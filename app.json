@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "AvocadoApp",
-    "slug": "AvocadoApp",
+    "slug": "avocadoapp",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -25,6 +25,26 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      "sentry-expo"
+    ],
+    "hooks": {
+      "postPublish": [
+        {
+          "file": "sentry-expo/upload-sourcemaps",
+          "config": {
+            "organization": "avocado-zn",
+            "project": "avocado"
+          }
+        }
+      ]
+    },
+    "extra": {
+      "eas": {
+        "projectId": "9dd547c7-ad18-410b-b7bb-e9ee2a73f8ea"
+      }
+    },
+    "owner": "avocadoadmin"
   }
 }
