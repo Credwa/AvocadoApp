@@ -11,9 +11,8 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "scheme": "app-myavocado",
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true
     },
@@ -21,14 +20,16 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.avocado.shares.myavocado"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": [
-      "sentry-expo"
-    ],
+    "plugins": ["sentry-expo", "expo-router"],
+    "experiments": {
+      "tsconfigPaths": true
+    },
     "hooks": {
       "postPublish": [
         {
