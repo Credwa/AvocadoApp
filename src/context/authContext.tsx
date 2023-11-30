@@ -1,12 +1,13 @@
 import React from 'react'
-import { Alert } from 'react-native'
 import * as Sentry from 'sentry-expo'
 
 import { supabase } from '@/helpers/supabase/supabase'
 import { useStorageState } from '@/hooks/useStorageState'
+import { useAppStore } from '@/store'
+import { Session } from '@supabase/supabase-js'
 
 const AuthContext = React.createContext<{
-  signIn: (email: string, password: string) => void
+  signIn: (email: string, password: string) => Promise<Session | null>
   signOut: () => void
   session?: string | null
   isLoading: boolean
@@ -20,7 +21,6 @@ export function useSession() {
       throw new Error('useSession must be wrapped in a <SessionProvider />')
     }
   }
-
   return value
 }
 
@@ -39,15 +39,22 @@ export function SessionProvider(props: React.PropsWithChildren) {
             password
           })
           if (error) {
-            Alert.alert(error.message)
-            return
+            throw new Error(error.message)
           }
+          useAppStore.setState({ user_id: session?.user.id })
           Sentry.Native.setUser({ id: session?.user.id })
           // Perform sign-in logic here
           await setSession(session?.access_token || null)
+          return session
         },
-        signOut: () => {
-          setSession(null)
+        signOut: async () => {
+          const { error } = await supabase.auth.signOut()
+
+          if (error) {
+            throw new Error(error.message)
+          }
+
+          await setSession(null)
         },
         session,
         isLoading

@@ -1,8 +1,10 @@
 import { Slot } from 'expo-router'
-import { useEffect } from 'react'
+import { View } from 'react-native'
 import * as Sentry from 'sentry-expo'
+import { useDeviceContext } from 'twrnc'
 
 import { SessionProvider } from '@/context/authContext'
+import tw from '@/helpers/lib/tailwind'
 
 let sentryInitialzed = false
 
@@ -16,9 +18,13 @@ if (!sentryInitialzed) {
 }
 
 const RootLayout = () => {
+  useDeviceContext(tw)
+
   return (
     <SessionProvider>
-      <Slot />
+      <View style={tw`flex-1 dark:bg-zinc-950 bg-zinc-50`}>
+        <Slot />
+      </View>
     </SessionProvider>
   )
 }

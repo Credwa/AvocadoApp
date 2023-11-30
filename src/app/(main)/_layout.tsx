@@ -3,12 +3,15 @@ import { Text } from 'react-native'
 
 import { useSession } from '@/context/authContext'
 
-export default function MainLayout() {
+// export { default } from '../../../.storybook'
+
+export default function Layout() {
   const { session, isLoading } = useSession() ?? {}
 
   if (isLoading) {
     return <Text>Loading...</Text>
   }
+
   if (!session) {
     return <Redirect href="/sign-in" />
   }
