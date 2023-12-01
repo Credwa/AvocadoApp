@@ -24,7 +24,9 @@ if (!sentryInitialzed) {
 
 const RootLayout = () => {
   const [fontsLoaded] = useFonts({
+    'REM-Light': require('~/assets/fonts/REM/REM-Light.ttf'),
     REM: require('~/assets/fonts/REM/REM-Regular.ttf'),
+    'REM-Italic': require('~/assets/fonts/REM/REM-Italic.ttf'),
     'REM-Medium': require('~/assets/fonts/REM/REM-Medium.ttf'),
     'REM-SemiBold': require('~/assets/fonts/REM/REM-SemiBold.ttf'),
     'REM-Bold': require('~/assets/fonts/REM/REM-Bold.ttf')

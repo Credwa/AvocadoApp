@@ -2,7 +2,7 @@ import { Text, TextProps } from 'react-native'
 
 type TypographyProps = {
   children: React.ReactNode
-  weight?: 400 | 500 | 600 | 700
+  weight?: 300 | 400 | 500 | 600 | 700 | 'italic'
 } & TextProps
 
 export const Typography = (props: TypographyProps) => {
@@ -11,8 +11,14 @@ export const Typography = (props: TypographyProps) => {
   delete newProps.style
   let weightStyle = {}
   switch (props.weight) {
+    case 300:
+      weightStyle = { fontFamily: 'REM-Light' }
+      break
     case 400:
       weightStyle = { fontFamily: 'REM' }
+      break
+    case 'italic':
+      weightStyle = { fontFamily: 'REM-Italic' }
       break
     case 500:
       weightStyle = { fontFamily: 'REM-Medium' }
