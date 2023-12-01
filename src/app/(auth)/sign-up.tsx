@@ -1,6 +1,7 @@
 import { Image } from 'expo-image'
+import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import { ImageBackground, KeyboardAvoidingView, Platform, useColorScheme, View } from 'react-native'
+import { Alert, ImageBackground, KeyboardAvoidingView, Platform, useColorScheme, View } from 'react-native'
 
 import { Button } from '@/components/atoms/Button'
 import { ErrorText } from '@/components/atoms/ErrorText'
@@ -8,10 +9,12 @@ import { Link } from '@/components/atoms/Link'
 import { TextInput } from '@/components/atoms/TextInput'
 import { Typography } from '@/components/atoms/Typography'
 import tw from '@/helpers/lib/tailwind'
-import { signUpSchema, TSignInSchema, TSignUpSchema } from '@/helpers/lib/validators'
+import { signUpSchema, TSignUpSchema } from '@/helpers/schemas/auth'
+import { supabase } from '@/helpers/supabase/supabase'
 import { zodResolver } from '@hookform/resolvers/zod'
 
-export default function SignIn() {
+export default function SignUp() {
+  const [submitting, setSubmitting] = useState(false)
   const {
     control,
     handleSubmit,
@@ -30,9 +33,24 @@ export default function SignIn() {
     imageBackground = require('~/assets/images/auth-background-dark.png')
   }
 
-  const onSubmit = async (data: TSignInSchema) => {
+  const onSubmit = async (data: TSignUpSchema) => {
+    setSubmitting(true)
     try {
-    } catch (error) {}
+      const { error } = await supabase.auth.signUp({
+        email: data.email,
+        password: data.password
+      })
+      if (error) throw new Error(error?.message)
+
+      setSubmitting(false)
+    } catch (error) {
+      setSubmitting(false)
+      if (error instanceof Error) {
+        Alert.alert(error.message)
+      } else {
+        Alert.alert('An unknown error has occurred.')
+      }
+    }
   }
 
   return (
@@ -83,21 +101,21 @@ export default function SignIn() {
           </View>
         </View>
         <View style={tw`flex-col self-center w-full`}>
-          <Typography style={tw`flex flex-col text-xs leading-6 text-center text-neutral`}>
-            By continuing, you agree to the{' '}
-          </Typography>
-          <View style={tw`flex flex-row self-center gap-1`}>
+          <View style={tw`flex flex-row flex-wrap self-center justify-center gap-1`}>
+            <Typography style={tw`flex flex-col text-xs text-center text-neutral`}>
+              By continuing, you agree to the{' '}
+            </Typography>
             <Link styles="underline dark:text-secondary-light text-xs" variant="secondary" href="">
               Avocado User Account Agreement
             </Link>
             <Typography style={tw`text-xs text-neutral`}>and</Typography>
-            <Link styles="underline dark:text-secondary-light text-xs" variant="secondary" href="">
+            <Link styles="underline dark:text-secondary-light text-center text-xs" variant="secondary" href="">
               Privacy Policy
             </Link>
           </View>
         </View>
         <View style={tw`flex flex-col gap-8`}>
-          <Button styles="w-full" onPress={handleSubmit(onSubmit)}>
+          <Button loading={submitting} styles="w-full" onPress={handleSubmit(onSubmit)}>
             Sign up
           </Button>
           <View style={tw`flex flex-row self-center`}>

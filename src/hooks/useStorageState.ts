@@ -1,3 +1,9 @@
+/**
+ * Secure storage hook for storing sensitive data like session tokens.
+ * @see https://docs.expo.io/versions/latest/sdk/securestore/
+ * Use @/store for non-sensitive data.
+ */
+
 import * as SecureStore from 'expo-secure-store'
 import * as React from 'react'
 

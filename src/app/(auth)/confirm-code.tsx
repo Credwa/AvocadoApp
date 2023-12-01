@@ -1,5 +1,4 @@
-import { Image } from 'expo-image'
-import { router } from 'expo-router'
+import { router, useLocalSearchParams } from 'expo-router'
 import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { Alert, ImageBackground, KeyboardAvoidingView, Platform, Pressable, useColorScheme, View } from 'react-native'
@@ -10,23 +9,22 @@ import { ErrorText } from '@/components/atoms/ErrorText'
 import { TextInput } from '@/components/atoms/TextInput'
 import { Typography } from '@/components/atoms/Typography'
 import tw from '@/helpers/lib/tailwind'
-import { TVerifyOTPSchema, verifyOTPSchema } from '@/helpers/schemas/auth'
+import { confirmCodeSchema, TConfirmCodeSchema } from '@/helpers/schemas/auth'
 import { supabase } from '@/helpers/supabase/supabase'
 import { Ionicons } from '@expo/vector-icons'
 import { zodResolver } from '@hookform/resolvers/zod'
 
-export default function ForgotPassword() {
+export default function ConfirmCode() {
+  const { email } = useLocalSearchParams<{ email?: string }>()
+
+  console.log(email)
   const [submitting, setSubmitting] = useState(false)
   const {
     control,
     handleSubmit,
-    formState: { errors },
-    setValue
-  } = useForm<TVerifyOTPSchema>({
-    resolver: zodResolver(verifyOTPSchema),
-    defaultValues: {
-      email: ''
-    }
+    formState: { errors }
+  } = useForm<TConfirmCodeSchema>({
+    resolver: zodResolver(confirmCodeSchema)
   })
   const colorScheme = useColorScheme()
   let imageBackground = require('~/assets/images/auth-background.png')
@@ -34,39 +32,29 @@ export default function ForgotPassword() {
   if (colorScheme === 'dark') {
     imageBackground = require('~/assets/images/auth-background-dark.png')
   }
+  supabase.auth.getSession()
 
-  const onSubmit = async (data: TVerifyOTPSchema) => {
+  const onSubmit = async (formData: TConfirmCodeSchema) => {
     setSubmitting(true)
     try {
-      const { error } = await supabase.auth.signInWithOtp({
-        email: data.email,
-        options: {
-          shouldCreateUser: false
-        }
-      })
-      if (error) {
-        if (error.name === 'AuthApiError') {
-          Alert.alert(
-            `We couldn't find your account. Create a new account?`,
-            `It looks like ${data.email} isn't connected to an account. You can create a new account with this email or try again.`,
-            [
-              {
-                text: 'Try again',
-                onPress: () => setValue('email', ''),
-                style: 'cancel'
-              },
-              { text: 'Create new account', onPress: () => router.push('/sign-up') }
-            ]
-          )
-          setSubmitting(false)
-          return
-        } else {
-          throw new Error(error?.message)
-        }
-      }
+      if (!email) {
+        Alert.alert('An unknown error has occurred.', '', [
+          {
+            text: 'Go back',
+            onPress: () => router.back()
+          }
+        ])
+      } else {
+        const { data, error } = await supabase.auth.verifyOtp({
+          email,
+          token: formData.code,
+          type: 'email'
+        })
 
-      setSubmitting(false)
-      router.push(`/confirm-code?email=${data.email}`)
+        if (error) throw new Error(error?.message)
+        setSubmitting(false)
+        router.push('/reset-password')
+      }
     } catch (error) {
       setSubmitting(false)
       if (error instanceof Error) {
@@ -95,14 +83,11 @@ export default function ForgotPassword() {
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           style={tw`flex-col flex-1 justify-center gap-12 gutter-sm`}
         >
-          <Image style={tw`self-center w-16 h-16`} source={require('~/assets/images/AvocadoLogoMinimal.png')} />
           <View style={tw`flex-col gap-2 pb-4`}>
             <Typography weight={700} style={tw`text-2xl text-black dark:text-white`}>
-              Find your account
+              Confirm your account
             </Typography>
-            <Typography style={tw``}>
-              Enter your email address and we'll send you a link to reset your password.
-            </Typography>
+            <Typography style={tw``}>We sent a code to your email. Enter that code to confirm your account.</Typography>
           </View>
           <View style={tw`flex-col gap-4`}>
             <View>
@@ -114,22 +99,24 @@ export default function ForgotPassword() {
                 render={({ field: { onChange, onBlur, value } }) => (
                   <TextInput
                     autoFocus
-                    placeholder="Email"
-                    inputMode="email"
+                    placeholder="Enter code"
+                    inputMode="numeric"
+                    keyboardType="numeric"
+                    maxLength={6}
                     onBlur={onBlur}
                     onChangeText={onChange}
                     value={value}
                   />
                 )}
-                name="email"
+                name="code"
               />
-              {errors.email && <ErrorText>{errors.email.message}</ErrorText>}
+              {errors.code && <ErrorText>{errors.code.message}</ErrorText>}
             </View>
           </View>
 
           <View style={tw`flex flex-col gap-8`}>
             <Button loading={submitting} styles="w-full" onPress={handleSubmit(onSubmit)}>
-              Find account
+              Continue
             </Button>
           </View>
         </KeyboardAvoidingView>

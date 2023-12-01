@@ -1,5 +1,6 @@
 import { Image } from 'expo-image'
 import { router } from 'expo-router'
+import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { Alert, ImageBackground, KeyboardAvoidingView, Platform, useColorScheme, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -10,10 +11,11 @@ import { Link } from '@/components/atoms/Link'
 import { TextInput } from '@/components/atoms/TextInput'
 import { useSession } from '@/context/authContext'
 import tw from '@/helpers/lib/tailwind'
-import { signInSchema, TSignInSchema } from '@/helpers/lib/validators'
+import { signInSchema, TSignInSchema } from '@/helpers/schemas/auth'
 import { zodResolver } from '@hookform/resolvers/zod'
 
 export default function SignIn() {
+  const [submitting, setSubmitting] = useState(false)
   const {
     control,
     handleSubmit,
@@ -38,12 +40,14 @@ export default function SignIn() {
 
   const onSubmit = async (data: TSignInSchema) => {
     if (!signIn) return
+    setSubmitting(true)
     try {
       const session = await signIn(data.email.trim(), data.password.trim())
       if (session) {
         router.replace('/')
       }
     } catch (error) {
+      setSubmitting(false)
       if (error instanceof Error) {
         Alert.alert(error.message)
       } else {
@@ -68,13 +72,7 @@ export default function SignIn() {
                   required: true
                 }}
                 render={({ field: { onChange, onBlur, value } }) => (
-                  <TextInput
-                    placeholder="Email"
-                    inputMode="email"
-                    value={value}
-                    onBlur={onBlur}
-                    onChangeText={onChange}
-                  />
+                  <TextInput placeholder="Email" inputMode="email" onBlur={onBlur} onChangeText={onChange} />
                 )}
                 name="email"
               />
@@ -102,7 +100,7 @@ export default function SignIn() {
           </View>
 
           <View style={tw`flex flex-col justify-end gap-8`}>
-            <Button styles="w-full" onPress={handleSubmit(onSubmit)}>
+            <Button loading={submitting} styles="w-full" onPress={handleSubmit(onSubmit)}>
               Login
             </Button>
             <View style={tw`flex flex-row self-center`}>

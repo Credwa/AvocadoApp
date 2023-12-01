@@ -10,22 +10,21 @@ import { ErrorText } from '@/components/atoms/ErrorText'
 import { TextInput } from '@/components/atoms/TextInput'
 import { Typography } from '@/components/atoms/Typography'
 import tw from '@/helpers/lib/tailwind'
-import { TVerifyOTPSchema, verifyOTPSchema } from '@/helpers/schemas/auth'
+import { passwordResetSchema, TPasswordResetSchema } from '@/helpers/schemas/auth'
 import { supabase } from '@/helpers/supabase/supabase'
 import { Ionicons } from '@expo/vector-icons'
 import { zodResolver } from '@hookform/resolvers/zod'
 
-export default function ForgotPassword() {
+export default function ResetPassword() {
   const [submitting, setSubmitting] = useState(false)
   const {
     control,
     handleSubmit,
-    formState: { errors },
-    setValue
-  } = useForm<TVerifyOTPSchema>({
-    resolver: zodResolver(verifyOTPSchema),
+    formState: { errors }
+  } = useForm<TPasswordResetSchema>({
+    resolver: zodResolver(passwordResetSchema),
     defaultValues: {
-      email: ''
+      password: ''
     }
   })
   const colorScheme = useColorScheme()
@@ -35,38 +34,21 @@ export default function ForgotPassword() {
     imageBackground = require('~/assets/images/auth-background-dark.png')
   }
 
-  const onSubmit = async (data: TVerifyOTPSchema) => {
+  const onSubmit = async (data: TPasswordResetSchema) => {
     setSubmitting(true)
     try {
-      const { error } = await supabase.auth.signInWithOtp({
-        email: data.email,
-        options: {
-          shouldCreateUser: false
-        }
-      })
+      const { error } = await supabase.auth.updateUser({ password: data.password })
+      console.log(error)
       if (error) {
-        if (error.name === 'AuthApiError') {
-          Alert.alert(
-            `We couldn't find your account. Create a new account?`,
-            `It looks like ${data.email} isn't connected to an account. You can create a new account with this email or try again.`,
-            [
-              {
-                text: 'Try again',
-                onPress: () => setValue('email', ''),
-                style: 'cancel'
-              },
-              { text: 'Create new account', onPress: () => router.push('/sign-up') }
-            ]
-          )
-          setSubmitting(false)
-          return
-        } else {
-          throw new Error(error?.message)
-        }
+        throw new Error(error?.message)
       }
-
+      const signOutData = await supabase.auth.signOut()
+      console.log(signOutData)
+      if (signOutData.error) {
+        throw new Error(signOutData.error?.message)
+      }
       setSubmitting(false)
-      router.push(`/confirm-code?email=${data.email}`)
+      router.push(`/sign-in`)
     } catch (error) {
       setSubmitting(false)
       if (error instanceof Error) {
@@ -98,10 +80,11 @@ export default function ForgotPassword() {
           <Image style={tw`self-center w-16 h-16`} source={require('~/assets/images/AvocadoLogoMinimal.png')} />
           <View style={tw`flex-col gap-2 pb-4`}>
             <Typography weight={700} style={tw`text-2xl text-black dark:text-white`}>
-              Find your account
+              Reset your password
             </Typography>
             <Typography style={tw``}>
-              Enter your email address and we'll send you a link to reset your password.
+              Enter a new password below to reset it. You'll be able to sign in with your new password after resetting
+              it.
             </Typography>
           </View>
           <View style={tw`flex-col gap-4`}>
@@ -114,22 +97,22 @@ export default function ForgotPassword() {
                 render={({ field: { onChange, onBlur, value } }) => (
                   <TextInput
                     autoFocus
-                    placeholder="Email"
-                    inputMode="email"
+                    placeholder="New password"
+                    secureTextEntry
                     onBlur={onBlur}
                     onChangeText={onChange}
                     value={value}
                   />
                 )}
-                name="email"
+                name="password"
               />
-              {errors.email && <ErrorText>{errors.email.message}</ErrorText>}
+              {errors.password && <ErrorText>{errors.password.message}</ErrorText>}
             </View>
           </View>
 
           <View style={tw`flex flex-col gap-8`}>
             <Button loading={submitting} styles="w-full" onPress={handleSubmit(onSubmit)}>
-              Find account
+              Reset password
             </Button>
           </View>
         </KeyboardAvoidingView>
