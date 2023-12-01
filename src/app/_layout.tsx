@@ -1,10 +1,15 @@
+import { useFonts } from 'expo-font'
 import { Slot } from 'expo-router'
+import * as SplashScreen from 'expo-splash-screen'
+import { useCallback } from 'react'
 import { View } from 'react-native'
 import * as Sentry from 'sentry-expo'
 import { useDeviceContext } from 'twrnc'
 
 import { SessionProvider } from '@/context/authContext'
 import tw from '@/helpers/lib/tailwind'
+
+SplashScreen.preventAutoHideAsync()
 
 let sentryInitialzed = false
 
@@ -18,11 +23,28 @@ if (!sentryInitialzed) {
 }
 
 const RootLayout = () => {
+  const [fontsLoaded] = useFonts({
+    REM: require('~/assets/fonts/REM/REM-Regular.ttf'),
+    'REM-Medium': require('~/assets/fonts/REM/REM-Medium.ttf'),
+    'REM-SemiBold': require('~/assets/fonts/REM/REM-SemiBold.ttf'),
+    'REM-Bold': require('~/assets/fonts/REM/REM-Bold.ttf')
+  })
+
   useDeviceContext(tw)
+
+  const onLayoutRootView = useCallback(async () => {
+    if (fontsLoaded) {
+      await SplashScreen.hideAsync()
+    }
+  }, [fontsLoaded])
+
+  if (!fontsLoaded) {
+    return null
+  }
 
   return (
     <SessionProvider>
-      <View style={tw`flex-1 dark:bg-zinc-950 bg-zinc-50`}>
+      <View style={tw`flex-1 dark:bg-zinc-950 bg-zinc-50`} onLayout={onLayoutRootView}>
         <Slot />
       </View>
     </SessionProvider>

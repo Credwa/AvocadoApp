@@ -9,7 +9,8 @@ module.exports = {
         '.gutter-xs': `px-2`,
         '.gutter-sm': `px-4`,
         '.gutter-md': `px-6`,
-        '.gutter-lg': `px-8`
+        '.gutter-lg': `px-8`,
+        '.text-neutral': 'text-zinc-600 dark:text-zinc-200'
       })
     })
   ],

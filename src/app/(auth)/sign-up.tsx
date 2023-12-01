@@ -1,11 +1,12 @@
 import { Image } from 'expo-image'
 import { Controller, useForm } from 'react-hook-form'
-import { ImageBackground, KeyboardAvoidingView, Platform, Text, useColorScheme, View } from 'react-native'
+import { ImageBackground, KeyboardAvoidingView, Platform, useColorScheme, View } from 'react-native'
 
-import { ALink } from '@/components/atoms/ALink'
 import { Button } from '@/components/atoms/Button'
 import { ErrorText } from '@/components/atoms/ErrorText'
+import { Link } from '@/components/atoms/Link'
 import { TextInput } from '@/components/atoms/TextInput'
+import { Typography } from '@/components/atoms/Typography'
 import tw from '@/helpers/lib/tailwind'
 import { signUpSchema, TSignInSchema, TSignUpSchema } from '@/helpers/lib/validators'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -19,8 +20,7 @@ export default function SignIn() {
     resolver: zodResolver(signUpSchema),
     defaultValues: {
       email: '',
-      password: '',
-      confirmPassword: ''
+      password: ''
     }
   })
   const colorScheme = useColorScheme()
@@ -39,7 +39,7 @@ export default function SignIn() {
     <ImageBackground style={tw`flex flex-1`} source={imageBackground}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={tw`flex-col justify-center flex-1 gap-8 gutter-sm`}
+        style={tw`flex-col justify-center flex-1 gap-10 gutter-sm`}
       >
         <Image style={tw`self-center w-16 h-16 mb-12`} source={require('~/assets/images/AvocadoLogoMinimal.png')} />
         <View style={tw`flex-col gap-4`}>
@@ -83,15 +83,29 @@ export default function SignIn() {
             {errors.password && <ErrorText>{errors.password.message}</ErrorText>}
           </View>
         </View>
+        <View style={tw`flex-col self-center w-full`}>
+          <Typography style={tw`flex flex-col text-xs leading-6 text-center text-neutral`}>
+            By continuing, you agree to the{' '}
+          </Typography>
+          <View style={tw`flex flex-row self-center gap-1`}>
+            <Link styles="underline dark:text-secondary-light text-xs" variant="secondary" href="">
+              Avocado User Account Agreement
+            </Link>
+            <Typography style={tw`text-xs text-neutral`}>and</Typography>
+            <Link styles="underline dark:text-secondary-light text-xs" variant="secondary" href="">
+              Privacy Policy
+            </Link>
+          </View>
+        </View>
         <View style={tw`flex flex-col gap-8`}>
           <Button styles="w-full" onPress={handleSubmit(onSubmit)}>
             Sign up
           </Button>
           <View style={tw`flex flex-row self-center`}>
-            <Text style={tw`text-zinc-600 dark:text-zinc-200`}>Already have an account? </Text>
-            <ALink variant="secondary" href="/sign-in">
+            <Typography style={tw`text-neutral`}>Already have an account? </Typography>
+            <Link variant="secondary" href="/sign-in">
               Log in
-            </ALink>
+            </Link>
           </View>
         </View>
       </KeyboardAvoidingView>
