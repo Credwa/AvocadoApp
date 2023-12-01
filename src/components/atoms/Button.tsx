@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { Pressable, PressableProps, Text } from 'react-native'
+import { Pressable, PressableProps } from 'react-native'
 
 import tw from '@/helpers/lib/tailwind'
 

@@ -1,5 +1,5 @@
 import { router } from 'expo-router'
-import { Text, View } from 'react-native'
+import { View } from 'react-native'
 
 import { Typography } from '@/components/atoms/Typography'
 import { useSession } from '@/context/authContext'

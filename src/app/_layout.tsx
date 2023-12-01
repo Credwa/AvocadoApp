@@ -13,6 +13,8 @@ SplashScreen.preventAutoHideAsync()
 
 let sentryInitialzed = false
 
+console.log('ran')
+
 if (!sentryInitialzed) {
   Sentry.init({
     dsn: 'https://d50d3a482469ae4a1ccb8e142683384e@o4506305008173056.ingest.sentry.io/4506305022263296',

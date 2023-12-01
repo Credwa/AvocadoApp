@@ -53,7 +53,6 @@ export default function SignIn() {
                 <TextInput
                   placeholder="Email"
                   inputMode="email"
-                  textContentType="oneTimeCode"
                   onBlur={onBlur}
                   onChangeText={onChange}
                   value={value}

@@ -50,17 +50,17 @@ export const TextInput: FC<TextInputProps> = (props) => {
 
   return (
     <View style={tw`relative flex`}>
-      {(isFocused || (props.value && props.value.length > 0)) && (
+      {isFocused || (props.value && props.value.length > 0) ? (
         <Animated.Text style={[tw`absolute z-50 px-4 pt-4 text-xs dark:text-zinc-300 text-zinc-500`, animatedStyle]}>
           {props.placeholder}
         </Animated.Text>
-      )}
+      ) : null}
       <DefaultTextInput
         onFocus={handleFocus}
         onEndEditing={handleEndEditing}
         style={[
           tw.style(
-            `w-full flex dark:bg-[#0F202A] shadow-md dark:shadow-zinc-500 shadow-zinc-100 bg-zinc-50 border dark:border-zinc-600 border-zinc-300 dark:text-zinc-50 text-zinc-900 rounded-2xl h-14 px-4 no-underline`,
+            `w-full flex dark:bg-[#0F202A] shadow-md dark:shadow-zinc-500 shadow-zinc-100 bg-zinc-50 border dark:border-zinc-600 border-zinc-300 dark:text-zinc-50 text-zinc-900 rounded-xl h-14 px-4 no-underline`,
             props.styles
           ),
           tw.style({ 'border-primary-lighter': isFocused }),

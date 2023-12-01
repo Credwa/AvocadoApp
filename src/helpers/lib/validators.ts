@@ -12,3 +12,9 @@ export const signUpSchema = z.object({
 })
 
 export type TSignUpSchema = z.infer<typeof signUpSchema>
+
+export const passwordResetSchema = z.object({
+  email: z.string().trim().email('Email is required')
+})
+
+export type TPasswordResetSchema = z.infer<typeof passwordResetSchema>

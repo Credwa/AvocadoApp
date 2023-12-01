@@ -1,5 +1,7 @@
 import { Text, TextProps } from 'react-native'
 
+import tw from '@/helpers/lib/tailwind'
+
 type TypographyProps = {
   children: React.ReactNode
   weight?: 300 | 400 | 500 | 600 | 700 | 'italic'
@@ -35,7 +37,7 @@ export const Typography = (props: TypographyProps) => {
   }
 
   return (
-    <Text style={[weightStyle, props.style]} {...newProps}>
+    <Text style={[tw.style('text-neutral'), weightStyle, props.style]} {...newProps}>
       {props.children}
     </Text>
   )
