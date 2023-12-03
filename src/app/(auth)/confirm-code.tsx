@@ -1,24 +1,28 @@
 import { router, useLocalSearchParams } from 'expo-router'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import { Alert, ImageBackground, KeyboardAvoidingView, Platform, Pressable, useColorScheme, View } from 'react-native'
+import { Alert, ImageBackground, KeyboardAvoidingView, Platform, useColorScheme, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
+import BackButton from '@/components/atoms/BackButton'
 import { Button } from '@/components/atoms/Button'
 import { ErrorText } from '@/components/atoms/ErrorText'
 import { TextInput } from '@/components/atoms/TextInput'
+import ShowToast from '@/components/atoms/Toast'
 import { Typography } from '@/components/atoms/Typography'
+import { useSession } from '@/context/authContext'
+import { handleErrors } from '@/helpers/lib/Errors'
 import tw from '@/helpers/lib/tailwind'
 import { confirmCodeSchema, TConfirmCodeSchema } from '@/helpers/schemas/auth'
 import { supabase } from '@/helpers/supabase/supabase'
-import { Ionicons } from '@expo/vector-icons'
 import { zodResolver } from '@hookform/resolvers/zod'
 
 export default function ConfirmCode() {
-  const { email } = useLocalSearchParams<{ email?: string }>()
-
-  console.log(email)
+  const { email, password } = useLocalSearchParams<{ email?: string; password?: string }>()
+  const { signUp } = useSession() ?? {}
+  const [codeResent, setCodeResent] = useState(false)
   const [submitting, setSubmitting] = useState(false)
+  const [timeLeft, setTimeLeft] = useState(60)
   const {
     control,
     handleSubmit,
@@ -32,7 +36,38 @@ export default function ConfirmCode() {
   if (colorScheme === 'dark') {
     imageBackground = require('~/assets/images/auth-background-dark.png')
   }
-  supabase.auth.getSession()
+
+  useEffect(() => {
+    if (codeResent) {
+      const timer = setInterval(() => {
+        setTimeLeft((prev) => {
+          if (prev === 0) {
+            setCodeResent(false)
+            clearInterval(timer)
+          }
+          return prev > 0 ? prev - 1 : 0
+        })
+      }, 1000)
+
+      return () => {
+        clearInterval(timer)
+      }
+    }
+  }, [codeResent])
+
+  const resend = async () => {
+    if (email && !codeResent) {
+      setCodeResent(true)
+      setTimeLeft(60)
+      const { error } = await supabase.auth.signInWithOtp({
+        email
+      })
+      handleErrors(error)
+      ShowToast('Code was sent')
+    } else if (codeResent && email) {
+      ShowToast(`You can resend a code in ${timeLeft} seconds`)
+    }
+  }
 
   const onSubmit = async (formData: TConfirmCodeSchema) => {
     setSubmitting(true)
@@ -45,15 +80,27 @@ export default function ConfirmCode() {
           }
         ])
       } else {
-        const { data, error } = await supabase.auth.verifyOtp({
+        const {
+          error,
+          data: { session }
+        } = await supabase.auth.verifyOtp({
           email,
           token: formData.code,
           type: 'email'
         })
-
-        if (error) throw new Error(error?.message)
-        setSubmitting(false)
-        router.push('/reset-password')
+        if (password && signUp) {
+          const res = await signUp(password, session)
+          if (res) {
+            router.replace('/')
+          } else {
+            await supabase.auth.signOut()
+            router.replace('/sign-in?errorMessage=exists')
+          }
+        } else {
+          setSubmitting(false)
+          if (error) throw new Error(error?.message)
+          router.push('/reset-password')
+        }
       }
     } catch (error) {
       setSubmitting(false)
@@ -68,17 +115,7 @@ export default function ConfirmCode() {
   return (
     <ImageBackground style={tw`flex flex-1`} source={imageBackground}>
       <SafeAreaView style={tw`flex flex-1`}>
-        <Pressable style={tw`p-4`} onPress={() => router.back()}>
-          {({ pressed }) => (
-            <Ionicons
-              name="chevron-back"
-              size={32}
-              style={[tw.style(''), tw.style({ 'opacity-50': pressed })]}
-              color={colorScheme === 'dark' ? tw.color('text-zinc-100') : tw.color('text-zinc-700')}
-            />
-          )}
-        </Pressable>
-
+        <BackButton />
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           style={tw`flex-col flex-1 justify-center gap-12 gutter-sm`}
@@ -114,9 +151,12 @@ export default function ConfirmCode() {
             </View>
           </View>
 
-          <View style={tw`flex flex-col gap-8`}>
+          <View style={tw`flex flex-col gap-4`}>
             <Button loading={submitting} styles="w-full" onPress={handleSubmit(onSubmit)}>
               Continue
+            </Button>
+            <Button variant="default" loading={submitting} styles="w-full" onPress={resend}>
+              Send code again
             </Button>
           </View>
         </KeyboardAvoidingView>

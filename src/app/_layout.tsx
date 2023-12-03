@@ -3,6 +3,7 @@ import { Slot } from 'expo-router'
 import * as SplashScreen from 'expo-splash-screen'
 import { useCallback } from 'react'
 import { View } from 'react-native'
+import { RootSiblingParent } from 'react-native-root-siblings'
 import * as Sentry from 'sentry-expo'
 import { useDeviceContext } from 'twrnc'
 
@@ -12,8 +13,6 @@ import tw from '@/helpers/lib/tailwind'
 SplashScreen.preventAutoHideAsync()
 
 let sentryInitialzed = false
-
-console.log('ran')
 
 if (!sentryInitialzed) {
   Sentry.init({
@@ -48,9 +47,11 @@ const RootLayout = () => {
 
   return (
     <SessionProvider>
-      <View style={tw`flex-1 dark:bg-zinc-950 bg-zinc-50`} onLayout={onLayoutRootView}>
-        <Slot />
-      </View>
+      <RootSiblingParent>
+        <View style={tw`flex-1 dark:bg-zinc-950 bg-zinc-50`} onLayout={onLayoutRootView}>
+          <Slot />
+        </View>
+      </RootSiblingParent>
     </SessionProvider>
   )
 }

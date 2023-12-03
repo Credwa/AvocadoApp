@@ -7,7 +7,7 @@ import tw from '@/helpers/lib/tailwind'
 import { Typography } from './Typography'
 
 type ButtonProps = PressableProps & {
-  variant?: 'primary' | 'secondary' | 'danger'
+  variant?: 'primary' | 'secondary' | 'danger' | 'default'
   children: React.ReactNode
   styles?: string
   outline?: boolean
@@ -36,11 +36,12 @@ export const Button: FC<ButtonProps> = ({
         ? 'border dark:border-secondary-lighter border-secondary-main'
         : 'dark:bg-secondary-main bg-secondary-main dark:shadow-secondary-main shadow-black'
       textColor = outline ? 'dark:text-secondary-lighter text-secondary-main' : ''
-
       break
     case 'danger':
       color = 'bg-danger-main'
       break
+    case 'default':
+      textColor = `text-neutral`
   }
 
   const loadingAnim = require('~/assets/lottie/SoundwaveLight.json')
@@ -55,7 +56,7 @@ export const Button: FC<ButtonProps> = ({
         ),
         tw.style({
           'opacity-80': pressed,
-          'shadow-none': outline
+          'shadow-none': outline || variant === 'default'
         })
       ]}
       onPress={onPress}

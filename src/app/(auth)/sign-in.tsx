@@ -1,6 +1,6 @@
 import { Image } from 'expo-image'
-import { router } from 'expo-router'
-import { useState } from 'react'
+import { router, useLocalSearchParams } from 'expo-router'
+import { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { Alert, ImageBackground, KeyboardAvoidingView, Platform, useColorScheme, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -9,17 +9,20 @@ import { Button } from '@/components/atoms/Button'
 import { ErrorText } from '@/components/atoms/ErrorText'
 import { Link } from '@/components/atoms/Link'
 import { TextInput } from '@/components/atoms/TextInput'
+import ShowToast from '@/components/atoms/Toast'
 import { useSession } from '@/context/authContext'
 import tw from '@/helpers/lib/tailwind'
 import { signInSchema, TSignInSchema } from '@/helpers/schemas/auth'
 import { zodResolver } from '@hookform/resolvers/zod'
 
 export default function SignIn() {
+  const { errorMessage } = useLocalSearchParams<{ errorMessage?: string }>()
   const [submitting, setSubmitting] = useState(false)
   const {
     control,
     handleSubmit,
-    formState: { errors }
+    formState: { errors },
+    setError
   } = useForm<TSignInSchema>({
     resolver: zodResolver(signInSchema),
     defaultValues: {
@@ -27,6 +30,14 @@ export default function SignIn() {
       password: ''
     }
   })
+
+  console.log(errorMessage)
+  useEffect(() => {
+    switch (errorMessage) {
+      case 'exists':
+        setError('email', { message: 'Email already exists try logging in instead' }, { shouldFocus: true })
+    }
+  }, [])
 
   const colorScheme = useColorScheme()
 
@@ -72,7 +83,13 @@ export default function SignIn() {
                   required: true
                 }}
                 render={({ field: { onChange, onBlur, value } }) => (
-                  <TextInput placeholder="Email" inputMode="email" onBlur={onBlur} onChangeText={onChange} />
+                  <TextInput
+                    placeholder="Email"
+                    inputMode="email"
+                    onBlur={onBlur}
+                    onChangeText={onChange}
+                    value={value}
+                  />
                 )}
                 name="email"
               />
@@ -100,7 +117,7 @@ export default function SignIn() {
           </View>
 
           <View style={tw`flex flex-col justify-end gap-8`}>
-            <Button loading={submitting} styles="w-full" onPress={handleSubmit(onSubmit)}>
+            <Button loading={submitting} styles="w-full" onPress={() => ShowToast('Hello')}>
               Login
             </Button>
             <View style={tw`flex flex-row self-center`}>

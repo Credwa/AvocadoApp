@@ -1,4 +1,5 @@
 import { Image } from 'expo-image'
+import { router } from 'expo-router'
 import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { Alert, ImageBackground, KeyboardAvoidingView, Platform, useColorScheme, View } from 'react-native'
@@ -36,13 +37,22 @@ export default function SignUp() {
   const onSubmit = async (data: TSignUpSchema) => {
     setSubmitting(true)
     try {
-      const { error } = await supabase.auth.signUp({
-        email: data.email,
-        password: data.password
+      await fetch(`http://192.168.1.23:3000/api/app/new-user`, {
+        method: 'POST',
+        body: JSON.stringify({
+          email: data.email
+        })
       })
+      const { error } = await supabase.auth.signInWithOtp({
+        email: data.email,
+        options: {
+          shouldCreateUser: false
+        }
+      })
+      console.log(error)
       if (error) throw new Error(error?.message)
-
       setSubmitting(false)
+      router.push(`/confirm-code?email=${data.email}&password=${data.password}`)
     } catch (error) {
       setSubmitting(false)
       if (error instanceof Error) {
@@ -105,11 +115,19 @@ export default function SignUp() {
             <Typography style={tw`flex flex-col text-xs text-center text-neutral`}>
               By continuing, you agree to the{' '}
             </Typography>
-            <Link styles="underline dark:text-secondary-light text-xs" variant="secondary" href="">
+            <Link
+              styles="underline dark:text-secondary-light text-xs"
+              variant="secondary"
+              href="/webviews/terms-of-use?url=https://myavocado.app/terms-of-use"
+            >
               Avocado User Account Agreement
             </Link>
             <Typography style={tw`text-xs text-neutral`}>and</Typography>
-            <Link styles="underline dark:text-secondary-light text-center text-xs" variant="secondary" href="">
+            <Link
+              styles="underline dark:text-secondary-light text-center text-xs"
+              variant="secondary"
+              href="/webviews/privacy-policy?url=https://myavocado.app/privacy-policy"
+            >
               Privacy Policy
             </Link>
           </View>

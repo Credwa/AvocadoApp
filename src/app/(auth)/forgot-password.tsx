@@ -2,9 +2,10 @@ import { Image } from 'expo-image'
 import { router } from 'expo-router'
 import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import { Alert, ImageBackground, KeyboardAvoidingView, Platform, Pressable, useColorScheme, View } from 'react-native'
+import { Alert, ImageBackground, KeyboardAvoidingView, Platform, useColorScheme, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
+import BackButton from '@/components/atoms/BackButton'
 import { Button } from '@/components/atoms/Button'
 import { ErrorText } from '@/components/atoms/ErrorText'
 import { TextInput } from '@/components/atoms/TextInput'
@@ -12,7 +13,6 @@ import { Typography } from '@/components/atoms/Typography'
 import tw from '@/helpers/lib/tailwind'
 import { TVerifyOTPSchema, verifyOTPSchema } from '@/helpers/schemas/auth'
 import { supabase } from '@/helpers/supabase/supabase'
-import { Ionicons } from '@expo/vector-icons'
 import { zodResolver } from '@hookform/resolvers/zod'
 
 export default function ForgotPassword() {
@@ -80,16 +80,7 @@ export default function ForgotPassword() {
   return (
     <ImageBackground style={tw`flex flex-1`} source={imageBackground}>
       <SafeAreaView style={tw`flex flex-1`}>
-        <Pressable style={tw`p-4`} onPress={() => router.back()}>
-          {({ pressed }) => (
-            <Ionicons
-              name="chevron-back"
-              size={32}
-              style={[tw.style(''), tw.style({ 'opacity-50': pressed })]}
-              color={colorScheme === 'dark' ? tw.color('text-zinc-100') : tw.color('text-zinc-700')}
-            />
-          )}
-        </Pressable>
+        <BackButton />
 
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
