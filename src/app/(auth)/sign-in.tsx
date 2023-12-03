@@ -9,7 +9,6 @@ import { Button } from '@/components/atoms/Button'
 import { ErrorText } from '@/components/atoms/ErrorText'
 import { Link } from '@/components/atoms/Link'
 import { TextInput } from '@/components/atoms/TextInput'
-import ShowToast from '@/components/atoms/Toast'
 import { useSession } from '@/context/authContext'
 import tw from '@/helpers/lib/tailwind'
 import { signInSchema, TSignInSchema } from '@/helpers/schemas/auth'
@@ -117,7 +116,7 @@ export default function SignIn() {
           </View>
 
           <View style={tw`flex flex-col justify-end gap-8`}>
-            <Button loading={submitting} styles="w-full" onPress={() => ShowToast('Hello')}>
+            <Button loading={submitting} styles="w-full" onPress={handleSubmit(onSubmit)}>
               Login
             </Button>
             <View style={tw`flex flex-row self-center`}>
