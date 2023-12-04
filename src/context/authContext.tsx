@@ -11,6 +11,7 @@ const AuthContext = React.createContext<{
   signIn: (email: string, password: string) => Promise<Session | null>
   signUp: (password: string, otpSession: Session | null) => Promise<Session | null>
   signOut: () => void
+  emailConfirm: () => Promise<Session | null>
   session?: string | null
   isLoading: boolean
 } | null>(null)
@@ -31,10 +32,8 @@ const checkIfUserExists = async () => {
   const { data: usersData, error: usersError } = await supabase.from('users').select('id')
   handleErrors(usersError)
   if (!usersData?.length) {
-    const insertUser = await supabase.from('users').insert({})
-    if (insertUser.error) {
-      throw new Error(insertUser.error.message)
-    }
+    const { error: insertUserError } = await supabase.from('users').insert({})
+    handleErrors(insertUserError)
     return false
   } else {
     return true
@@ -73,6 +72,16 @@ export function SessionProvider(props: React.PropsWithChildren) {
           } else {
             return null
           }
+        },
+        emailConfirm: async () => {
+          const {
+            error,
+            data: { session }
+          } = await supabase.auth.getSession()
+
+          handleErrors(error)
+          await setSession(session?.access_token || null)
+          return session
         },
         signOut: async () => {
           const { error } = await supabase.auth.signOut()

@@ -15,6 +15,7 @@ import { signInSchema, TSignInSchema } from '@/helpers/schemas/auth'
 import { zodResolver } from '@hookform/resolvers/zod'
 
 export default function SignIn() {
+  const { signIn } = useSession() ?? {}
   const { errorMessage } = useLocalSearchParams<{ errorMessage?: string }>()
   const [submitting, setSubmitting] = useState(false)
   const {
@@ -30,7 +31,6 @@ export default function SignIn() {
     }
   })
 
-  console.log(errorMessage)
   useEffect(() => {
     switch (errorMessage) {
       case 'exists':
@@ -45,8 +45,6 @@ export default function SignIn() {
   if (colorScheme === 'dark') {
     imageBackground = require('~/assets/images/auth-background-dark.png')
   }
-
-  const { signIn } = useSession() ?? {}
 
   const onSubmit = async (data: TSignInSchema) => {
     if (!signIn) return

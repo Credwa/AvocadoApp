@@ -1,3 +1,4 @@
+import { makeRedirectUri } from 'expo-auth-session'
 import { Image } from 'expo-image'
 import { router } from 'expo-router'
 import { useState } from 'react'
@@ -9,10 +10,13 @@ import { ErrorText } from '@/components/atoms/ErrorText'
 import { Link } from '@/components/atoms/Link'
 import { TextInput } from '@/components/atoms/TextInput'
 import { Typography } from '@/components/atoms/Typography'
+import { handleErrors } from '@/helpers/lib/Errors'
 import tw from '@/helpers/lib/tailwind'
 import { signUpSchema, TSignUpSchema } from '@/helpers/schemas/auth'
 import { supabase } from '@/helpers/supabase/supabase'
 import { zodResolver } from '@hookform/resolvers/zod'
+
+const redirectTo = makeRedirectUri()
 
 export default function SignUp() {
   const [submitting, setSubmitting] = useState(false)
@@ -27,6 +31,7 @@ export default function SignUp() {
       password: ''
     }
   })
+
   const colorScheme = useColorScheme()
   let imageBackground = require('~/assets/images/auth-background.png')
 
@@ -37,22 +42,17 @@ export default function SignUp() {
   const onSubmit = async (data: TSignUpSchema) => {
     setSubmitting(true)
     try {
-      await fetch(`http://192.168.1.23:3000/api/app/new-user`, {
-        method: 'POST',
-        body: JSON.stringify({
-          email: data.email
-        })
-      })
-      const { error } = await supabase.auth.signInWithOtp({
+      const { error } = await supabase.auth.signUp({
         email: data.email,
+        password: data.password,
         options: {
-          shouldCreateUser: false
+          emailRedirectTo: `${redirectTo}?mode=app&email=${data.email}`
         }
       })
-      console.log(error)
-      if (error) throw new Error(error?.message)
+
+      handleErrors(error)
       setSubmitting(false)
-      router.push(`/confirm-code?email=${data.email}&password=${data.password}`)
+      router.push(`/check-email?email=${data.email}`)
     } catch (error) {
       setSubmitting(false)
       if (error instanceof Error) {

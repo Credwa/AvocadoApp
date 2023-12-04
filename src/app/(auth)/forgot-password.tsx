@@ -10,6 +10,7 @@ import { Button } from '@/components/atoms/Button'
 import { ErrorText } from '@/components/atoms/ErrorText'
 import { TextInput } from '@/components/atoms/TextInput'
 import { Typography } from '@/components/atoms/Typography'
+import { handleErrors } from '@/helpers/lib/Errors'
 import tw from '@/helpers/lib/tailwind'
 import { TVerifyOTPSchema, verifyOTPSchema } from '@/helpers/schemas/auth'
 import { supabase } from '@/helpers/supabase/supabase'
@@ -61,7 +62,7 @@ export default function ForgotPassword() {
           setSubmitting(false)
           return
         } else {
-          throw new Error(error?.message)
+          handleErrors(error)
         }
       }
 

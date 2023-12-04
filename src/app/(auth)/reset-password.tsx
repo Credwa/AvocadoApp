@@ -9,7 +9,9 @@ import BackButton from '@/components/atoms/BackButton'
 import { Button } from '@/components/atoms/Button'
 import { ErrorText } from '@/components/atoms/ErrorText'
 import { TextInput } from '@/components/atoms/TextInput'
+import ShowToast from '@/components/atoms/Toast'
 import { Typography } from '@/components/atoms/Typography'
+import { handleErrors } from '@/helpers/lib/Errors'
 import tw from '@/helpers/lib/tailwind'
 import { passwordResetSchema, TPasswordResetSchema } from '@/helpers/schemas/auth'
 import { supabase } from '@/helpers/supabase/supabase'
@@ -38,14 +40,11 @@ export default function ResetPassword() {
     setSubmitting(true)
     try {
       const { error } = await supabase.auth.updateUser({ password: data.password })
-      if (error) {
-        throw new Error(error?.message)
-      }
-      const signOutData = await supabase.auth.signOut()
-      if (signOutData.error) {
-        throw new Error(signOutData.error?.message)
-      }
+      handleErrors(error)
+      const { error: signOutError } = await supabase.auth.signOut()
+      handleErrors(signOutError)
       setSubmitting(false)
+      ShowToast('Password reset successfully')
       router.push(`/sign-in`)
     } catch (error) {
       setSubmitting(false)
