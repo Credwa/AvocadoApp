@@ -15,7 +15,7 @@ import { signInSchema, TSignInSchema } from '@/helpers/schemas/auth'
 import { zodResolver } from '@hookform/resolvers/zod'
 
 export default function SignIn() {
-  const { signIn } = useSession() ?? {}
+  const { signIn, emailConfirm } = useSession() ?? {}
   const { errorMessage } = useLocalSearchParams<{ errorMessage?: string }>()
   const [submitting, setSubmitting] = useState(false)
   const {
@@ -30,6 +30,26 @@ export default function SignIn() {
       password: ''
     }
   })
+
+  const init = async () => {
+    try {
+      if (emailConfirm) {
+        const session = await emailConfirm()
+        if (session) {
+          router.replace('/')
+        }
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert(error.message)
+      } else {
+        Alert.alert('An unknown error has occurred.')
+      }
+    }
+  }
+  useEffect(() => {
+    init()
+  }, [])
 
   useEffect(() => {
     switch (errorMessage) {

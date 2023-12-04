@@ -18,12 +18,12 @@ import { supabase } from '@/helpers/supabase/supabase'
 import { zodResolver } from '@hookform/resolvers/zod'
 
 export default function ConfirmCode() {
-  const { email, password, type } = useLocalSearchParams<{
+  const { email, type } = useLocalSearchParams<{
     email?: string
     password?: string
     type?: 'email' | 'signup'
   }>()
-  const { signUp } = useSession() ?? {}
+  const { emailConfirm } = useSession() ?? {}
   const [codeResent, setCodeResent] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [timeLeft, setTimeLeft] = useState(60)
@@ -84,21 +84,17 @@ export default function ConfirmCode() {
           }
         ])
       } else {
-        const {
-          error,
-          data: { session }
-        } = await supabase.auth.verifyOtp({
+        const { error } = await supabase.auth.verifyOtp({
           email,
           token: formData.code,
           type: type ?? 'email'
         })
-        if (password && signUp) {
-          const res = await signUp(password, session)
-          if (res) {
-            router.replace('/')
-          } else {
-            await supabase.auth.signOut()
-            router.replace('/sign-in?errorMessage=exists')
+        if (type === 'signup') {
+          if (emailConfirm) {
+            const session = await emailConfirm()
+            if (session) {
+              router.replace('/')
+            }
           }
         } else {
           setSubmitting(false)

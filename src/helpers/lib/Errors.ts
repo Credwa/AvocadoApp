@@ -9,7 +9,7 @@ export const handleErrors = (...errors: (Error | PostgrestError | null)[]) => {
       thrownMessage = error.message
     } else if (error) {
       // log other errors TODO use proper logging
-      console.log(error)
+      console.log('handled error: ', error)
     }
   }
 

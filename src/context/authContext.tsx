@@ -27,10 +27,12 @@ export function useSession() {
   return value
 }
 
-const checkIfUserExists = async () => {
+const checkIfUserExists = async (session: Session | null = null) => {
   // check is user exists in users table if not insert new user
+  if (!session) return
   const { data: usersData, error: usersError } = await supabase.from('users').select('id')
   handleErrors(usersError)
+  console.log(usersData)
   if (!usersData?.length) {
     const { error: insertUserError } = await supabase.from('users').insert({})
     handleErrors(insertUserError)
@@ -55,7 +57,7 @@ export function SessionProvider(props: React.PropsWithChildren) {
             password
           })
           handleErrors(error)
-          await checkIfUserExists()
+          await checkIfUserExists(session)
           useAppStore.setState({ user_id: session?.user.id })
           Sentry.Native.setUser({ id: session?.user.id })
           // Perform sign-in logic here
@@ -63,7 +65,7 @@ export function SessionProvider(props: React.PropsWithChildren) {
           return session
         },
         signUp: async (password: string, otpSession: Session | null) => {
-          const doesUserExist = await checkIfUserExists()
+          const doesUserExist = await checkIfUserExists(otpSession)
           if (!doesUserExist) {
             const { error: updateUserError } = await supabase.auth.updateUser({ password })
             handleErrors(updateUserError)
@@ -79,6 +81,7 @@ export function SessionProvider(props: React.PropsWithChildren) {
             data: { session }
           } = await supabase.auth.getSession()
 
+          await checkIfUserExists(session)
           handleErrors(error)
           await setSession(session?.access_token || null)
           return session

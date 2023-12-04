@@ -1,52 +1,21 @@
-import * as QueryParams from 'expo-auth-session/build/QueryParams'
+import * as Device from 'expo-device'
 import { useFonts } from 'expo-font'
 import * as Linking from 'expo-linking'
-import { router, Slot } from 'expo-router'
+import { router, Slot, useSegments } from 'expo-router'
 import * as SplashScreen from 'expo-splash-screen'
 import { useCallback, useEffect } from 'react'
-import { Alert, View } from 'react-native'
+import { View } from 'react-native'
 import { RootSiblingParent } from 'react-native-root-siblings'
 import * as Sentry from 'sentry-expo'
 import { useDeviceContext } from 'twrnc'
 
 import { SessionProvider } from '@/context/authContext'
-import { handleErrors } from '@/helpers/lib/Errors'
+import { createSessionFromUrl } from '@/helpers/lib/lib'
 import tw from '@/helpers/lib/tailwind'
-import { supabase } from '@/helpers/supabase/supabase'
 
 SplashScreen.preventAutoHideAsync()
 
 let sentryInitialzed = false
-let storedToken = ''
-
-const createSessionFromUrl = async (url: string) => {
-  const { params, errorCode } = QueryParams.getQueryParams(url)
-
-  if (errorCode) throw new Error(errorCode)
-  const { token, mode, email } = params
-  console.log('my tok 1', token)
-
-  if (mode !== 'app') return
-  if (token === storedToken) return
-  console.log('my tok 2', token)
-
-  storedToken = token as string
-  try {
-    const { data, error } = await supabase.auth.verifyOtp({
-      type: 'signup',
-      token: token as string,
-      email: email as string
-    })
-    handleErrors(error)
-    return data.session?.access_token
-  } catch (error) {
-    if (error instanceof Error) {
-      Alert.alert(error.message)
-    } else {
-      Alert.alert('An unknown error has occurred.')
-    }
-  }
-}
 
 if (!sentryInitialzed) {
   Sentry.init({
@@ -58,8 +27,11 @@ if (!sentryInitialzed) {
 }
 
 const RootLayout = () => {
+  const segments = useSegments()
+
   const url = Linking.useURL()
 
+  console.log(segments)
   const [fontsLoaded] = useFonts({
     'REM-Light': require('~/assets/fonts/REM/REM-Light.ttf'),
     REM: require('~/assets/fonts/REM/REM-Regular.ttf'),
@@ -72,10 +44,11 @@ const RootLayout = () => {
   useDeviceContext(tw)
 
   const init = async () => {
-    if (url) {
+    console.log('seg', segments[0])
+    if (url && segments[0] === '(main)' && !segments[1]) {
       const session = await createSessionFromUrl(url)
       if (session) {
-        router.replace('/')
+        router.replace('/sign-in')
       }
     }
   }
