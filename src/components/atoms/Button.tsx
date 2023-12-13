@@ -59,6 +59,7 @@ export const Button: FC<ButtonProps> = ({
           'shadow-none': outline || variant === 'default'
         })
       ]}
+      disabled={loading}
       onPress={onPress}
     >
       {loading && <LottieView autoPlay style={tw`absolute w-12 h-10`} source={loadingAnim} />}

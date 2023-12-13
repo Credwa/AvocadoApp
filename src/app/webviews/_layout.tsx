@@ -12,19 +12,6 @@ export default function Layout() {
         headerLeft: () => <BackButton style="p-0" forceColorScheme="light" />,
         headerTitleAlign: 'center'
       }}
-    >
-      {/* <Stack.Screen
-        name="terms-of-use"
-        options={{
-          headerTitle: 'Terms of Use'
-        }}
-      />
-      <Stack.Screen
-        name="privacy-policy"
-        options={{
-          headerTitle: 'Privacy Policy'
-        }}
-      /> */}
-    </Stack>
+    />
   )
 }

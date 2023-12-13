@@ -1,3 +1,4 @@
+import { usePostHog } from 'posthog-react-native'
 import React from 'react'
 import * as Sentry from 'sentry-expo'
 
@@ -32,7 +33,6 @@ const checkIfUserExists = async (session: Session | null = null) => {
   if (!session) return
   const { data: usersData, error: usersError } = await supabase.from('users').select('id')
   handleErrors(usersError)
-  console.log(usersData)
   if (!usersData?.length) {
     const { error: insertUserError } = await supabase.from('users').insert({})
     handleErrors(insertUserError)
@@ -44,6 +44,7 @@ const checkIfUserExists = async (session: Session | null = null) => {
 
 export function SessionProvider(props: React.PropsWithChildren) {
   const [[isLoading, session], setSession] = useStorageState('session')
+  const posthog = usePostHog()
 
   return (
     <AuthContext.Provider
@@ -60,8 +61,12 @@ export function SessionProvider(props: React.PropsWithChildren) {
           await checkIfUserExists(session)
           useAppStore.setState({ user_id: session?.user.id })
           Sentry.Native.setUser({ id: session?.user.id })
+
           // Perform sign-in logic here
           await setSession(session?.access_token || null)
+          posthog?.identify(session?.user.id)
+          posthog?.capture('Sign in')
+
           return session
         },
         signUp: async (password: string, otpSession: Session | null) => {
@@ -70,6 +75,8 @@ export function SessionProvider(props: React.PropsWithChildren) {
             const { error: updateUserError } = await supabase.auth.updateUser({ password })
             handleErrors(updateUserError)
             await setSession(otpSession?.access_token || null)
+            posthog?.identify(otpSession?.user.id)
+            posthog?.capture('Sign up')
             return otpSession
           } else {
             return null
@@ -87,6 +94,7 @@ export function SessionProvider(props: React.PropsWithChildren) {
           return session
         },
         signOut: async () => {
+          posthog?.capture('Sign out')
           const { error } = await supabase.auth.signOut()
           handleErrors(error)
           await setSession(null)

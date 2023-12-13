@@ -1,7 +1,7 @@
 import { router, useLocalSearchParams } from 'expo-router'
 import { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import { Alert, ImageBackground, KeyboardAvoidingView, Platform, useColorScheme, View } from 'react-native'
+import { Alert, KeyboardAvoidingView, Platform, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import BackButton from '@/components/atoms/BackButton'
@@ -34,12 +34,6 @@ export default function ConfirmCode() {
   } = useForm<TConfirmCodeSchema>({
     resolver: zodResolver(confirmCodeSchema)
   })
-  const colorScheme = useColorScheme()
-  let imageBackground = require('~/assets/images/auth-background.png')
-
-  if (colorScheme === 'dark') {
-    imageBackground = require('~/assets/images/auth-background-dark.png')
-  }
 
   useEffect(() => {
     if (codeResent) {
@@ -113,54 +107,52 @@ export default function ConfirmCode() {
   }
 
   return (
-    <ImageBackground style={tw`flex flex-1`} source={imageBackground}>
-      <SafeAreaView style={tw`flex flex-1`}>
-        <BackButton />
-        <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          style={tw`flex-col flex-1 justify-center gap-12 gutter-sm`}
-        >
-          <View style={tw`flex-col gap-2 pb-4`}>
-            <Typography weight={700} style={tw`text-2xl text-black dark:text-white`}>
-              Confirm your account
-            </Typography>
-            <Typography style={tw``}>We sent a code to your email. Enter that code to confirm your account.</Typography>
+    <SafeAreaView style={tw`flex flex-1`}>
+      <BackButton />
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={tw`flex-col flex-1 justify-center gap-12 gutter-sm`}
+      >
+        <View style={tw`flex-col gap-2 pb-4`}>
+          <Typography weight={700} style={tw`text-2xl text-black dark:text-white`}>
+            Confirm your account
+          </Typography>
+          <Typography style={tw``}>We sent a code to your email. Enter that code to confirm your account.</Typography>
+        </View>
+        <View style={tw`flex-col gap-4`}>
+          <View>
+            <Controller
+              control={control}
+              rules={{
+                required: true
+              }}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <TextInput
+                  autoFocus
+                  placeholder="Enter code"
+                  inputMode="numeric"
+                  keyboardType="numeric"
+                  maxLength={6}
+                  onBlur={onBlur}
+                  onChangeText={onChange}
+                  value={value}
+                />
+              )}
+              name="code"
+            />
+            {errors.code && <ErrorText>{errors.code.message}</ErrorText>}
           </View>
-          <View style={tw`flex-col gap-4`}>
-            <View>
-              <Controller
-                control={control}
-                rules={{
-                  required: true
-                }}
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <TextInput
-                    autoFocus
-                    placeholder="Enter code"
-                    inputMode="numeric"
-                    keyboardType="numeric"
-                    maxLength={6}
-                    onBlur={onBlur}
-                    onChangeText={onChange}
-                    value={value}
-                  />
-                )}
-                name="code"
-              />
-              {errors.code && <ErrorText>{errors.code.message}</ErrorText>}
-            </View>
-          </View>
+        </View>
 
-          <View style={tw`flex flex-col gap-4`}>
-            <Button loading={submitting} styles="w-full" onPress={handleSubmit(onSubmit)}>
-              Continue
-            </Button>
-            <Button variant="default" loading={submitting} styles="w-full" onPress={resend}>
-              Send code again
-            </Button>
-          </View>
-        </KeyboardAvoidingView>
-      </SafeAreaView>
-    </ImageBackground>
+        <View style={tw`flex flex-col gap-4`}>
+          <Button loading={submitting} styles="w-full" onPress={handleSubmit(onSubmit)}>
+            Continue
+          </Button>
+          <Button variant="default" loading={submitting} styles="w-full" onPress={resend}>
+            Send code again
+          </Button>
+        </View>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   )
 }

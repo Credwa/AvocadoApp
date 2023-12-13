@@ -9,12 +9,10 @@
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#000000"
     },
     "scheme": "app.myavocado",
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.avocado.shares.myavocado"
@@ -29,10 +27,7 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": [
-      "sentry-expo",
-      "expo-router"
-    ],
+    "plugins": ["sentry-expo", "expo-router", "expo-localization"],
     "experiments": {
       "tsconfigPaths": true
     },

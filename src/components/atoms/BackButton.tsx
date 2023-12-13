@@ -15,8 +15,12 @@ export default function BackButton({ size = 32, style, forceColorScheme }: BackB
 
   if (forceColorScheme) colorScheme = forceColorScheme
 
+  const goBack = () => {
+    router.back()
+  }
+
   return (
-    <Pressable style={[tw`p-4`, tw.style(style)]} onPress={() => router.back()}>
+    <Pressable style={[tw`p-4`, tw.style(style)]} onPress={goBack}>
       {({ pressed }) => (
         <Ionicons
           name="chevron-back"

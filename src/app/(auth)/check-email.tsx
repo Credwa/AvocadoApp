@@ -1,7 +1,7 @@
 import { Image } from 'expo-image'
 import { router, useLocalSearchParams } from 'expo-router'
 import { useEffect, useState } from 'react'
-import { ImageBackground, useColorScheme, View } from 'react-native'
+import { View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import BackButton from '@/components/atoms/BackButton'
@@ -16,13 +16,6 @@ export default function CheckEmail() {
   const { email } = useLocalSearchParams<{ email?: string; password?: string }>()
   const [codeResent, setCodeResent] = useState(false)
   const [timeLeft, setTimeLeft] = useState(60)
-
-  const colorScheme = useColorScheme()
-  let imageBackground = require('~/assets/images/auth-background.png')
-
-  if (colorScheme === 'dark') {
-    imageBackground = require('~/assets/images/auth-background-dark.png')
-  }
 
   useEffect(() => {
     if (codeResent) {
@@ -62,26 +55,24 @@ export default function CheckEmail() {
   }
 
   return (
-    <ImageBackground style={tw`flex flex-1`} source={imageBackground}>
-      <SafeAreaView style={tw`flex flex-1`}>
-        <BackButton />
-        <View style={tw`flex-col justify-center flex-1 gap-2 pb-4 gutter-sm`}>
-          <Image style={tw`self-center w-16 h-16 mb-6`} source={require('~/assets/images/AvocadoLogoMinimal.png')} />
+    <SafeAreaView style={tw`flex flex-1`}>
+      <BackButton />
+      <View style={tw`flex-col justify-center flex-1 gap-2 pb-4 gutter-sm`}>
+        <Image style={tw`self-center w-16 h-16 mb-6`} source={require('~/assets/images/AvocadoLogoMinimal.png')} />
 
-          <Typography weight={700} style={tw`text-2xl text-center text-black dark:text-white`}>
-            Confirm your account
-          </Typography>
-          <Typography style={tw`text-center`}>
-            We sent a link to your email. Click on the link to confirm your account.
-          </Typography>
-          <Button variant="default" styles="w-full mt-8 dark:bg-slate-700 bg-zinc-200" onPress={resend}>
-            Send email again
-          </Button>
-          <Button variant="default" styles="w-full mt-4 " onPress={enterCode}>
-            Enter code
-          </Button>
-        </View>
-      </SafeAreaView>
-    </ImageBackground>
+        <Typography weight={700} style={tw`text-2xl text-center text-black dark:text-white`}>
+          Confirm your account
+        </Typography>
+        <Typography style={tw`text-center`}>
+          We sent a link to your email. Click on the link to confirm your account.
+        </Typography>
+        <Button variant="default" styles="w-full mt-8 dark:bg-slate-700 bg-zinc-200" onPress={resend}>
+          Send email again
+        </Button>
+        <Button variant="default" styles="w-full mt-4 " onPress={enterCode}>
+          Enter code
+        </Button>
+      </View>
+    </SafeAreaView>
   )
 }

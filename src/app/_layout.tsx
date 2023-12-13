@@ -1,8 +1,8 @@
-import * as Device from 'expo-device'
 import { useFonts } from 'expo-font'
 import * as Linking from 'expo-linking'
 import { router, Slot, useSegments } from 'expo-router'
 import * as SplashScreen from 'expo-splash-screen'
+import { PostHogProvider } from 'posthog-react-native'
 import { useCallback, useEffect } from 'react'
 import { View } from 'react-native'
 import { RootSiblingParent } from 'react-native-root-siblings'
@@ -17,11 +17,13 @@ SplashScreen.preventAutoHideAsync()
 
 let sentryInitialzed = false
 
+const postHogKey = __DEV__ ? '' : 'phc_kK42froNyH2xUUXebCZXl3YKF2V9jA2JInAGqhMog2Y'
+
 if (!sentryInitialzed) {
   Sentry.init({
     dsn: 'https://d50d3a482469ae4a1ccb8e142683384e@o4506305008173056.ingest.sentry.io/4506305022263296',
     enableInExpoDevelopment: true,
-    debug: process.env.NODE_ENV === 'development' // If `true`, Sentry will try to print out useful debugging information if something goes wrong with sending the event. Set it to `false` in production
+    debug: __DEV__ // If `true`, Sentry will try to print out useful debugging information if something goes wrong with sending the event. Set it to `false` in production
   })
   sentryInitialzed = true
 }
@@ -31,8 +33,7 @@ const RootLayout = () => {
 
   const url = Linking.useURL()
 
-  console.log(segments)
-  const [fontsLoaded] = useFonts({
+  const [fontsLoaded, fontError] = useFonts({
     'REM-Light': require('~/assets/fonts/REM/REM-Light.ttf'),
     REM: require('~/assets/fonts/REM/REM-Regular.ttf'),
     'REM-Italic': require('~/assets/fonts/REM/REM-Italic.ttf'),
@@ -44,9 +45,10 @@ const RootLayout = () => {
   useDeviceContext(tw)
 
   const init = async () => {
-    console.log('seg', segments[0])
+    console.log('url', url)
     if (url && segments[0] === '(main)' && !segments[1]) {
       const session = await createSessionFromUrl(url)
+
       if (session) {
         router.replace('/sign-in')
       }
@@ -58,23 +60,31 @@ const RootLayout = () => {
   }, [url])
 
   const onLayoutRootView = useCallback(async () => {
-    if (fontsLoaded) {
+    if (fontsLoaded || fontError) {
       await SplashScreen.hideAsync()
     }
   }, [fontsLoaded])
 
-  if (!fontsLoaded) {
+  if (!fontsLoaded && !fontError) {
     return null
   }
 
   return (
-    <SessionProvider>
-      <RootSiblingParent>
-        <View style={tw`flex-1 dark:bg-zinc-950 bg-zinc-50`} onLayout={onLayoutRootView}>
-          <Slot />
-        </View>
-      </RootSiblingParent>
-    </SessionProvider>
+    <PostHogProvider
+      apiKey={postHogKey}
+      options={{
+        host: 'https://app.posthog.com'
+      }}
+      debug={__DEV__}
+    >
+      <SessionProvider>
+        <RootSiblingParent>
+          <View style={tw`flex-1 dark:bg-zinc-950 bg-zinc-50`} onLayout={onLayoutRootView}>
+            <Slot />
+          </View>
+        </RootSiblingParent>
+      </SessionProvider>
+    </PostHogProvider>
   )
 }
 
