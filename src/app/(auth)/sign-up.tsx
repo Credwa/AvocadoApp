@@ -3,7 +3,7 @@ import { Image } from 'expo-image'
 import { router } from 'expo-router'
 import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import { Alert, KeyboardAvoidingView, Platform, Pressable, Text, View } from 'react-native'
+import { Alert, KeyboardAvoidingView, Platform, View } from 'react-native'
 
 import { Button } from '@/components/atoms/Button'
 import { ErrorText } from '@/components/atoms/ErrorText'

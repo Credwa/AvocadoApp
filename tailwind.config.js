@@ -10,12 +10,14 @@ module.exports = {
         '.gutter-sm': `px-4`,
         '.gutter-md': `px-6`,
         '.gutter-lg': `px-8`,
-        '.text-neutral': 'text-zinc-600 dark:text-zinc-200'
+        '.text-neutral': 'text-zinc-600 dark:text-zinc-200',
+        '.background-default': 'bg-zinc-50 dark:bg-zinc-900',
+        '.icon-neutral': 'text-zinc-700 dark:text-zinc-200'
       })
     })
   ],
   theme: {
-    screens: {
+    screeans: {
       sm: '380px',
       md: '420px',
       lg: '680px',
@@ -27,7 +29,8 @@ module.exports = {
           lighter: '#c2aeff',
           light: '#a580ff',
           main: '#8a4dff',
-          dark: '#6f16eb'
+          dark: '#6f16eb',
+          darker: '#5d12c5'
         },
         secondary: {
           lighter: '#81f4ab',

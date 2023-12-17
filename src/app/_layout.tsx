@@ -4,7 +4,7 @@ import { router, Slot, useSegments } from 'expo-router'
 import * as SplashScreen from 'expo-splash-screen'
 import { PostHogProvider } from 'posthog-react-native'
 import { useCallback, useEffect } from 'react'
-import { View } from 'react-native'
+import { Appearance as AppAppearance, View } from 'react-native'
 import { RootSiblingParent } from 'react-native-root-siblings'
 import * as Sentry from 'sentry-expo'
 import { useDeviceContext } from 'twrnc'
@@ -12,6 +12,7 @@ import { useDeviceContext } from 'twrnc'
 import { SessionProvider } from '@/context/authContext'
 import { createSessionFromUrl } from '@/helpers/lib/lib'
 import tw from '@/helpers/lib/tailwind'
+import { useAppStore } from '@/store'
 
 SplashScreen.preventAutoHideAsync()
 
@@ -22,13 +23,15 @@ const postHogKey = __DEV__ ? '' : 'phc_kK42froNyH2xUUXebCZXl3YKF2V9jA2JInAGqhMog
 if (!sentryInitialzed) {
   Sentry.init({
     dsn: 'https://d50d3a482469ae4a1ccb8e142683384e@o4506305008173056.ingest.sentry.io/4506305022263296',
-    enableInExpoDevelopment: true,
+    enableInExpoDevelopment: false,
     debug: __DEV__ // If `true`, Sentry will try to print out useful debugging information if something goes wrong with sending the event. Set it to `false` in production
   })
   sentryInitialzed = true
 }
 
 const RootLayout = () => {
+  const appearance = useAppStore((state) => state.appearance)
+  AppAppearance.setColorScheme(appearance === 'automatic' ? null : appearance)
   const segments = useSegments()
 
   const url = Linking.useURL()
@@ -45,7 +48,6 @@ const RootLayout = () => {
   useDeviceContext(tw)
 
   const init = async () => {
-    console.log('url', url)
     if (url && segments[0] === '(main)' && !segments[1]) {
       const session = await createSessionFromUrl(url)
 

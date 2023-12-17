@@ -8,9 +8,10 @@ type BackButtonProps = {
   size?: number
   style?: string
   forceColorScheme?: 'dark' | 'light'
+  href?: string
 }
 
-export default function BackButton({ size = 32, style, forceColorScheme }: BackButtonProps) {
+export default function BackButton({ size = 32, style, forceColorScheme, href }: BackButtonProps) {
   let colorScheme = useColorScheme()
 
   if (forceColorScheme) colorScheme = forceColorScheme

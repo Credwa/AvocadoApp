@@ -1,7 +1,8 @@
 import { BlurView } from 'expo-blur'
 import { Redirect, Tabs } from 'expo-router'
-import { StyleSheet, Text, useColorScheme } from 'react-native'
+import { StyleSheet, useColorScheme } from 'react-native'
 
+import LoadingScreen from '@/components/LoadingScreen'
 import { useSession } from '@/context/authContext'
 import tw from '@/helpers/lib/tailwind'
 import { Ionicons } from '@expo/vector-icons'
@@ -13,7 +14,7 @@ export default function Layout() {
   const colorScheme = useColorScheme()
 
   if (isLoading) {
-    return <Text>Loading...</Text>
+    return <LoadingScreen />
   }
   const tabBarOptions = (iconName: any, label: string) => {
     return {
@@ -38,12 +39,12 @@ export default function Layout() {
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarStyle: tw`absolute`,
+        tabBarStyle: tw`absolute bg-transparent dark:border-t-zinc-800`,
         tabBarBackground: () => (
           <BlurView
-            tint="light"
-            intensity={100}
-            style={[{ ...StyleSheet.absoluteFillObject }, tw`overflow-hidden bg-zinc-100 dark:bg-zinc-950`]}
+            tint={colorScheme === 'dark' ? 'dark' : 'light'}
+            intensity={80}
+            style={[{ ...StyleSheet.absoluteFillObject }, tw`overflow-hidden bg-zinc-100 dark:bg-black`]}
           />
         )
       }}
