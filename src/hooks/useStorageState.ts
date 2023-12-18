@@ -24,6 +24,10 @@ export async function setStorageItemAsync(key: string, value: string | null) {
   }
 }
 
+export async function getStorageItemAsync(key: string): Promise<string | null> {
+  return SecureStore.getItemAsync(key)
+}
+
 export function useStorageState(key: string): UseStateHook<string> {
   // Public
   const [state, setState] = useAsyncState<string>()

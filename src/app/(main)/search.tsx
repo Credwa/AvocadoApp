@@ -7,10 +7,10 @@ import LoadingScreen from '@/components/LoadingScreen'
 import { useSession } from '@/context/authContext'
 import tw from '@/helpers/lib/tailwind'
 
-const Explore = () => {
+const Search = () => {
   const { signOut } = useSession() ?? {}
 
   return <LoadingScreen />
 }
 
-export default Explore
+export default Search

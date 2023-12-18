@@ -1,8 +1,10 @@
 import { usePostHog } from 'posthog-react-native'
 import React from 'react'
 import * as Sentry from 'sentry-expo'
+import { z } from 'zod'
 
 import { handleErrors } from '@/helpers/lib/Errors'
+import { fetchWithAuth } from '@/helpers/lib/lib'
 import { supabase } from '@/helpers/supabase/supabase'
 import { useStorageState } from '@/hooks/useStorageState'
 import { useAppStore } from '@/store'
@@ -31,15 +33,15 @@ export function useSession() {
 const checkIfUserExists = async (session: Session | null = null) => {
   // check is user exists in users table if not insert new user
   if (!session) return
-  const { data: usersData, error: usersError } = await supabase.from('users').select('id')
-  handleErrors(usersError)
-  if (!usersData?.length) {
-    const { error: insertUserError } = await supabase.from('users').insert({})
-    handleErrors(insertUserError)
-    return false
-  } else {
-    return true
-  }
+
+  const userExists = z.object({
+    exists: z.boolean()
+  })
+  const response = await fetchWithAuth<z.infer<typeof userExists>>('/user/verify', userExists, {
+    method: 'POST',
+    body: JSON.stringify({ id: session.user.id })
+  })
+  return response.exists
 }
 
 export function SessionProvider(props: React.PropsWithChildren) {
@@ -63,7 +65,7 @@ export function SessionProvider(props: React.PropsWithChildren) {
           Sentry.Native.setUser({ id: session?.user.id })
 
           // Perform sign-in logic here
-          await setSession(session?.access_token || null)
+          await setSession(session?.access_token ? JSON.stringify(session) : null)
           posthog?.identify(session?.user.id)
           posthog?.capture('Sign in')
 
@@ -74,7 +76,7 @@ export function SessionProvider(props: React.PropsWithChildren) {
           if (!doesUserExist) {
             const { error: updateUserError } = await supabase.auth.updateUser({ password })
             handleErrors(updateUserError)
-            await setSession(otpSession?.access_token || null)
+            await setSession(otpSession?.access_token ? JSON.stringify(session) : null)
             posthog?.identify(otpSession?.user.id)
             posthog?.capture('Sign up')
             return otpSession
@@ -90,14 +92,19 @@ export function SessionProvider(props: React.PropsWithChildren) {
 
           await checkIfUserExists(session)
           handleErrors(error)
-          await setSession(session?.access_token || null)
+          await setSession(session?.access_token ? JSON.stringify(session) : null)
           return session
         },
         signOut: async () => {
-          posthog?.capture('Sign out')
-          const { error } = await supabase.auth.signOut()
-          handleErrors(error)
-          await setSession(null)
+          try {
+            posthog?.capture('Sign out')
+            const { error } = await supabase.auth.signOut()
+            handleErrors(error)
+            await setSession(null)
+          } catch (error) {
+            console.error(error)
+            await setSession(null)
+          }
         },
         session,
         isLoading

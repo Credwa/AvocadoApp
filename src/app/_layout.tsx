@@ -4,19 +4,32 @@ import { router, Slot, useSegments } from 'expo-router'
 import * as SplashScreen from 'expo-splash-screen'
 import { PostHogProvider } from 'posthog-react-native'
 import { useCallback, useEffect } from 'react'
-import { Appearance as AppAppearance, View } from 'react-native'
+import { Appearance as AppAppearance, AppStateStatus, Platform, View } from 'react-native'
 import { RootSiblingParent } from 'react-native-root-siblings'
 import * as Sentry from 'sentry-expo'
-import { useDeviceContext } from 'twrnc'
+import { useAppColorScheme, useDeviceContext } from 'twrnc'
 
 import { SessionProvider } from '@/context/authContext'
 import { createSessionFromUrl } from '@/helpers/lib/lib'
 import tw from '@/helpers/lib/tailwind'
+import { useAppState } from '@/hooks/useAppState'
+import { useOnlineManager } from '@/hooks/useOnlineManager'
 import { useAppStore } from '@/store'
+import { focusManager, QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 SplashScreen.preventAutoHideAsync()
 
 let sentryInitialzed = false
+const queryClient = new QueryClient({
+  defaultOptions: { queries: { retry: 2 } }
+})
+
+function onAppStateChange(status: AppStateStatus) {
+  // React Query already supports in web browser refetch on window focus by default
+  if (Platform.OS !== 'web') {
+    focusManager.setFocused(status === 'active')
+  }
+}
 
 const postHogKey = __DEV__ ? '' : 'phc_kK42froNyH2xUUXebCZXl3YKF2V9jA2JInAGqhMog2Y'
 
@@ -30,8 +43,28 @@ if (!sentryInitialzed) {
 }
 
 const RootLayout = () => {
+  useOnlineManager()
+  useAppState(onAppStateChange)
+  useDeviceContext(tw, { withDeviceColorScheme: false })
+  const setColorScheme = useAppColorScheme(tw)[2]
   const appearance = useAppStore((state) => state.appearance)
-  AppAppearance.setColorScheme(appearance === 'automatic' ? null : appearance)
+
+  useEffect(() => {
+    const subscription = AppAppearance.addChangeListener((scheme) => {
+      if (appearance === 'automatic') {
+        setColorScheme(scheme.colorScheme)
+        AppAppearance.setColorScheme(scheme.colorScheme)
+      }
+    })
+    return () => {
+      subscription.remove()
+    }
+  }, [appearance])
+
+  useEffect(() => {
+    setColorScheme(appearance === 'automatic' ? AppAppearance.getColorScheme() : appearance)
+    AppAppearance.setColorScheme(appearance === 'automatic' ? AppAppearance.getColorScheme() : appearance)
+  }, [appearance])
   const segments = useSegments()
 
   const url = Linking.useURL()
@@ -44,8 +77,6 @@ const RootLayout = () => {
     'REM-SemiBold': require('~/assets/fonts/REM/REM-SemiBold.ttf'),
     'REM-Bold': require('~/assets/fonts/REM/REM-Bold.ttf')
   })
-
-  useDeviceContext(tw)
 
   const init = async () => {
     if (url && segments[0] === '(main)' && !segments[1]) {
@@ -80,11 +111,13 @@ const RootLayout = () => {
       debug={__DEV__}
     >
       <SessionProvider>
-        <RootSiblingParent>
-          <View style={tw`flex-1 dark:bg-zinc-950 bg-zinc-50`} onLayout={onLayoutRootView}>
-            <Slot />
-          </View>
-        </RootSiblingParent>
+        <QueryClientProvider client={queryClient}>
+          <RootSiblingParent>
+            <View style={tw`flex-1 dark:bg-zinc-950 bg-zinc-50`} onLayout={onLayoutRootView}>
+              <Slot />
+            </View>
+          </RootSiblingParent>
+        </QueryClientProvider>
       </SessionProvider>
     </PostHogProvider>
   )

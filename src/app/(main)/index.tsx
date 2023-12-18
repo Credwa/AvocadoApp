@@ -8,7 +8,9 @@ import { Typography } from '@/components/atoms/Typography'
 import { Avatar } from '@/components/Avatar'
 import { DropdownMenu } from '@/components/DropdownMenu'
 import tw from '@/helpers/lib/tailwind'
+import { getCurrentUserProfile } from '@/services/UserService'
 import { Foundation } from '@expo/vector-icons'
+import { useQuery } from '@tanstack/react-query'
 
 const storybookEnabled = process.env.EXPO_PUBLIC_STORYBOOK_ENABLED === 'true'
 
@@ -17,6 +19,7 @@ const height = Dimensions.get('window').height
 const Root = () => {
   const colorScheme = useColorScheme()
   const [menuOpen, setMenuOpen] = useState(false)
+  const { data } = useQuery({ ...getCurrentUserProfile() })
 
   const gradient =
     colorScheme === 'dark'
@@ -65,10 +68,10 @@ const Root = () => {
             <View />
             <View>
               <Avatar
-                src="https://i.scdn.co/image/ab6761610000e5ebcdce7620dc940db079bf4952"
+                src={data?.avatar_url ?? ''}
                 size={12}
                 styles="mr-2 shadow-offset-1 shadow-md shadow-black mt-2"
-                onPress={() => setMenuOpen(true)}
+                onPress={() => setMenuOpen((prev) => !prev)}
               />
               <DropdownMenu data={dropDownItems} open={menuOpen} targetHeight={12} />
             </View>

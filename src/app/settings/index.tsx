@@ -93,7 +93,7 @@ export default function Settings() {
         keyExtractor={(item, index) => item.title + index}
         renderItem={({ item, index, section }) => (
           <ListItem length={section.data.length} index={index} onPress={item.onPress} icon={item.icon}>
-            <Typography weight={500} style={tw`text-sm shadow-md text-zinc-950 dark:text-zinc-100 shadow-offset-1`}>
+            <Typography weight={500} style={tw`text-sm text-zinc-950 dark:text-zinc-100`}>
               {item.title}
             </Typography>
           </ListItem>
@@ -112,7 +112,7 @@ export default function Settings() {
         icon={<Ionicons name="exit-outline" style={iconStyle} size={iconSize} />}
         showCaret={false}
       >
-        <Typography weight={500} style={tw`text-sm text-red-600 shadow-md dark:text-red-400 shadow-offset-1`}>
+        <Typography weight={500} style={tw`text-sm text-red-600 dark:text-red-400`}>
           Sign Out
         </Typography>
       </ListItem>

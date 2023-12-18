@@ -24,7 +24,8 @@ export const Avatar = ({ size, src, blurHash = defaultBlurhash, onPress, styles 
               source={src}
               placeholder={blurHash}
               contentFit="fill"
-              transition={500}
+              transition={200}
+              cachePolicy="memory"
               style={[tw.style(`w-${size} h-${size} rounded-full`), tw.style({ 'opacity-50': pressed })]}
               alt="avatar image"
             />

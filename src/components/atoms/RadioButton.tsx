@@ -10,16 +10,18 @@ type RadioButtonProps = {
   value: string
   selected?: string
   onPress?: () => void
+  styles?: string
 }
 
 const RadioButton: FC<RadioButtonProps> & { Group: typeof RadioButtonGroup } = ({
   label,
   selected,
   onPress,
-  value
+  value,
+  styles
 }) => {
   return (
-    <Pressable style={tw`flex-row items-center mb-2`} onPress={onPress}>
+    <Pressable style={tw.style(`flex-row items-center`, styles)} onPress={onPress}>
       <View
         style={tw.style(
           `items-center justify-center w-5 h-5 bg-transparent border rounded-full border-zinc-300 dark:border-zinc-500`,
@@ -28,7 +30,7 @@ const RadioButton: FC<RadioButtonProps> & { Group: typeof RadioButtonGroup } = (
       >
         {selected === value ? <View style={tw`w-2.5 h-2.5 rounded-full bg-primary-main dark:bg-primary-main`} /> : null}
       </View>
-      <Typography style={tw`ml-4 text-base dark:text-zinc-100 text-zinc-950`}>{label}</Typography>
+      <Typography style={tw.style(`ml-4 text-base dark:text-zinc-100 text-zinc-950`)}>{label}</Typography>
     </Pressable>
   )
 }
@@ -37,9 +39,10 @@ type RadioButtonGroupProps = {
   children: ReactElement<typeof RadioButton>[] | ReactElement<typeof RadioButton>
   onValueChange: (value: string) => void
   value: string
+  styles?: string
 }
 
-const RadioButtonGroup: FC<RadioButtonGroupProps> = ({ onValueChange, children, value }) => {
+const RadioButtonGroup: FC<RadioButtonGroupProps> = ({ onValueChange, children, value, styles }) => {
   const [selectedValue, setSelectedValue] = useState(value)
 
   const handlePress = (newValue: string) => {
@@ -48,7 +51,7 @@ const RadioButtonGroup: FC<RadioButtonGroupProps> = ({ onValueChange, children, 
   }
 
   return (
-    <>
+    <View style={tw.style(styles)}>
       {React.Children.map(children, (child) => {
         if (React.isValidElement(child)) {
           return React.cloneElement(child, {
@@ -61,7 +64,7 @@ const RadioButtonGroup: FC<RadioButtonGroupProps> = ({ onValueChange, children, 
         }
         return child
       })}
-    </>
+    </View>
   )
 }
 

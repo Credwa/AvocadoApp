@@ -37,7 +37,7 @@ export const Typography = (props: TypographyProps) => {
   }
 
   return (
-    <Text style={[tw.style('text-neutral'), weightStyle, props.style]} {...newProps}>
+    <Text style={[tw.style('dark:text-zinc-300 text-zinc-900'), weightStyle, props.style]} {...newProps}>
       {props.children}
     </Text>
   )

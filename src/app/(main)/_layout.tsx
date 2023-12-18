@@ -5,7 +5,7 @@ import { StyleSheet, useColorScheme } from 'react-native'
 import LoadingScreen from '@/components/LoadingScreen'
 import { useSession } from '@/context/authContext'
 import tw from '@/helpers/lib/tailwind'
-import { Ionicons } from '@expo/vector-icons'
+import { Ionicons, MaterialIcons } from '@expo/vector-icons'
 
 const iconSize = 24
 
@@ -16,18 +16,19 @@ export default function Layout() {
   if (isLoading) {
     return <LoadingScreen />
   }
-  const tabBarOptions = (iconName: any, label: string) => {
+  const tabBarOptions = (iconName: any, label: string, icon?: React.JSX.Element) => {
     return {
       tabBarActiveTintColor: tw.color('text-primary-main'),
       tabBarLabel: label,
-
-      tabBarIcon: () => (
-        <Ionicons
-          name={iconName}
-          size={iconSize}
-          color={colorScheme === 'dark' ? tw.color('text-zinc-100') : tw.color('text-zinc-700')}
-        />
-      )
+      tabBarIcon: icon
+        ? () => icon
+        : () => (
+            <Ionicons
+              name={iconName}
+              size={iconSize}
+              color={colorScheme === 'dark' ? tw.color('text-zinc-100') : tw.color('text-zinc-700')}
+            />
+          )
     }
   }
 
@@ -50,7 +51,21 @@ export default function Layout() {
       }}
     >
       <Tabs.Screen name="index" options={{ ...tabBarOptions('home-sharp', 'Home') }} />
-      <Tabs.Screen name="explore" options={{ ...tabBarOptions('search', 'Search') }} />
+      <Tabs.Screen name="search" options={{ ...tabBarOptions('search', 'Search') }} />
+      <Tabs.Screen
+        name="library"
+        options={{
+          ...tabBarOptions(
+            'library',
+            'Library',
+            <MaterialIcons
+              name="library-music"
+              size={iconSize}
+              color={colorScheme === 'dark' ? tw.color('text-zinc-100') : tw.color('text-zinc-700')}
+            />
+          )
+        }}
+      />
     </Tabs>
   )
 }

@@ -1,6 +1,6 @@
-import { PostgrestError } from '@supabase/supabase-js'
+import { AuthError, PostgrestError } from '@supabase/supabase-js'
 
-export const handleErrors = (...errors: (Error | PostgrestError | null)[]) => {
+export const handleErrors = (...errors: (Error | PostgrestError | AuthError | null)[]) => {
   let thrownMessage: string | null = null
 
   for (const error of errors) {
@@ -9,7 +9,7 @@ export const handleErrors = (...errors: (Error | PostgrestError | null)[]) => {
       thrownMessage = error.message
     } else if (error) {
       // log other errors TODO use proper logging
-      console.log('handled error: ', error)
+      console.error('handled error: ', error)
     }
   }
 
