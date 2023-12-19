@@ -15,6 +15,7 @@ import tw from '@/helpers/lib/tailwind'
 import { useAppState } from '@/hooks/useAppState'
 import { useOnlineManager } from '@/hooks/useOnlineManager'
 import { useAppStore } from '@/store'
+import { StripeProvider } from '@stripe/stripe-react-native'
 import { focusManager, QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 SplashScreen.preventAutoHideAsync()
@@ -111,13 +112,19 @@ const RootLayout = () => {
       debug={__DEV__}
     >
       <SessionProvider>
-        <QueryClientProvider client={queryClient}>
-          <RootSiblingParent>
-            <View style={tw`flex-1 dark:bg-zinc-950 bg-zinc-50`} onLayout={onLayoutRootView}>
-              <Slot />
-            </View>
-          </RootSiblingParent>
-        </QueryClientProvider>
+        <StripeProvider
+          publishableKey="pk_test_51OEgCAD0PCnrjk8E0WhE2BnEJ5Ij9zgjD2lITATKCg8vzdEsYcAELFYFcJqMPsDjy0LlhgBBnt6WLHsxhYdMeZ3c00YW7Bp8el"
+          urlScheme="app.myavocado" // required for 3D Secure and bank redirects
+          merchantIdentifier="merchant.com.shares.app.myavocado" // required for Apple Pay
+        >
+          <QueryClientProvider client={queryClient}>
+            <RootSiblingParent>
+              <View style={tw`flex-1 dark:bg-zinc-950 bg-zinc-50`} onLayout={onLayoutRootView}>
+                <Slot />
+              </View>
+            </RootSiblingParent>
+          </QueryClientProvider>
+        </StripeProvider>
       </SessionProvider>
     </PostHogProvider>
   )

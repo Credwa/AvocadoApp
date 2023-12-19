@@ -1,10 +1,11 @@
 import { BlurView } from 'expo-blur'
 import { Redirect, Tabs } from 'expo-router'
-import { StyleSheet, useColorScheme } from 'react-native'
+import { StyleSheet } from 'react-native'
 
 import LoadingScreen from '@/components/LoadingScreen'
 import { useSession } from '@/context/authContext'
 import tw from '@/helpers/lib/tailwind'
+import { useColorScheme } from '@/hooks/useColorScheme'
 import { Ionicons, MaterialIcons } from '@expo/vector-icons'
 
 const iconSize = 24

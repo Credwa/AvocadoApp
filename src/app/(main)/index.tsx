@@ -19,7 +19,7 @@ const height = Dimensions.get('window').height
 const Root = () => {
   const colorScheme = useColorScheme()
   const [menuOpen, setMenuOpen] = useState(false)
-  const { data } = useQuery({ ...getCurrentUserProfile() })
+  // const { data } = useQuery({ ...getCurrentUserProfile() })
 
   const gradient =
     colorScheme === 'dark'
@@ -68,7 +68,7 @@ const Root = () => {
             <View />
             <View>
               <Avatar
-                src={data?.avatar_url ?? ''}
+                src={''}
                 size={12}
                 styles="mr-2 shadow-offset-1 shadow-md shadow-black mt-2"
                 onPress={() => setMenuOpen((prev) => !prev)}

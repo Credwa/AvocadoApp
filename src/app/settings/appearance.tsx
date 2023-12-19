@@ -21,7 +21,7 @@ const Appearance = () => {
   return (
     <>
       {appearance && (
-        <View style={tw`flex-1 px-4 py-10 gutter-lg`}>
+        <View style={tw`flex-1 px-4 py-10 gutter-sm`}>
           <RadioButton.Group styles="w-full" onValueChange={buttonChange as (value: string) => void} value={appearance}>
             <RadioButton
               styles={`w-full justify-between flex-row-reverse  bg-white dark:bg-zinc-800 py-3 px-4 rounded-t-md ${

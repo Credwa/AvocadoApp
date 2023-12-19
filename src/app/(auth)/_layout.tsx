@@ -1,19 +1,17 @@
 import { Slot } from 'expo-router'
-import { ImageBackground, useColorScheme } from 'react-native'
+import { ImageBackground } from 'react-native'
 
 import tw from '@/helpers/lib/tailwind'
+import { useColorScheme } from '@/hooks/useColorScheme'
 
 // export { default } from '../../../.storybook'
 
 export default function Layout() {
-  const colorScheme = useColorScheme()
-
+  const scheme = useColorScheme()
   let imageBackground = require('~/assets/images/auth-background.png')
-
-  if (colorScheme === 'dark') {
+  if (scheme === 'dark') {
     imageBackground = require('~/assets/images/auth-background-dark.png')
   }
-
   return (
     <ImageBackground style={tw`flex-auto`} source={imageBackground}>
       <Slot />
