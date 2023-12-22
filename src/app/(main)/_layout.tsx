@@ -2,7 +2,7 @@ import { BlurView } from 'expo-blur'
 import { Redirect, Tabs } from 'expo-router'
 import { StyleSheet } from 'react-native'
 
-import LoadingScreen from '@/components/LoadingScreen'
+import { Typography } from '@/components/atoms/Typography'
 import { useSession } from '@/context/authContext'
 import tw from '@/helpers/lib/tailwind'
 import { useColorScheme } from '@/hooks/useColorScheme'
@@ -14,8 +14,11 @@ export default function Layout() {
   const { session, isLoading } = useSession() ?? {}
   const colorScheme = useColorScheme()
 
+  if (!isLoading && !session) {
+    return <Redirect href="/sign-in" />
+  }
   if (isLoading) {
-    return <LoadingScreen />
+    return <Typography>Loading...</Typography>
   }
   const tabBarOptions = (iconName: any, label: string, icon?: React.JSX.Element) => {
     return {
@@ -31,10 +34,6 @@ export default function Layout() {
             />
           )
     }
-  }
-
-  if (!session) {
-    return <Redirect href="/sign-in" />
   }
 
   return (

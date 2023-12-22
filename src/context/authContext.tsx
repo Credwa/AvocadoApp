@@ -47,6 +47,19 @@ const checkIfUserExists = async (session: Session | null = null) => {
 export function SessionProvider(props: React.PropsWithChildren) {
   const [[isLoading, session], setSession] = useStorageState('session')
   const posthog = usePostHog()
+  const parsedSession = session ? (JSON.parse(session) as Session) : null
+
+  if (parsedSession?.expires_at && parsedSession.expires_at < new Date().getTime() / 1000) {
+    console.log('refreshing session')
+    supabase.auth.refreshSession({ refresh_token: parsedSession.refresh_token }).then(({ error, data }) => {
+      if (error) {
+        console.error(error)
+        setSession(null)
+      } else {
+        setSession(JSON.stringify(data.session))
+      }
+    })
+  }
 
   return (
     <AuthContext.Provider
@@ -89,7 +102,10 @@ export function SessionProvider(props: React.PropsWithChildren) {
             error,
             data: { session }
           } = await supabase.auth.getSession()
-
+          if (error?.status === 400) {
+            await setSession(null)
+            return null
+          }
           await checkIfUserExists(session)
           handleErrors(error)
           await setSession(session?.access_token ? JSON.stringify(session) : null)

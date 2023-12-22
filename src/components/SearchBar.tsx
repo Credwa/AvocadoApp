@@ -1,7 +1,7 @@
 import LottieView from 'lottie-react-native'
 import { FC, useEffect, useRef, useState } from 'react'
-import { Pressable, TextInput, View } from 'react-native'
-import Animated, { FadeIn, useSharedValue, withTiming } from 'react-native-reanimated'
+import { ActivityIndicator, Pressable, TextInput, View } from 'react-native'
+import Animated, { FadeIn } from 'react-native-reanimated'
 
 import tw from '@/helpers/lib/tailwind'
 import { useColorScheme } from '@/hooks/useColorScheme'
@@ -14,12 +14,11 @@ type SearchBarProps = {
   searching: boolean
 } & React.ComponentProps<typeof TextInput>
 
-const loadingAnim = require('~/assets/lottie/Loading.json')
-
 export const SearchBar: FC<SearchBarProps> = (props) => {
   const [hasValue, setHasValue] = useState(false)
   const [isFocused, setIsFocused] = useState(false)
   const textInputRef = useRef<TextInput>(null) // Creating a ref for the TextInput
+  const loadingAnim = require('~/assets/lottie/Loading.json')
 
   const colorScheme = useColorScheme()
   const newProps = { ...props }
@@ -49,7 +48,7 @@ export const SearchBar: FC<SearchBarProps> = (props) => {
   }
 
   return (
-    <View style={tw`flex-row gap-x-4`}>
+    <View style={tw.style(`flex-row gap-x-4`, props.styles)}>
       <Animated.View style={tw.style(`relative w-full`, { flex: 1 })}>
         <Pressable style={tw`absolute left-0 z-10 mt-2.5 ml-2`}>
           <Ionicons
@@ -78,8 +77,11 @@ export const SearchBar: FC<SearchBarProps> = (props) => {
         />
 
         {props.searching && (
-          <View style={tw`absolute right-0 z-10 mt-2.5`}>
-            <LottieView autoPlay style={tw`w-6 h-6`} source={loadingAnim} />
+          <View style={tw`absolute right-0 z-10 mt-3 mr-2`}>
+            {/* <LottieView autoPlay source={loadingAnim} /> */}
+            <ActivityIndicator
+              color={colorScheme === 'dark' ? tw.color('text-primary-lighter') : tw.color('text-primary-main')}
+            />
           </View>
         )}
       </Animated.View>

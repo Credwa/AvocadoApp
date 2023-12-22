@@ -65,7 +65,6 @@ export async function fetchWithAuth<T>(
       handleErrors(error)
       await setStorageItemAsync('session', JSON.stringify(session))
     }
-    console.log('refreshing session done')
 
     if (!apiSess) {
       throw new HTTPError('No session found', 401)

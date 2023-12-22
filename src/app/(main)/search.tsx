@@ -1,19 +1,27 @@
-import { router } from 'expo-router'
 import React, { useEffect, useState } from 'react'
+import { View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
-import { Pill } from '@/components/atoms/Pill'
 import { Typography } from '@/components/atoms/Typography'
-import LoadingScreen from '@/components/LoadingScreen'
 import { SearchBar } from '@/components/SearchBar'
 import tw from '@/helpers/lib/tailwind'
+import { useColorScheme } from '@/hooks/useColorScheme'
 import { getSearchResults } from '@/services/CampaignService'
 import { useQuery } from '@tanstack/react-query'
 
+const SearchList = () => {
+  return (
+    <View style={tw`absolute flex self-center flex-1 w-full h-screen px-0 background-default top-11`}>
+      <Typography>Search List</Typography>
+    </View>
+  )
+}
+
 const Search = () => {
+  useColorScheme()
   const [query, setSearchQuery] = useState('')
   const [debouncedQuery, setDebouncedQuery] = useState(query)
-  const { isLoading, data } = useQuery({
+  const { data, isLoading } = useQuery({
     ...getSearchResults(query),
     // only run when search length is a minimum of 3 characters and debouncedQuery is equal to query which is set after specified timeout
     enabled: debouncedQuery.length > 2 && debouncedQuery === query
@@ -37,7 +45,10 @@ const Search = () => {
   }
   return (
     <SafeAreaView style={tw`flex-1 pt-4 background-default gutter-sm`}>
-      <SearchBar searching={isLoading} placeholder="Search artists and songs..." onChangeText={handleSearch} />
+      <View style={tw`relative`}>
+        <SearchBar searching={isLoading} placeholder="Search artists and songs..." onChangeText={handleSearch} />
+        <SearchList />
+      </View>
     </SafeAreaView>
   )
 }

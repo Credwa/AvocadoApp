@@ -4,7 +4,7 @@ import { router, Slot, useSegments } from 'expo-router'
 import * as SplashScreen from 'expo-splash-screen'
 import { PostHogProvider } from 'posthog-react-native'
 import { useCallback, useEffect } from 'react'
-import { Appearance as AppAppearance, AppStateStatus, Platform, View } from 'react-native'
+import { Appearance as AppAppearance, AppStateStatus, Platform, StatusBar, View } from 'react-native'
 import { RootSiblingParent } from 'react-native-root-siblings'
 import * as Sentry from 'sentry-expo'
 import { useAppColorScheme, useDeviceContext } from 'twrnc'
@@ -52,20 +52,30 @@ const RootLayout = () => {
 
   useEffect(() => {
     const subscription = AppAppearance.addChangeListener((scheme) => {
+      console.log(`appearance - ${appearance} scheme - `, scheme)
+      console.log('here')
       if (appearance === 'automatic') {
         setColorScheme(scheme.colorScheme)
-        AppAppearance.setColorScheme(scheme.colorScheme)
+        StatusBar.setBarStyle(scheme.colorScheme === 'dark' ? 'light-content' : 'dark-content')
+      } else {
+        setColorScheme(appearance)
       }
     })
+
     return () => {
       subscription.remove()
     }
   }, [appearance])
 
   useEffect(() => {
-    setColorScheme(appearance === 'automatic' ? AppAppearance.getColorScheme() : appearance)
-    AppAppearance.setColorScheme(appearance === 'automatic' ? AppAppearance.getColorScheme() : appearance)
-  }, [appearance])
+    console.log('test', AppAppearance.getColorScheme())
+    if (appearance === 'automatic') {
+      setColorScheme(AppAppearance.getColorScheme())
+    } else {
+      setColorScheme(appearance)
+    }
+  }, [])
+
   const segments = useSegments()
 
   const url = Linking.useURL()
