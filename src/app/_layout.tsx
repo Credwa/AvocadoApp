@@ -5,11 +5,13 @@ import * as SplashScreen from 'expo-splash-screen'
 import { PostHogProvider } from 'posthog-react-native'
 import { useCallback, useEffect } from 'react'
 import { Appearance as AppAppearance, AppStateStatus, Platform, StatusBar, View } from 'react-native'
+import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { RootSiblingParent } from 'react-native-root-siblings'
 import * as Sentry from 'sentry-expo'
 import { useAppColorScheme, useDeviceContext } from 'twrnc'
 
 import { SessionProvider } from '@/context/authContext'
+import { PlaybackProvider } from '@/context/playbackContext'
 import { createSessionFromUrl } from '@/helpers/lib/lib'
 import tw from '@/helpers/lib/tailwind'
 import { useAppState } from '@/hooks/useAppState'
@@ -128,11 +130,13 @@ const RootLayout = () => {
           merchantIdentifier="merchant.com.shares.app.myavocado" // required for Apple Pay
         >
           <QueryClientProvider client={queryClient}>
-            <RootSiblingParent>
-              <View style={tw`flex-1 dark:bg-zinc-950 bg-zinc-50`} onLayout={onLayoutRootView}>
-                <Slot />
-              </View>
-            </RootSiblingParent>
+            <PlaybackProvider>
+              <RootSiblingParent>
+                <GestureHandlerRootView style={tw`flex-1 dark:bg-zinc-950 bg-zinc-50`} onLayout={onLayoutRootView}>
+                  <Slot />
+                </GestureHandlerRootView>
+              </RootSiblingParent>
+            </PlaybackProvider>
           </QueryClientProvider>
         </StripeProvider>
       </SessionProvider>

@@ -1,6 +1,6 @@
 import { LinearGradient } from 'expo-linear-gradient'
 import { router } from 'expo-router'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Dimensions, RefreshControl, ScrollView, useColorScheme, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
@@ -9,7 +9,9 @@ import { Avatar } from '@/components/Avatar'
 import { DropdownMenu } from '@/components/DropdownMenu'
 import tw from '@/helpers/lib/tailwind'
 import { getCurrentUserProfile } from '@/services/UserService'
+import { useAppStore } from '@/store'
 import { Foundation } from '@expo/vector-icons'
+import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
 import { useQuery } from '@tanstack/react-query'
 
 const storybookEnabled = process.env.EXPO_PUBLIC_STORYBOOK_ENABLED === 'true'
@@ -20,6 +22,12 @@ const Root = () => {
   const colorScheme = useColorScheme()
   const [menuOpen, setMenuOpen] = useState(false)
   const { data } = useQuery({ ...getCurrentUserProfile() })
+  const tabBarHeight = useBottomTabBarHeight()
+  const setTabBarHeight = useAppStore((state) => state.setTabBarHeight)
+
+  useEffect(() => {
+    setTabBarHeight(tabBarHeight)
+  }, [])
 
   const gradient =
     colorScheme === 'dark'

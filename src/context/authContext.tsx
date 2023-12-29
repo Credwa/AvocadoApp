@@ -50,7 +50,7 @@ export function SessionProvider(props: React.PropsWithChildren) {
   const parsedSession = session ? (JSON.parse(session) as Session) : null
 
   if (parsedSession?.expires_at && parsedSession.expires_at < new Date().getTime() / 1000) {
-    console.log('refreshing session')
+    console.log('refreshing session auth context')
     supabase.auth.refreshSession({ refresh_token: parsedSession.refresh_token }).then(({ error, data }) => {
       if (error) {
         console.error(error)

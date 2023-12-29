@@ -11,7 +11,7 @@ module.exports = {
         '.gutter-md': `px-6`,
         '.gutter-lg': `px-8`,
         '.text-neutral': 'text-zinc-600 dark:text-zinc-200',
-        '.background-default': 'bg-zinc-50 dark:bg-zinc-900',
+        '.background-default': 'bg-zinc-50 dark:bg-zinc-950',
         '.icon-neutral': 'text-zinc-700 dark:text-zinc-200'
       })
     })

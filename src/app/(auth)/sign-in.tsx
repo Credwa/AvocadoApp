@@ -2,7 +2,7 @@ import { Image } from 'expo-image'
 import { router, useLocalSearchParams } from 'expo-router'
 import { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import { Alert, KeyboardAvoidingView, Platform, View } from 'react-native'
+import { Alert, Keyboard, KeyboardAvoidingView, Platform, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { Button } from '@/components/atoms/Button'
@@ -30,6 +30,21 @@ export default function SignIn() {
       password: ''
     }
   })
+  const [keyboardShown, setKeyboardShown] = useState(false)
+
+  useEffect(() => {
+    const showSubscription = Keyboard.addListener('keyboardDidShow', () => {
+      setKeyboardShown(true)
+    })
+    const hideSubscription = Keyboard.addListener('keyboardDidHide', () => {
+      setKeyboardShown(false)
+    })
+
+    return () => {
+      showSubscription.remove()
+      hideSubscription.remove()
+    }
+  }, [])
 
   const init = async () => {
     try {
@@ -128,22 +143,26 @@ export default function SignIn() {
           <Button loading={submitting} styles="w-full" onPress={handleSubmit(onSubmit)}>
             Login
           </Button>
-          <View style={tw`flex flex-row self-center`}>
-            <Link variant="default" styles="font-semibold" href="/forgot-password">
-              Forgot password?
-            </Link>
-          </View>
+          {!keyboardShown && (
+            <View style={tw`flex flex-row self-center`}>
+              <Link variant="default" styles="font-semibold" href="/forgot-password">
+                Forgot password?
+              </Link>
+            </View>
+          )}
         </View>
       </KeyboardAvoidingView>
-      <Button
-        styles="w-full mb-4"
-        outline
-        onPress={() => {
-          router.push('/sign-up')
-        }}
-      >
-        Create new account
-      </Button>
+      {!keyboardShown && (
+        <Button
+          styles="w-full mb-4"
+          outline
+          onPress={() => {
+            router.push('/sign-up')
+          }}
+        >
+          Create new account
+        </Button>
+      )}
     </SafeAreaView>
   )
 }

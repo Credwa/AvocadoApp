@@ -10,7 +10,11 @@ import tw from '@/helpers/lib/tailwind'
 const Library = () => {
   const { signOut } = useSession() ?? {}
 
-  return <LoadingScreen />
+  return (
+    <>
+      <Typography>Hello</Typography>
+    </>
+  )
 }
 
 export default Library

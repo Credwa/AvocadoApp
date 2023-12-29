@@ -3,6 +3,7 @@ import { Alert } from 'react-native'
 import { z } from 'zod'
 
 import { setStorageItemAsync } from '@/hooks/useStorageState'
+import { MinCampaign } from '@/services/CampaignService'
 import HTTPError from '@/services/HTTPError'
 
 import { supabase } from '../supabase/supabase'
@@ -36,6 +37,26 @@ export const createSessionFromUrl = async (url: string) => {
   }
 }
 
+export function getSongTitle(campaign: MinCampaign, trunc: number) {
+  const { song_title, add_version_info, add_version_info_other, is_radio_edit } = campaign
+
+  let title = song_title
+
+  if (add_version_info === 'other') {
+    title = `${song_title} (${add_version_info_other})`
+  } else if (add_version_info === 'radio edit' && is_radio_edit) {
+    title = song_title
+  } else {
+    title = song_title
+  }
+
+  if (title.length > trunc) {
+    title = title.slice(0, trunc) + '...'
+  }
+
+  return title
+}
+
 /** Calls backend requests with current user auth tokens and validates/parses the data with zod */
 export async function fetchWithAuth<T>(
   endpoint: string,
@@ -55,7 +76,7 @@ export async function fetchWithAuth<T>(
       }`
     )
     if (session?.expires_at && session.expires_at < new Date().getTime() / 1000) {
-      console.log('refreshing session')
+      console.log('refreshing session fetch')
       // Refreshes session in storage if it's expired
       const {
         error,
@@ -90,6 +111,7 @@ export async function fetchWithAuth<T>(
     if (parser) {
       const parsedResponse = parser.safeParse(data)
       if (!parsedResponse.success) {
+        console.error(parsedResponse.error)
         throw new Error(parsedResponse.error?.message)
       }
       return parsedResponse.data

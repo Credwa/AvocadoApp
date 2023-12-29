@@ -11,18 +11,26 @@ import { Typography } from './atoms/Typography'
 
 type SearchBarProps = {
   styles?: string
+  onFocusStatusChange?: (status: boolean) => void
   searching: boolean
 } & React.ComponentProps<typeof TextInput>
 
 export const SearchBar: FC<SearchBarProps> = (props) => {
   const [hasValue, setHasValue] = useState(false)
   const [isFocused, setIsFocused] = useState(false)
+  const [isActive, setIsActive] = useState(false)
   const textInputRef = useRef<TextInput>(null) // Creating a ref for the TextInput
   const loadingAnim = require('~/assets/lottie/Loading.json')
 
   const colorScheme = useColorScheme()
   const newProps = { ...props }
   delete newProps.styles
+
+  useEffect(() => {
+    if (isFocused) {
+      props.onFocusStatusChange?.(isFocused)
+    }
+  }, [isFocused])
 
   useEffect(() => {
     if (props.value && props.value.length > 0 && !hasValue) {
@@ -34,6 +42,7 @@ export const SearchBar: FC<SearchBarProps> = (props) => {
 
   const handleFocus = () => {
     setIsFocused(true)
+    setIsActive(true)
   }
 
   const handleEndEditing = () => {
@@ -44,6 +53,8 @@ export const SearchBar: FC<SearchBarProps> = (props) => {
     if (textInputRef.current) {
       textInputRef.current.blur()
       textInputRef.current.clear()
+      props.onFocusStatusChange?.(false)
+      setIsActive(false)
     }
   }
 
@@ -64,7 +75,7 @@ export const SearchBar: FC<SearchBarProps> = (props) => {
           onEndEditing={handleEndEditing}
           style={[
             tw.style(
-              `dark:bg-zinc-800 flex bg-zinc-200 dark:text-zinc-300 text-zinc-700 rounded-md h-11 px-9 no-underline`,
+              `dark:bg-zinc-900 flex bg-zinc-200 dark:text-zinc-300 text-zinc-700 rounded-md h-11 px-9 no-underline`,
               props.styles
             ),
             { fontFamily: 'REM' }
@@ -85,7 +96,7 @@ export const SearchBar: FC<SearchBarProps> = (props) => {
           </View>
         )}
       </Animated.View>
-      {isFocused && (
+      {isActive && (
         <Animated.View style={tw.style(`relative self-center`)} entering={FadeIn}>
           <Pressable onPress={handleClear} style={tw`left-0 z-10`} hitSlop={{ top: 20, bottom: 20, left: 10 }}>
             <Typography style={tw`dark:text-primary-lighter text-primary-main`}>Cancel</Typography>
