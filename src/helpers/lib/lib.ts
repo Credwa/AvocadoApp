@@ -1,9 +1,10 @@
+import dayjs from 'dayjs'
 import * as QueryParams from 'expo-auth-session/build/QueryParams'
 import { Alert } from 'react-native'
 import { z } from 'zod'
 
 import { setStorageItemAsync } from '@/hooks/useStorageState'
-import { MinCampaign } from '@/services/CampaignService'
+import { Campaign, MinCampaign } from '@/services/CampaignService'
 import HTTPError from '@/services/HTTPError'
 
 import { supabase } from '../supabase/supabase'
@@ -37,7 +38,18 @@ export const createSessionFromUrl = async (url: string) => {
   }
 }
 
-export function getSongTitle(campaign: MinCampaign, trunc: number) {
+export function getCampaignDaysLeft(campaign_start_date: string, time_restraint = 0) {
+  if (!campaign_start_date) return 0
+  const start = dayjs(campaign_start_date)
+  const end = start.add(time_restraint, 'day')
+  const now = dayjs()
+  let daysLeft = end.diff(now, 'day')
+  daysLeft = Math.max(daysLeft, 0)
+  return daysLeft ?? 0
+}
+
+export function getSongTitle(campaign: MinCampaign | Campaign, trunc: number) {
+  if (!campaign) return ''
   const { song_title, add_version_info, add_version_info_other, is_radio_edit } = campaign
 
   let title = song_title
@@ -54,7 +66,7 @@ export function getSongTitle(campaign: MinCampaign, trunc: number) {
     title = title.slice(0, trunc) + '...'
   }
 
-  return title
+  return title.charAt(0).toUpperCase() + title.slice(1)
 }
 
 /** Calls backend requests with current user auth tokens and validates/parses the data with zod */

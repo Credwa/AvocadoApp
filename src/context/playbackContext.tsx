@@ -4,12 +4,22 @@ import RootSiblingsManager from 'react-native-root-siblings'
 
 import { Playbar } from '@/components/Playbar'
 
+export type PlaybackMetadata = {
+  song_id: string
+  audio_url: string
+  duration: number | null
+  title: string
+  artist: string
+  artwork_url: string
+}
+
 const PlaybackContext = React.createContext<{
-  play: (audio_url: string) => Promise<void>
+  play: (metadata: PlaybackMetadata) => Promise<void>
   pause: () => Promise<void>
   stop: () => Promise<void>
   isPlaying: boolean
-  currentAudio: string | null
+  viewVisible: boolean
+  currentMetadata: PlaybackMetadata | null
 } | null>(null)
 
 // This hook can be used to access the user info.
@@ -70,6 +80,7 @@ export function PlaybackProvider(props: React.PropsWithChildren) {
   const [currentPlaybackStatus, setCurrentPlaybackStatus] = useState<keyof typeof PlaybackStatus>(
     PlaybackStatus.UNLOADED
   )
+  const [currentPlaybackMetadata, setCurrentPlaybackMetadata] = useState<PlaybackMetadata | null>(null)
   const [currentAudio, setCurrentAudio] = useState<string | null>(null)
   const [isPlaying, setIsPlaying] = useState(false)
   const [hasPermissions, setHasPermissions] = useState(false)
@@ -127,13 +138,13 @@ export function PlaybackProvider(props: React.PropsWithChildren) {
 
   const stopPlayback = async () => {
     try {
-      if (!currentPlaybackObject) return
+      setPlaybar(null)
+      setCurrentAudio(null)
+      setCurrentPlaybackObject(undefined)
+      playbar?.destroy()
       console.log('stopping audio')
       await currentPlaybackObject?.stopAsync()
       await currentPlaybackObject?.unloadAsync()
-      playbar?.destroy()
-      setPlaybar(null)
-      setCurrentAudio(null)
     } catch (error) {
       console.log('stop errfors', error)
     }
@@ -142,17 +153,17 @@ export function PlaybackProvider(props: React.PropsWithChildren) {
   return (
     <PlaybackContext.Provider
       value={{
-        play: async (audio_url: string) => {
+        play: async (metadata: PlaybackMetadata) => {
           try {
-            if (currentAudio && currentAudio !== audio_url) {
+            if (currentAudio && currentAudio !== metadata.audio_url) {
+              console.log('insta stop')
               await stopPlayback()
             }
-            const playbackObject = await loadAsync(audio_url, hasPermissions, currentAudio)
+            const playbackObject = await loadAsync(metadata.audio_url, hasPermissions, currentAudio)
             setCurrentPlaybackObject(playbackObject ?? currentPlaybackObject)
-            console.log(`playing music -  ${audio_url}`)
-            if (!currentPlaybackObject) return
+            console.log(`playing music -  ${metadata}`)
+            setCurrentPlaybackMetadata(metadata)
             await currentPlaybackObject?.playAsync()
-            setCurrentAudio(audio_url)
             if (!playbar) setPlaybar(new RootSiblingsManager(<Playbar />))
           } catch (error) {
             console.log('play error', error)
@@ -170,7 +181,8 @@ export function PlaybackProvider(props: React.PropsWithChildren) {
           await stopPlayback()
         },
         isPlaying,
-        currentAudio
+        viewVisible: !!playbar,
+        currentMetadata: currentPlaybackMetadata
       }}
     >
       {props.children}

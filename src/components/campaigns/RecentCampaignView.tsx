@@ -1,4 +1,5 @@
 import { Image } from 'expo-image'
+import { useRouter } from 'expo-router'
 import React, { FC } from 'react'
 import { Dimensions, Pressable, View } from 'react-native'
 import Carousel from 'react-native-reanimated-carousel'
@@ -36,6 +37,7 @@ const RecentCampaignList = ({ campaigns }: { campaigns: MinCampaign[] }) => {
 }
 
 const RecentCampaignItem = ({ campaign }: { campaign: MinCampaign }) => {
+  const router = useRouter()
   return (
     <Pressable
       style={({ pressed }) => [
@@ -45,7 +47,7 @@ const RecentCampaignItem = ({ campaign }: { campaign: MinCampaign }) => {
         })
       ]}
       onPress={() => {
-        console.log('hello')
+        router.push(`views/song/${campaign.song_id}?url=search`)
       }}
     >
       {({ pressed }) => (

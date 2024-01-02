@@ -1,20 +1,18 @@
 import { FC } from 'react'
 import { Pressable } from 'react-native'
 
-import { usePlayback } from '@/context/playbackContext'
+import { PlaybackMetadata, usePlayback } from '@/context/playbackContext'
 import tw from '@/helpers/lib/tailwind'
 import { Ionicons } from '@expo/vector-icons'
 
 type PlayButtonProps = {
   onPress?: () => void
   styles?: string
-  metadata: {
-    audio_url: string
-  }
+  metadata: PlaybackMetadata
 }
 
 export const PlayButton: FC<PlayButtonProps> = ({ styles, metadata }) => {
-  const { play, pause, isPlaying, currentAudio } = usePlayback()
+  const { play, pause, isPlaying, currentMetadata } = usePlayback()
 
   return (
     <Pressable
@@ -23,12 +21,16 @@ export const PlayButton: FC<PlayButtonProps> = ({ styles, metadata }) => {
         if (isPlaying) {
           pause()
         } else {
-          play(metadata.audio_url)
+          play(metadata)
         }
       }}
-      style={tw.style(`w-10 h-10 rounded-full bg-secondary-main flex justify-center items-center`, styles)}
+      style={({ pressed }) =>
+        tw.style(`w-10 h-10 rounded-full bg-secondary-main flex justify-center items-center`, styles, {
+          'opacity-80 w-9 h-9': pressed
+        })
+      }
     >
-      {isPlaying && currentAudio === metadata.audio_url ? (
+      {isPlaying && currentMetadata?.audio_url === metadata.audio_url ? (
         <Ionicons name="pause-sharp" size={24} color={tw.color('text-zinc-800')} />
       ) : (
         <Ionicons name="play-sharp" size={24} style={tw`ml-1`} color={tw.color('text-zinc-800')} />

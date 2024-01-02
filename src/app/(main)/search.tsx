@@ -55,21 +55,23 @@ const Search = () => {
 
   return (
     <SafeAreaView style={tw`flex-1 pt-4 background-default gutter-sm`}>
-      <ScrollView style={tw``}>
-        <View style={tw`relative`}>
-          <SearchBar
-            searching={isSearchLoading}
-            placeholder="Search artists and songs..."
-            onChangeText={handleSearch}
-            onFocusStatusChange={handleFocusStatusChange}
-          />
-          {showSearchList && <SearchList searchResults={searchData} />}
-        </View>
-        <View style={tw.style(`flex-col pt-8 gap-y-8 pb-20`, { 'opacity-0': showSearchList })}>
-          <FeaturedView data={featuredCampaigns?.concat(featuredCampaigns)} title="Featured Songs" />
-          <RecentCampaignView data={newData} />
-        </View>
-      </ScrollView>
+      <View style={tw`relative`}>
+        <SearchBar
+          searching={isSearchLoading}
+          placeholder="Search artists and songs..."
+          onChangeText={handleSearch}
+          onFocusStatusChange={handleFocusStatusChange}
+        />
+        {showSearchList && <SearchList searchResults={searchData} />}
+      </View>
+      {!showSearchList && (
+        <ScrollView style={tw``}>
+          <View style={tw.style(`flex-col pt-8 gap-y-8 pb-20`, { 'opacity-0': showSearchList })}>
+            <FeaturedView data={featuredCampaigns?.concat(featuredCampaigns)} title="Featured Songs" />
+            <RecentCampaignView data={newData} />
+          </View>
+        </ScrollView>
+      )}
     </SafeAreaView>
   )
 }

@@ -1,4 +1,5 @@
 import { Image } from 'expo-image'
+import { useRouter } from 'expo-router'
 import { FC } from 'react'
 import { KeyboardAvoidingView, Platform, Pressable, SectionList, useColorScheme, View } from 'react-native'
 import Animated, { FadeInUp } from 'react-native-reanimated'
@@ -26,6 +27,7 @@ const defaultBlurhash =
   '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj['
 
 const SearchListItem: FC<SearchListItemProps> = ({ item }) => {
+  const router = useRouter()
   const colorScheme = useColorScheme()
   return (
     <Pressable
@@ -36,7 +38,8 @@ const SearchListItem: FC<SearchListItemProps> = ({ item }) => {
         })
       ]}
       onPress={() => {
-        console.log('hello')
+        if (item.type === 'artist') router.replace(`views/artist/${item.id}?url=search`)
+        else if (item.type === 'song') router.replace(`views/song/${item.id}?url=search`)
       }}
     >
       {({ pressed }) => (

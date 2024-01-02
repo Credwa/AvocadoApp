@@ -10,6 +10,7 @@ type ButtonProps = PressableProps & {
   variant?: 'primary' | 'secondary' | 'danger' | 'default'
   children: React.ReactNode
   styles?: string
+  textStyles?: string
   outline?: boolean
   loading?: boolean
 }
@@ -19,6 +20,7 @@ export const Button: FC<ButtonProps> = ({
   children,
   onPress,
   styles,
+  textStyles,
   variant = 'primary',
   outline = false
 }) => {
@@ -33,8 +35,8 @@ export const Button: FC<ButtonProps> = ({
       break
     case 'secondary':
       color = outline
-        ? 'border dark:border-secondary-lighter border-secondary-main'
-        : 'dark:bg-secondary-main bg-secondary-main dark:shadow-secondary-main shadow-black'
+        ? 'border dark:border-secondary-darker border-secondary-main'
+        : 'dark:bg-secondary-dark bg-secondary-main dark:shadow-secondary-main shadow-black'
       textColor = outline ? 'dark:text-secondary-lighter text-secondary-main' : ''
       break
     case 'danger':
@@ -67,7 +69,7 @@ export const Button: FC<ButtonProps> = ({
         weight={500}
         style={[
           tw`text-base font-semibold text-white dark:text-zinc-200`,
-          tw.style(textColor, { 'opacity-0': loading })
+          tw.style(textColor, { 'opacity-0': loading }, textStyles)
         ]}
       >
         {children}

@@ -1,4 +1,5 @@
 import { Image } from 'expo-image'
+import { useRouter } from 'expo-router'
 import React, { FC } from 'react'
 import { Dimensions, Pressable, View } from 'react-native'
 import Carousel from 'react-native-reanimated-carousel'
@@ -19,6 +20,7 @@ const defaultBlurhash =
   '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj['
 
 const FeaturedItem = ({ campaign }: { campaign: MinCampaign }) => {
+  const router = useRouter()
   return (
     <Pressable
       style={({ pressed }) => [
@@ -28,7 +30,7 @@ const FeaturedItem = ({ campaign }: { campaign: MinCampaign }) => {
         })
       ]}
       onPress={() => {
-        console.log('hello')
+        router.push(`views/song/${campaign.song_id}?url=search`)
       }}
     >
       {({ pressed }) => (
@@ -42,7 +44,17 @@ const FeaturedItem = ({ campaign }: { campaign: MinCampaign }) => {
               style={[tw.style(`h-40 w-40 rounded-sm`), tw.style({ 'opacity-50': pressed })]}
               alt={`Artwork for ${campaign.song_title} by ${campaign.artist_name}`}
             />
-            <PlayButton metadata={{ audio_url: campaign.audio_url }} styles="absolute bottom-0 ml-1 mb-1" />
+            <PlayButton
+              metadata={{
+                song_id: campaign.song_id,
+                audio_url: campaign.audio_url,
+                title: getSongTitle(campaign, 20),
+                artist: campaign.artist_name,
+                duration: campaign.duration,
+                artwork_url: campaign.artwork_url
+              }}
+              styles="absolute bottom-0 ml-1 mb-1"
+            />
           </View>
 
           <View style={tw.style(`flex-col gap-y-0.5`)}>

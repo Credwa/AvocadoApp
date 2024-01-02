@@ -17,7 +17,8 @@ export default function BackButton({ size = 32, style, forceColorScheme, href }:
   if (forceColorScheme) colorScheme = forceColorScheme
 
   const goBack = () => {
-    router.back()
+    if (href) router.replace(href)
+    else router.back()
   }
 
   return (
