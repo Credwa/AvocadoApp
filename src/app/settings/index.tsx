@@ -4,6 +4,7 @@ import { Alert, Pressable, SectionList, View } from 'react-native'
 
 import { Typography } from '@/components/atoms/Typography'
 import { useSession } from '@/context/authContext'
+import { usePlayback } from '@/context/playbackContext'
 import tw from '@/helpers/lib/tailwind'
 import { Ionicons } from '@expo/vector-icons'
 
@@ -49,6 +50,7 @@ const ListItem: FC<ListItemProps> = ({ icon, onPress, children, index, length, s
 export default function Settings() {
   const router = useRouter()
   const { signOut } = useSession() ?? {}
+  const { stop } = usePlayback() ?? {}
 
   const iconStyle = tw`mt-1 icon-neutral`
   const iconSize = 20
@@ -75,6 +77,11 @@ export default function Settings() {
     }
   ]
 
+  const signOutActions = async () => {
+    await stop()
+    signOut && (await signOut())
+  }
+
   const appSignOut = async () => {
     Alert.alert('Sign out', 'Are you sure you want to sign out?', [
       {
@@ -82,7 +89,7 @@ export default function Settings() {
         onPress: () => null,
         style: 'cancel'
       },
-      { text: 'Sign Out', onPress: async () => signOut && (await signOut()), style: 'destructive' }
+      { text: 'Sign Out', onPress: signOutActions, style: 'destructive' }
     ])
   }
 

@@ -38,6 +38,24 @@ const minCampaign = z.object({
 const minCampaigns = z.array(minCampaign)
 export type MinCampaign = z.infer<typeof minCampaign>
 
+export const getRecentCampaigns = () => {
+  return {
+    queryKey: ['campaigns', 'recent'],
+    queryFn: async (): Promise<MinCampaign[]> => {
+      return fetchWithAuth<MinCampaign[]>(`/campaigns/recent`, minCampaigns)
+    }
+  }
+}
+
+export const getFeaturedCampaigns = () => {
+  return {
+    queryKey: ['campaigns', 'featured'],
+    queryFn: async (): Promise<MinCampaign[]> => {
+      return fetchWithAuth<MinCampaign[]>(`/campaigns/featured`, minCampaigns)
+    }
+  }
+}
+
 const campaign = z.object({
   id: z.string(),
   song_title: z.string(),
@@ -60,31 +78,13 @@ const campaign = z.object({
     })
     .nullable(),
   artists: z.object({
+    id: z.string(),
     artist_name: z.string(),
     avatar_url: z.string(),
     is_verified: z.boolean()
   })
 })
-
 export type Campaign = z.infer<typeof campaign>
-
-export const getRecentCampaigns = () => {
-  return {
-    queryKey: ['campaigns', 'recent'],
-    queryFn: async (): Promise<MinCampaign[]> => {
-      return fetchWithAuth<MinCampaign[]>(`/campaigns/recent`, minCampaigns)
-    }
-  }
-}
-
-export const getFeaturedCampaigns = () => {
-  return {
-    queryKey: ['campaigns', 'featured'],
-    queryFn: async (): Promise<MinCampaign[]> => {
-      return fetchWithAuth<MinCampaign[]>(`/campaigns/featured`, minCampaigns)
-    }
-  }
-}
 
 export const getCampaignById = (songId: string) => {
   return {

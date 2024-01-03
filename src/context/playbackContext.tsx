@@ -146,7 +146,7 @@ export function PlaybackProvider(props: React.PropsWithChildren) {
       await currentPlaybackObject?.stopAsync()
       await currentPlaybackObject?.unloadAsync()
     } catch (error) {
-      console.log('stop errfors', error)
+      console.log('stop errors', error)
     }
   }
 
@@ -156,7 +156,6 @@ export function PlaybackProvider(props: React.PropsWithChildren) {
         play: async (metadata: PlaybackMetadata) => {
           try {
             if (currentAudio && currentAudio !== metadata.audio_url) {
-              console.log('insta stop')
               await stopPlayback()
             }
             const playbackObject = await loadAsync(metadata.audio_url, hasPermissions, currentAudio)

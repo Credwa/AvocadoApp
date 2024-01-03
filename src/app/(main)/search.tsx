@@ -41,8 +41,6 @@ const Search = () => {
     }
   }, [query])
 
-  const newData2 = recentCampaigns?.concat(recentCampaigns).concat(recentCampaigns).concat(recentCampaigns)
-  const newData = newData2?.concat(newData2).concat(newData2).concat(newData2)
   const handleSearch = (searchQuery: string) => {
     if (searchQuery.length > 2) {
       setSearchQuery(searchQuery)
@@ -67,8 +65,8 @@ const Search = () => {
       {!showSearchList && (
         <ScrollView style={tw``}>
           <View style={tw.style(`flex-col pt-8 gap-y-8 pb-20`, { 'opacity-0': showSearchList })}>
-            <FeaturedView data={featuredCampaigns?.concat(featuredCampaigns)} title="Featured Songs" />
-            <RecentCampaignView data={newData} />
+            <FeaturedView data={featuredCampaigns} title="Featured Songs" />
+            <RecentCampaignView data={recentCampaigns} />
           </View>
         </ScrollView>
       )}

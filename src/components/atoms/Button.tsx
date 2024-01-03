@@ -26,6 +26,7 @@ export const Button: FC<ButtonProps> = ({
 }) => {
   let color = ``
   let textColor = ``
+  let loadingAnim = require('~/assets/lottie/SoundwaveLight.json')
   switch (variant) {
     case 'primary':
       color = outline
@@ -34,6 +35,7 @@ export const Button: FC<ButtonProps> = ({
       textColor = outline ? 'dark:text-primary-lighter text-primary-main' : ''
       break
     case 'secondary':
+      loadingAnim = require('~/assets/lottie/SoundwavePrimary.json')
       color = outline
         ? 'border dark:border-secondary-darker border-secondary-main'
         : 'dark:bg-secondary-dark bg-secondary-main dark:shadow-secondary-main shadow-black'
@@ -45,8 +47,6 @@ export const Button: FC<ButtonProps> = ({
     case 'default':
       textColor = `text-neutral`
   }
-
-  const loadingAnim = require('~/assets/lottie/SoundwaveLight.json')
 
   return (
     <Pressable

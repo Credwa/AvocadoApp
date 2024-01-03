@@ -54,8 +54,6 @@ const RootLayout = () => {
 
   useEffect(() => {
     const subscription = AppAppearance.addChangeListener((scheme) => {
-      console.log(`appearance - ${appearance} scheme - `, scheme)
-      console.log('here')
       if (appearance === 'automatic') {
         setColorScheme(scheme.colorScheme)
         StatusBar.setBarStyle(scheme.colorScheme === 'dark' ? 'light-content' : 'dark-content')
@@ -70,7 +68,6 @@ const RootLayout = () => {
   }, [appearance])
 
   useEffect(() => {
-    console.log('test', AppAppearance.getColorScheme())
     if (appearance === 'automatic') {
       setColorScheme(AppAppearance.getColorScheme())
     } else {

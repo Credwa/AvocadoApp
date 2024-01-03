@@ -1,5 +1,6 @@
 import { Image } from 'expo-image'
 import { LinearGradient } from 'expo-linear-gradient'
+import { useSegments } from 'expo-router'
 import { FC } from 'react'
 import { Pressable, View } from 'react-native'
 
@@ -20,17 +21,24 @@ const defaultBlurhash =
 
 export const Playbar: FC<PlaybarProps> = () => {
   const colorScheme = useColorScheme()
+  const segments = useSegments()
+  const isTabView = segments[0] === '(main)'
+
   const tabBarHeight = useAppStore((state) => state.tabBarHeight)
   const { stop, currentMetadata, isPlaying, pause, play } = usePlayback()
   const { title, artist, artwork_url } = currentMetadata ?? {}
-  // ['#0f0421', '#0f0421', '#110424', '#120426', '#120426', '#140529', '#15052b']
   const gradient =
     colorScheme === 'dark'
       ? ['#0f0421', '#0f0421', '#110424', '#120426', '#120426', '#140529', '#15052b']
       : [tw.color('text-primary-dark'), tw.color('text-primary-dark'), tw.color('text-primary-darker')]
 
   return (
-    <View style={tw.style(`absolute w-screen h-14 px-1 bottom-[${tabBarHeight}px]`)}>
+    <View
+      style={tw.style(
+        `absolute w-screen h-14 px-1 bottom-[${tabBarHeight}px]`,
+        !isTabView && `bottom-[${tabBarHeight / 2.5}px]`
+      )}
+    >
       <Pressable>
         {({ pressed }) => (
           <LinearGradient

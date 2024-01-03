@@ -66,18 +66,6 @@ export default function Layout() {
           )
         }}
       />
-      <Tabs.Screen
-        name="views"
-        options={{
-          href: null
-        }}
-      />
-      <Tabs.Screen
-        name="song"
-        options={{
-          href: null
-        }}
-      />
     </Tabs>
   )
 }

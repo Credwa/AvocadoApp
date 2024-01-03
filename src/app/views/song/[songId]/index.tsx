@@ -8,6 +8,7 @@ import { ScrollView } from 'react-native-gesture-handler'
 import BackButton from '@/components/atoms/BackButton'
 import { Button } from '@/components/atoms/Button'
 import { PlayButton } from '@/components/atoms/PlayButton'
+import ShareButton from '@/components/atoms/ShareButton'
 import { Typography } from '@/components/atoms/Typography'
 import { usePlayback } from '@/context/playbackContext'
 import { defaultBlurhash } from '@/helpers/lib/constants'
@@ -56,8 +57,11 @@ const Song = () => {
 
   return (
     <LinearGradient colors={gradient.map((color) => (color ? color : 'transparent'))} style={tw`flex-1 gutter-sm`}>
-      <SafeAreaView style={tw`flex flex-1 `}>
-        <BackButton href={url} />
+      <SafeAreaView style={tw`flex flex-1`}>
+        <View style={tw`flex-row items-center justify-between`}>
+          <BackButton href={url} />
+          <ShareButton />
+        </View>
         <ScrollView contentContainerStyle={tw`items-center`} style={tw`flex-col flex-1 gap-y-12 gutter-md`}>
           <View style={tw`items-center w-full gap-y-8`}>
             <Image
@@ -101,7 +105,7 @@ const Song = () => {
           <View style={tw`w-screen pt-8 border-b dark:border-zinc-700 border-zinc-200`} />
           <View style={tw`flex-row justify-between w-full`}>
             <View style={tw`flex-col self-start pt-4`}>
-              <Typography weight={500} style={tw`text-xl`}>
+              <Typography weight={500} style={tw`text-lg`}>
                 Price
               </Typography>
               <Typography style={tw`text-2xl`} weight={600}>
@@ -111,17 +115,11 @@ const Song = () => {
                 })}
               </Typography>
             </View>
-            {/* <View style={tw`flex-col self-start pt-4`}>
-              <Typography weight={500} style={tw`text-xl`}>
-                Shares
-              </Typography>
-              <Typography style={tw`text-2xl`} weight={600}>
-                {songData?.campaign_details?.available_shares.toLocaleString('en-US')}
-              </Typography>
-            </View> */}
             <View style={tw`flex-col self-center pt-4`}>
               <Typography
-                style={tw.style('text-base text-primary-lighter', { 'dark:text-red-400 text-red-600': daysLeft < 5 })}
+                style={tw.style('text-base text-primary-main dark:text-primary-lighter', {
+                  'dark:text-red-400 text-red-600': daysLeft < 5
+                })}
               >
                 {daysLeft} days left
               </Typography>
@@ -144,7 +142,10 @@ const Song = () => {
             </Pressable>
           </View>
 
-          <Pressable style={tw.style(`self-start justify-end mb-36 mt-20`, viewVisible && 'mb-48')}>
+          <Pressable
+            style={tw.style(`self-start justify-end mb-36 mt-20`, viewVisible && 'mb-36')}
+            onPress={() => router.push(`views/artist/${songData?.artists.id}`)}
+          >
             {({ pressed }) => (
               <View style={tw.style(`flex-row items-center gap-x-3`, { 'opacity-50': pressed })}>
                 <Image
@@ -172,11 +173,16 @@ const Song = () => {
         {/* Purchase button */}
         <View
           style={tw.style(
-            `absolute left-0 right-0 z-50 flex items-center bottom-24 gutter-md`,
-            viewVisible && `bottom-[${tabBarHeight * 2}px]`
+            `absolute left-0 right-0 z-50 flex items-center bottom-16 gutter-md`,
+            viewVisible && `bottom-[${tabBarHeight * 1.3}px]`
           )}
         >
-          <Button styles="w-full rounded-md" textStyles="text-white" variant="secondary">
+          <Button
+            onPress={() => router.push(`views/song/${songId}/purchase`)}
+            styles="w-full rounded-md"
+            textStyles="text-white"
+            variant="secondary"
+          >
             Purchase
           </Button>
         </View>
