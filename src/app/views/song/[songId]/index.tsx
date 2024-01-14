@@ -11,8 +11,7 @@ import { PlayButton } from '@/components/atoms/PlayButton'
 import ShareButton from '@/components/atoms/ShareButton'
 import { Typography } from '@/components/atoms/Typography'
 import { usePlayback } from '@/context/playbackContext'
-import { defaultBlurhash } from '@/helpers/lib/constants'
-import { getCampaignDaysLeft, getSongTitle } from '@/helpers/lib/lib'
+import { getCampaignDaysLeft, getRandomBlurhash, getSongTitle } from '@/helpers/lib/lib'
 import tw from '@/helpers/lib/tailwind'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import { getCampaignById } from '@/services/CampaignService'
@@ -66,7 +65,7 @@ const Song = () => {
           <View style={tw`items-center w-full gap-y-8`}>
             <Image
               source={songData?.artwork_url}
-              placeholder={defaultBlurhash}
+              placeholder={getRandomBlurhash()}
               contentFit="fill"
               cachePolicy="memory"
               style={[tw.style(`h-70 w-70 rounded-sm`)]}
@@ -83,7 +82,7 @@ const Song = () => {
                       <View style={tw`flex-row items-center gap-x-2`}>
                         <Image
                           source={songData?.artists.avatar_url}
-                          placeholder={defaultBlurhash}
+                          placeholder={getRandomBlurhash()}
                           contentFit="fill"
                           cachePolicy="memory"
                           style={[tw.style(`h-5 w-5 rounded-full`, { 'opacity-50': pressed })]}
@@ -150,7 +149,7 @@ const Song = () => {
               <View style={tw.style(`flex-row items-center gap-x-3`, { 'opacity-50': pressed })}>
                 <Image
                   source={songData?.artists.avatar_url}
-                  placeholder={defaultBlurhash}
+                  placeholder={getRandomBlurhash()}
                   contentFit="fill"
                   cachePolicy="memory"
                   style={[tw.style(`h-12 w-12 rounded-full`)]}

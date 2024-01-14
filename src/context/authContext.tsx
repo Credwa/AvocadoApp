@@ -39,7 +39,7 @@ const checkIfUserExists = async (session: Session | null = null) => {
   })
   const response = await fetchWithAuth<z.infer<typeof userExists>>('/user/verify', userExists, {
     method: 'POST',
-    body: JSON.stringify({ id: session.user.id })
+    body: JSON.stringify({ uid: session.user.id })
   })
   return response.exists
 }

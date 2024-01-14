@@ -51,6 +51,7 @@ export const SearchBar: FC<SearchBarProps> = (props) => {
 
   const handleClear = () => {
     if (textInputRef.current) {
+      console.log('handleClear')
       textInputRef.current.blur()
       textInputRef.current.clear()
       props.onFocusStatusChange?.(false)

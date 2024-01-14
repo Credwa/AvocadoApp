@@ -5,6 +5,7 @@ import { FC } from 'react'
 import { Pressable, View } from 'react-native'
 
 import { usePlayback } from '@/context/playbackContext'
+import { defaultBlurhash } from '@/helpers/lib/constants'
 import tw from '@/helpers/lib/tailwind'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import { useAppStore } from '@/store'
@@ -15,9 +16,6 @@ import { Typography } from './atoms/Typography'
 type PlaybarProps = {
   styles?: string
 }
-
-const defaultBlurhash =
-  '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj['
 
 export const Playbar: FC<PlaybarProps> = () => {
   const colorScheme = useColorScheme()

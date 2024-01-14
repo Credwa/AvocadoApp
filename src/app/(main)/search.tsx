@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import { View } from 'react-native'
-import { FlatList, ScrollView } from 'react-native-gesture-handler'
+import { ScrollView } from 'react-native-gesture-handler'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
-import { FeaturedView } from '@/components/campaigns/FeaturedCampaignsView'
+import { FeaturedView } from '@/components/campaigns/FeaturedView'
 import { RecentCampaignView } from '@/components/campaigns/RecentCampaignView'
 import { SearchBar } from '@/components/SearchBar'
 import { SearchList } from '@/components/SearchList'
 import tw from '@/helpers/lib/tailwind'
 import { useColorScheme } from '@/hooks/useColorScheme'
+import { getFeaturedArtists } from '@/services/ArtistService'
 import { getFeaturedCampaigns, getRecentCampaigns, getSearchResults } from '@/services/CampaignService'
 import { useQuery } from '@tanstack/react-query'
 
@@ -23,12 +24,16 @@ const Search = () => {
     enabled: debouncedQuery.length > 2 && debouncedQuery === query
   })
 
-  const { data: recentCampaigns, isLoading: isRecentCampaignsLoading } = useQuery({
+  const { data: recentCampaigns } = useQuery({
     ...getRecentCampaigns()
   })
 
-  const { data: featuredCampaigns, isLoading: isFeaturedCampaignsLoading } = useQuery({
+  const { data: featuredCampaigns } = useQuery({
     ...getFeaturedCampaigns()
+  })
+
+  const { data: featuredArtists } = useQuery({
+    ...getFeaturedArtists()
   })
 
   useEffect(() => {
@@ -67,6 +72,7 @@ const Search = () => {
           <View style={tw.style(`flex-col pt-8 gap-y-8 pb-20`, { 'opacity-0': showSearchList })}>
             <FeaturedView data={featuredCampaigns} title="Featured Songs" />
             <RecentCampaignView data={recentCampaigns} />
+            <FeaturedView data={featuredArtists} title="Artist Spotlight" />
           </View>
         </ScrollView>
       )}

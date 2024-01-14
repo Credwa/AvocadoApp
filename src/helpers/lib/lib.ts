@@ -8,7 +8,7 @@ import { Campaign, MinCampaign } from '@/services/CampaignService'
 import HTTPError from '@/services/HTTPError'
 
 import { supabase } from '../supabase/supabase'
-import { BASE_URL } from './constants'
+import { BASE_URL, blurhashes } from './constants'
 import { handleErrors } from './Errors'
 
 let storedTokenHash = ''
@@ -36,6 +36,10 @@ export const createSessionFromUrl = async (url: string) => {
       Alert.alert('An unknown error has occurred.')
     }
   }
+}
+
+export function getRandomBlurhash() {
+  return blurhashes[Math.floor(Math.random() * blurhashes.length)]
 }
 
 export function getCampaignDaysLeft(campaign_start_date: string, time_restraint = 0) {

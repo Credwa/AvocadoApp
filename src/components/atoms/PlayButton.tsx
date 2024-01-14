@@ -9,9 +9,10 @@ type PlayButtonProps = {
   onPress?: () => void
   styles?: string
   metadata: PlaybackMetadata
+  animationShown?: boolean
 }
 
-export const PlayButton: FC<PlayButtonProps> = ({ styles, metadata }) => {
+export const PlayButton: FC<PlayButtonProps> = ({ styles, metadata, animationShown = true }) => {
   const { play, pause, isPlaying, currentMetadata } = usePlayback()
 
   return (
@@ -26,7 +27,7 @@ export const PlayButton: FC<PlayButtonProps> = ({ styles, metadata }) => {
       }}
       style={({ pressed }) =>
         tw.style(`w-10 h-10 rounded-full bg-secondary-main flex justify-center items-center`, styles, {
-          'opacity-80 w-9 h-9': pressed
+          'opacity-80 w-9 h-9': pressed && animationShown
         })
       }
     >

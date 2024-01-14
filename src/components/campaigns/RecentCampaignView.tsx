@@ -4,7 +4,7 @@ import React, { FC } from 'react'
 import { Dimensions, Pressable, View } from 'react-native'
 import Carousel from 'react-native-reanimated-carousel'
 
-import { getSongTitle } from '@/helpers/lib/lib'
+import { getRandomBlurhash, getSongTitle } from '@/helpers/lib/lib'
 import tw from '@/helpers/lib/tailwind'
 import { MinCampaign } from '@/services/CampaignService'
 
@@ -13,9 +13,6 @@ import { Typography } from '../atoms/Typography'
 type RecentCampaignProps = {
   data: MinCampaign[] | undefined
 }
-
-const defaultBlurhash =
-  '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj['
 
 const RecentCampaignList = ({ campaigns }: { campaigns: MinCampaign[] }) => {
   if (campaigns.length > 6) throw new Error('Only 6 campaigns per view is allowed')
@@ -54,9 +51,9 @@ const RecentCampaignItem = ({ campaign }: { campaign: MinCampaign }) => {
         <View style={tw`flex-row items-center gap-x-3`}>
           <Image
             source={campaign.artwork_url}
-            placeholder={defaultBlurhash}
+            placeholder={getRandomBlurhash()}
             contentFit="fill"
-            transition={200}
+            transition={1500}
             cachePolicy="memory"
             style={[tw.style(`w-12 h-12 rounded-sm`), tw.style({ 'opacity-50': pressed })]}
             alt={`Artwork for ${campaign.song_title} by ${campaign.artist_name}`}

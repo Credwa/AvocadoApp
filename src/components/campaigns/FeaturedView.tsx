@@ -4,23 +4,33 @@ import React, { FC } from 'react'
 import { Dimensions, Pressable, View } from 'react-native'
 import Carousel from 'react-native-reanimated-carousel'
 
-import { getSongTitle } from '@/helpers/lib/lib'
+import { getRandomBlurhash, getSongTitle } from '@/helpers/lib/lib'
 import tw from '@/helpers/lib/tailwind'
+import { Artist } from '@/services/ArtistService'
 import { MinCampaign } from '@/services/CampaignService'
 
 import { PlayButton } from '../atoms/PlayButton'
 import { Typography } from '../atoms/Typography'
 
 type FeaturedProps = {
-  data: MinCampaign[] | undefined
+  data: MinCampaign[] | Artist[] | undefined
   title: string
 }
 
-const defaultBlurhash =
-  '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj['
+function isCampaign(data: MinCampaign | Artist): data is MinCampaign {
+  return (data as MinCampaign).song_id !== undefined
+}
 
-const FeaturedItem = ({ campaign }: { campaign: MinCampaign }) => {
+const FeaturedItem = ({ item }: { item: MinCampaign | Artist }) => {
   const router = useRouter()
+
+  const newItem = {
+    id: isCampaign(item) ? item.song_id : item.id,
+    image_url: isCampaign(item) ? item.artwork_url : item.avatar_url,
+    title: isCampaign(item) ? getSongTitle(item, 20) : item.artist_name,
+    audio_url: isCampaign(item) ? item.audio_url : undefined
+  }
+
   return (
     <Pressable
       style={({ pressed }) => [
@@ -30,43 +40,51 @@ const FeaturedItem = ({ campaign }: { campaign: MinCampaign }) => {
         })
       ]}
       onPress={() => {
-        router.push(`views/song/${campaign.song_id}?url=search`)
+        if (isCampaign(item)) {
+          router.push(`views/song/${item.song_id}?url=search`)
+        } else {
+          router.push(`views/artist/${item.id}?url=search`)
+        }
       }}
     >
       {({ pressed }) => (
         <View style={tw`flex-col justify-center gap-x-3 gap-y-2`}>
           <View style={tw`relative`}>
             <Image
-              source={campaign.artwork_url}
-              placeholder={defaultBlurhash}
+              source={newItem.image_url}
+              placeholder={getRandomBlurhash()}
               contentFit="fill"
               cachePolicy="memory"
               style={[tw.style(`h-40 w-40 rounded-sm`), tw.style({ 'opacity-50': pressed })]}
-              alt={`Artwork for ${campaign.song_title} by ${campaign.artist_name}`}
+              alt={`Artwork for ${newItem.title} by ${item.artist_name}`}
             />
-            <PlayButton
-              metadata={{
-                song_id: campaign.song_id,
-                audio_url: campaign.audio_url,
-                title: getSongTitle(campaign, 20),
-                artist: campaign.artist_name,
-                duration: campaign.duration,
-                artwork_url: campaign.artwork_url
-              }}
-              styles="absolute bottom-0 ml-1 mb-1"
-            />
+            {isCampaign(item) && (
+              <PlayButton
+                metadata={{
+                  song_id: item.song_id,
+                  audio_url: item.audio_url,
+                  title: getSongTitle(item, 20),
+                  artist: item.artist_name,
+                  duration: item.duration,
+                  artwork_url: item.artwork_url
+                }}
+                styles="absolute bottom-0 ml-1 mb-1"
+              />
+            )}
           </View>
 
           <View style={tw.style(`flex-col gap-y-0.5`)}>
             <View style={tw`flex-row gap-x-0.5`}>
               <Typography weight={500} style={tw`text-sm text-zinc-950 dark:text-zinc-100`}>
-                {getSongTitle(campaign, 20)}
+                {newItem.title}
               </Typography>
             </View>
 
-            <Typography weight={400} style={tw`text-sm text-zinc-600 dark:text-zinc-400`}>
-              {campaign.artist_name}
-            </Typography>
+            {isCampaign(item) && (
+              <Typography weight={400} style={tw`text-sm text-zinc-600 dark:text-zinc-400`}>
+                {item.artist_name}
+              </Typography>
+            )}
           </View>
         </View>
       )}
@@ -91,7 +109,7 @@ export const FeaturedView: FC<FeaturedProps> = ({ data, title }) => {
         width={PAGE_WIDTH / 2.3}
         style={tw`w-[${PAGE_WIDTH}] content-center items-center h-60`}
         data={[...data]}
-        renderItem={({ item }) => <FeaturedItem key={item.song_id} campaign={item} />}
+        renderItem={({ item }) => <FeaturedItem key={isCampaign(item) ? item.song_id : item.id} item={item} />}
       />
     </View>
   )

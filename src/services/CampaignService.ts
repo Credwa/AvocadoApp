@@ -34,15 +34,13 @@ const minCampaign = z.object({
   add_version_info_other: z.string(),
   is_radio_edit: z.boolean()
 })
-
-const minCampaigns = z.array(minCampaign)
 export type MinCampaign = z.infer<typeof minCampaign>
 
 export const getRecentCampaigns = () => {
   return {
     queryKey: ['campaigns', 'recent'],
     queryFn: async (): Promise<MinCampaign[]> => {
-      return fetchWithAuth<MinCampaign[]>(`/campaigns/recent`, minCampaigns)
+      return fetchWithAuth<MinCampaign[]>(`/campaigns/recent`, z.array(minCampaign))
     }
   }
 }
@@ -51,7 +49,7 @@ export const getFeaturedCampaigns = () => {
   return {
     queryKey: ['campaigns', 'featured'],
     queryFn: async (): Promise<MinCampaign[]> => {
-      return fetchWithAuth<MinCampaign[]>(`/campaigns/featured`, minCampaigns)
+      return fetchWithAuth<MinCampaign[]>(`/campaigns/featured`, z.array(minCampaign))
     }
   }
 }
@@ -91,6 +89,60 @@ export const getCampaignById = (songId: string) => {
     queryKey: ['campaigns', songId],
     queryFn: async (): Promise<Campaign> => {
       return fetchWithAuth<Campaign>(`/campaigns/${songId}`, campaign)
+    }
+  }
+}
+
+const purchasedCampaign = z.object({
+  song_id: z.string(),
+  song_title: z.string(),
+  artwork_url: z.string(),
+  audio_url: z.string(),
+  artist_name: z.string(),
+  duration: z.number().nullable(),
+  explicit_lyrics: z.boolean(),
+  add_version_info: z.string(),
+  add_version_info_other: z.string(),
+  is_radio_edit: z.boolean(),
+  latest_purchase: z.string(),
+  total_shares: z.number()
+})
+
+export type PurchasedCampaign = z.infer<typeof purchasedCampaign>
+
+export const purchaseCampaign = (songId: string, userId: string, shares: number) => {
+  return fetchWithAuth<void>(`/campaigns/purchase/${songId}`, undefined, {
+    method: 'POST',
+    body: JSON.stringify({ userid: userId, shares, songid: songId })
+  })
+}
+
+export const getPurchasedCampaigns = (userId?: string) => {
+  return {
+    queryKey: ['campaigns', 'purchase', userId],
+    queryFn: async (): Promise<PurchasedCampaign[]> => {
+      return fetchWithAuth<PurchasedCampaign[]>(`/campaigns/purchase?userId=${userId}`, z.array(purchasedCampaign))
+    }
+  }
+}
+
+const purchaseHistory = z.object({
+  user_id: z.string(),
+  song_id: z.string(),
+  created_at: z.string(),
+  shares: z.number()
+})
+
+export type PurchaseHistory = z.infer<typeof purchaseHistory>
+
+export const getPurchaseHistoryForSong = (songId: string, userId: string) => {
+  return {
+    queryKey: ['campaigns', 'purchase', userId, songId],
+    queryFn: async (): Promise<PurchaseHistory[]> => {
+      return fetchWithAuth<PurchaseHistory[]>(
+        `/campaigns/purchase/${songId}?userId=${userId}`,
+        z.array(purchaseHistory)
+      )
     }
   }
 }

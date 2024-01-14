@@ -4,6 +4,7 @@ import { FC } from 'react'
 import { KeyboardAvoidingView, Platform, Pressable, SectionList, useColorScheme, View } from 'react-native'
 import Animated, { FadeInUp } from 'react-native-reanimated'
 
+import { getRandomBlurhash } from '@/helpers/lib/lib'
 import tw from '@/helpers/lib/tailwind'
 import { SearchResult } from '@/services/CampaignService'
 import { MaterialIcons } from '@expo/vector-icons'
@@ -22,9 +23,6 @@ const titleMapping = new Map([
   ['song', 'Songs'],
   ['artist', 'Artists']
 ])
-
-const defaultBlurhash =
-  '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj['
 
 const SearchListItem: FC<SearchListItemProps> = ({ item }) => {
   const router = useRouter()
@@ -46,7 +44,7 @@ const SearchListItem: FC<SearchListItemProps> = ({ item }) => {
         <View style={tw`flex-row items-center gap-x-3`}>
           <Image
             source={item.image_url}
-            placeholder={defaultBlurhash}
+            placeholder={getRandomBlurhash()}
             contentFit="fill"
             transition={200}
             cachePolicy="memory"
@@ -147,7 +145,7 @@ export const SearchList: FC<SearchListProps> = ({ searchResults }) => {
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => <SearchListItem item={item} />}
           renderSectionHeader={({ section: { title } }) => (
-            <Typography weight={600} style={tw`pb-2 text-base`}>
+            <Typography weight={600} style={tw`pb-1 mt-4 text-base`}>
               {title}
             </Typography>
           )}
