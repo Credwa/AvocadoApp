@@ -18,13 +18,14 @@ export default function Layout() {
   return (
     <Stack
       screenOptions={{
-        headerShown: true
+        headerShown: false
       }}
     >
       <Stack.Screen
         name="song/[songId]/purchase"
         options={{
-          presentation: 'modal'
+          presentation: 'modal',
+          headerShown: false
         }}
       />
       <Stack.Screen
@@ -36,6 +37,7 @@ export default function Layout() {
       <Stack.Screen
         name="purchase/[songId]/index"
         options={{
+          headerShown: true,
           title: 'Purchase History',
           headerBackVisible: true,
           headerTitleStyle: tw`text-zinc-100`,

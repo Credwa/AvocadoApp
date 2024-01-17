@@ -10,6 +10,7 @@ import { Button } from '@/components/atoms/Button'
 import { PlayButton } from '@/components/atoms/PlayButton'
 import ShareButton from '@/components/atoms/ShareButton'
 import { Typography } from '@/components/atoms/Typography'
+import LoadingScreen from '@/components/LoadingScreen'
 import { usePlayback } from '@/context/playbackContext'
 import { getCampaignDaysLeft, getRandomBlurhash, getSongTitle } from '@/helpers/lib/lib'
 import tw from '@/helpers/lib/tailwind'
@@ -33,7 +34,7 @@ const Song = () => {
     ...getCampaignById(songId!)
   })
 
-  if (isSongLoading) return null
+  if (isSongLoading) return <LoadingScreen />
 
   const metaData = {
     song_id: songData!.id,
@@ -57,7 +58,7 @@ const Song = () => {
   return (
     <LinearGradient colors={gradient.map((color) => (color ? color : 'transparent'))} style={tw`flex-1 gutter-sm`}>
       <SafeAreaView style={tw`flex flex-1`}>
-        <View style={tw`flex-row items-center justify-between`}>
+        <View style={tw`flex-row items-center justify-between mt-4`}>
           <BackButton href={url} />
           <ShareButton />
         </View>
@@ -77,7 +78,9 @@ const Song = () => {
                   <Typography weight={600} style={tw`text-xl`}>
                     {getSongTitle(songData!, 40)}
                   </Typography>
-                  <Pressable>
+                  <Pressable
+                    onPress={() => router.push(`views/artist/${songData?.artists.id}?url=views/song/${songId}`)}
+                  >
                     {({ pressed }) => (
                       <View style={tw`flex-row items-center gap-x-2`}>
                         <Image
@@ -88,7 +91,9 @@ const Song = () => {
                           style={[tw.style(`h-5 w-5 rounded-full`, { 'opacity-50': pressed })]}
                           alt={`Profile picture for ${songData?.artists.artist_name}`}
                         />
-                        <Typography weight={500}>{songData?.artists.artist_name}</Typography>
+                        <Typography style={tw.style({ 'opacity-50': pressed })} weight={500}>
+                          {songData?.artists.artist_name}
+                        </Typography>
                       </View>
                     )}
                   </Pressable>
@@ -143,7 +148,7 @@ const Song = () => {
 
           <Pressable
             style={tw.style(`self-start justify-end mb-36 mt-20`, viewVisible && 'mb-36')}
-            onPress={() => router.push(`views/artist/${songData?.artists.id}`)}
+            onPress={() => router.push(`views/artist/${songData?.artists.id}?url=views/song/${songId}`)}
           >
             {({ pressed }) => (
               <View style={tw.style(`flex-row items-center gap-x-3`, { 'opacity-50': pressed })}>
@@ -155,7 +160,7 @@ const Song = () => {
                   style={[tw.style(`h-12 w-12 rounded-full`)]}
                   alt={`Profile picture for ${songData?.artists.artist_name}`}
                 />
-                <Typography weight={500} style={tw`text-lg`}>
+                <Typography weight={500} style={tw.style(`text-lg`, { 'opacity-50': pressed })}>
                   {songData?.artists.artist_name}
                 </Typography>
                 <MaterialIcons

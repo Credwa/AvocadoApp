@@ -5,7 +5,7 @@ import LottieView from 'lottie-react-native'
 import { usePostHog } from 'posthog-react-native'
 import { useEffect, useRef, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import { KeyboardAvoidingView, Platform, Pressable, useColorScheme, View } from 'react-native'
+import { KeyboardAvoidingView, Platform, Pressable, View } from 'react-native'
 import { RootSiblingParent } from 'react-native-root-siblings'
 
 import BackButton from '@/components/atoms/BackButton'
@@ -18,6 +18,7 @@ import { defaultBlurhash } from '@/helpers/lib/constants'
 import { getSongTitle } from '@/helpers/lib/lib'
 import tw from '@/helpers/lib/tailwind'
 import { purchaseSchema, TPurchaseSchema } from '@/helpers/schemas/extras'
+import { useColorScheme } from '@/hooks/useColorScheme'
 import { getCampaignById, purchaseCampaign } from '@/services/CampaignService'
 import { useAppStore } from '@/store'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -126,11 +127,13 @@ export default function Purchase() {
           ) : (
             <View style={tw`mt-4 gutter-md gap-y-20`}>
               <View style={tw`flex-row gap-x-2`}>
-                <View>
+                <View style={tw`gap-y-1`}>
                   <Typography weight={600} style={tw`text-xl`}>
                     Buy {getSongTitle(songData!, 40)}
                   </Typography>
-                  <Pressable>
+                  <Pressable
+                    onPress={() => router.replace(`views/artist/${songData?.artists.id}?url=views/song/${songId}`)}
+                  >
                     {({ pressed }) => (
                       <View style={tw`flex-row items-center gap-x-2`}>
                         <Image
@@ -141,7 +144,9 @@ export default function Purchase() {
                           style={[tw.style(`h-5 w-5 rounded-full`, { 'opacity-50': pressed })]}
                           alt={`Profile picture for ${songData?.artists.artist_name}`}
                         />
-                        <Typography weight={500}>{songData?.artists.artist_name}</Typography>
+                        <Typography weight={500} style={tw.style({ 'opacity-50': pressed })}>
+                          {songData?.artists.artist_name}
+                        </Typography>
                       </View>
                     )}
                   </Pressable>

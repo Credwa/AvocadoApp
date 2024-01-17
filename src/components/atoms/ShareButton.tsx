@@ -1,6 +1,7 @@
-import { Pressable, useColorScheme } from 'react-native'
+import { Pressable } from 'react-native'
 
 import tw from '@/helpers/lib/tailwind'
+import { useColorScheme } from '@/hooks/useColorScheme'
 import { Ionicons } from '@expo/vector-icons'
 
 type ShareButtonProps = {

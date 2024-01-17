@@ -2,7 +2,7 @@ import dayjs from 'dayjs'
 import localizedFormat from 'dayjs/plugin/localizedFormat'
 import { Image } from 'expo-image'
 import { LinearGradient } from 'expo-linear-gradient'
-import { router, useLocalSearchParams } from 'expo-router'
+import { useLocalSearchParams, useRouter } from 'expo-router'
 import { useState } from 'react'
 import { Pressable, SafeAreaView, View } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
@@ -13,6 +13,7 @@ import { PlayButton } from '@/components/atoms/PlayButton'
 import ShareButton from '@/components/atoms/ShareButton'
 import { Typography } from '@/components/atoms/Typography'
 import { usePlayback } from '@/context/playbackContext'
+import { defaultBlurhash } from '@/helpers/lib/constants'
 import { getCampaignDaysLeft, getRandomBlurhash, getSongTitle } from '@/helpers/lib/lib'
 import tw from '@/helpers/lib/tailwind'
 import { useColorScheme } from '@/hooks/useColorScheme'
@@ -25,6 +26,7 @@ const PurchaseHistory = () => {
   const colorScheme = useColorScheme()
   const tabBarHeight = useAppStore((state) => state.tabBarHeight)
 
+  const router = useRouter()
   const userId = useAppStore((state) => state.user_id)
   const { songId } = useLocalSearchParams<{ songId: string; url?: string }>()
   if (!songId) {
@@ -42,35 +44,46 @@ const PurchaseHistory = () => {
   return (
     <ScrollView style={tw`flex-1 py-8 background-default gutter-md`}>
       <SafeAreaView style={tw`mb-[${tabBarHeight * 1.5}px]`}>
-        <Typography weight={500} style={tw`text-2xl`}>
-          {getSongTitle(songData!, 20)}
-        </Typography>
-        <Pressable
-          style={tw.style(`self-start justify-end mb-12 mt-8`)}
-          onPress={() => router.push(`views/artist/${songData?.artists.id}`)}
-        >
-          {({ pressed }) => (
-            <View style={tw.style(`flex-row items-center gap-x-3`, { 'opacity-50': pressed })}>
-              <Image
-                source={songData?.artists.avatar_url}
-                placeholder={getRandomBlurhash()}
-                contentFit="fill"
-                cachePolicy="memory"
-                style={[tw.style(`h-12 w-12 rounded-full`)]}
-                alt={`Profile picture for ${songData?.artists.artist_name}`}
-              />
-              <Typography weight={500} style={tw`text-lg`}>
-                {songData?.artists.artist_name}
-              </Typography>
-              <MaterialIcons
-                name="verified"
-                style={tw`self-center`}
-                size={17}
-                color={colorScheme === 'dark' ? tw.color('text-primary-lighter') : tw.color('text-primary-main')}
-              />
-            </View>
-          )}
-        </Pressable>
+        <View style={tw`gap-y-6`}>
+          <Image
+            source={songData?.artwork_url}
+            placeholder={defaultBlurhash}
+            contentFit="fill"
+            cachePolicy="memory"
+            style={[tw.style(`h-20 w-20 rounded-sm`)]}
+            alt={`Profile picture for ${songData?.artists.artist_name}`}
+          />
+          <Typography weight={500} style={tw`text-2xl`}>
+            {getSongTitle(songData!, 100)}
+          </Typography>
+          <Pressable
+            style={tw.style(`self-start justify-end mb-12`)}
+            onPress={() => router.push(`views/artist/${songData?.artists.id}?url=views/purchase/${songId}`)}
+          >
+            {({ pressed }) => (
+              <View style={tw.style(`flex-row items-center gap-x-3`, { 'opacity-50': pressed })}>
+                <Image
+                  source={songData?.artists.avatar_url}
+                  placeholder={getRandomBlurhash()}
+                  contentFit="fill"
+                  cachePolicy="memory"
+                  style={[tw.style(`h-12 w-12 rounded-full`)]}
+                  alt={`Profile picture for ${songData?.artists.artist_name}`}
+                />
+                <Typography weight={500} style={tw.style(`text-lg`, { 'opacity-50': pressed })}>
+                  {songData?.artists.artist_name}
+                </Typography>
+                <MaterialIcons
+                  name="verified"
+                  style={tw`self-center`}
+                  size={17}
+                  color={colorScheme === 'dark' ? tw.color('text-primary-lighter') : tw.color('text-primary-main')}
+                />
+              </View>
+            )}
+          </Pressable>
+        </View>
+
         <View style={tw`w-full mb-4 border-b dark:border-zinc-700 border-zinc-300`} />
         <Typography weight={500} style={tw`text-xl`}>
           History

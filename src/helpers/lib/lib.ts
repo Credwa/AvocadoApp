@@ -38,6 +38,17 @@ export const createSessionFromUrl = async (url: string) => {
   }
 }
 
+export function truncate_number(num: number): string {
+  const absNum = Math.abs(num)
+  const suffixes = ['', 'K', 'M', 'B', 'T']
+  const suffixNum = Math.floor(('' + absNum).length / 3)
+  let shortNum = parseFloat((suffixNum !== 0 ? absNum / Math.pow(1000, suffixNum) : absNum).toPrecision(2))
+  if (shortNum % 1 !== 0) {
+    shortNum = Number(shortNum.toFixed(1))
+  }
+  return (num < 0 ? '-' : '') + shortNum + suffixes[suffixNum]
+}
+
 export function getRandomBlurhash() {
   return blurhashes[Math.floor(Math.random() * blurhashes.length)]
 }

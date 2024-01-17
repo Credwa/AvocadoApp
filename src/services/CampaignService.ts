@@ -22,14 +22,14 @@ export const getSearchResults = (query: string) => {
   }
 }
 
-const minCampaign = z.object({
+export const minCampaign = z.object({
   song_id: z.string(),
   song_title: z.string(),
   artwork_url: z.string(),
   audio_url: z.string(),
   duration: z.number().nullable(),
   explicit_lyrics: z.boolean(),
-  artist_name: z.string(),
+  artist_name: z.string().optional(),
   add_version_info: z.string(),
   add_version_info_other: z.string(),
   is_radio_edit: z.boolean()
