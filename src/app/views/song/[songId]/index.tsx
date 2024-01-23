@@ -68,7 +68,7 @@ const Song = () => {
               source={songData?.artwork_url}
               placeholder={getRandomBlurhash()}
               contentFit="fill"
-              cachePolicy="memory"
+              cachePolicy="disk"
               style={[tw.style(`h-70 w-70 rounded-sm`)]}
               alt={`Artwork for ${songData?.song_title} by ${songData?.artists.artist_name}`}
             />
@@ -87,7 +87,7 @@ const Song = () => {
                           source={songData?.artists.avatar_url}
                           placeholder={getRandomBlurhash()}
                           contentFit="fill"
-                          cachePolicy="memory"
+                          cachePolicy="disk"
                           style={[tw.style(`h-5 w-5 rounded-full`, { 'opacity-50': pressed })]}
                           alt={`Profile picture for ${songData?.artists.artist_name}`}
                         />
@@ -156,7 +156,7 @@ const Song = () => {
                   source={songData?.artists.avatar_url}
                   placeholder={getRandomBlurhash()}
                   contentFit="fill"
-                  cachePolicy="memory"
+                  cachePolicy="disk"
                   style={[tw.style(`h-12 w-12 rounded-full`)]}
                   alt={`Profile picture for ${songData?.artists.artist_name}`}
                 />

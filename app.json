@@ -30,7 +30,12 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": ["sentry-expo", "expo-router", "expo-localization"],
+    "plugins": [
+      "sentry-expo",
+      "expo-router",
+      "expo-localization",
+      ["expo-image-picker", { "photosPermission": "Permission required to upload a new profile photo" }]
+    ],
     "experiments": {
       "tsconfigPaths": true
     },

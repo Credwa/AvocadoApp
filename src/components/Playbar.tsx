@@ -53,7 +53,7 @@ export const Playbar: FC<PlaybarProps> = () => {
                 placeholder={defaultBlurhash}
                 contentFit="fill"
                 transition={50}
-                cachePolicy="memory"
+                cachePolicy="disk"
                 style={[tw.style(`w-11 h-11 rounded-sm`), tw.style({ 'opacity-50': pressed })]}
                 alt={`Artwork for ${title} by ${artist}`}
               />

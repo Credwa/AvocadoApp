@@ -133,7 +133,7 @@ const Library = () => {
                     placeholder={getRandomBlurhash()}
                     contentFit="fill"
                     transition={200}
-                    cachePolicy="memory"
+                    cachePolicy="disk"
                     style={[tw.style(`w-12 h-12 rounded-sm`), tw.style({ 'opacity-50': pressed })]}
                     alt="avatar image"
                   />

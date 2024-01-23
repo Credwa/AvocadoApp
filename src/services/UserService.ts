@@ -17,3 +17,10 @@ export const getCurrentUserProfile = () => {
     }
   }
 }
+
+export const uploadNewAvatar = (data: { id: string; imageBase64: string }) => {
+  return fetchWithAuth<void>('/user/me/avatar', undefined, {
+    method: 'POST',
+    body: JSON.stringify(data)
+  })
+}

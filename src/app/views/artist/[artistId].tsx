@@ -1,10 +1,11 @@
 import { ResizeMode, Video } from 'expo-av'
 import { Image } from 'expo-image'
 import { router, useLocalSearchParams } from 'expo-router'
-import React, { useRef, useState } from 'react'
-import { Dimensions, Pressable, SafeAreaView, useColorScheme, View } from 'react-native'
+import React, { useEffect, useRef, useState } from 'react'
+import { Dimensions, Pressable, SafeAreaView, View } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
 
+import { ActivitiesView } from '@/components/artistComponents/artistActivitiesView'
 import ArtistLinks from '@/components/artistComponents/artistLinks'
 import ArtistStats from '@/components/artistComponents/artistStats'
 import BackButton from '@/components/atoms/BackButton'
@@ -12,6 +13,7 @@ import { Typography } from '@/components/atoms/Typography'
 import LoadingScreen from '@/components/LoadingScreen'
 import { getRandomBlurhash, getSongTitle } from '@/helpers/lib/lib'
 import tw from '@/helpers/lib/tailwind'
+import { useColorScheme } from '@/hooks/useColorScheme'
 import { getArtistProfile } from '@/services/ArtistService'
 import { Campaign } from '@/services/CampaignService'
 import { useAppStore } from '@/store'
@@ -36,15 +38,20 @@ export default function ArtistProfile() {
 
   if (isArtistLoading) return <LoadingScreen />
 
-  console.log(artistData)
+  const filteredArtistActivities = artistData?.artist_activities?.activities?.filter(
+    (activity) =>
+      (activity.activity_avatar && activity.activity_avatar.length > 0) ||
+      (activity.track_info?.avatar && activity.track_info?.avatar.length > 0)
+  )
+
   return (
-    <ScrollView nestedScrollEnabled style={tw`flex flex-col flex-1 background-default`}>
+    <ScrollView nestedScrollEnabled style={tw.style(`flex flex-col flex-1 background-default`)}>
       <View style={tw`relative h-[${screenHeight / 2.3}px]`}>
         <Image
           source={artistData?.avatar_url}
           placeholder={getRandomBlurhash()}
           contentFit="fill"
-          cachePolicy="memory"
+          cachePolicy="disk"
           style={[tw.style(`w-full absolute h-[${screenHeight / 2.3}px]`)]}
           alt={`Profile picture for ${artistData?.artist_name}`}
         />
@@ -133,7 +140,7 @@ export default function ArtistProfile() {
                           placeholder={getRandomBlurhash()}
                           contentFit="fill"
                           transition={200}
-                          cachePolicy="memory"
+                          cachePolicy="disk"
                           style={[tw.style(`w-12 h-12 rounded-sm`), tw.style({ 'opacity-50': pressed })]}
                           alt="avatar image"
                         />
@@ -158,6 +165,7 @@ export default function ArtistProfile() {
         )}
         <ArtistLinks artistLinks={artistData?.artist_links!} />
         <ArtistStats artistStats={artistData?.artist_stats!} />
+        <ActivitiesView artistActivities={filteredArtistActivities!} />
       </View>
     </ScrollView>
   )

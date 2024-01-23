@@ -63,6 +63,14 @@ export function getCampaignDaysLeft(campaign_start_date: string, time_restraint 
   return daysLeft ?? 0
 }
 
+export function truncate_string(str: string, trunc: number) {
+  if (!str) return ''
+  if (str.length > trunc) {
+    str = str.slice(0, trunc) + '...'
+  }
+  return str
+}
+
 export function getSongTitle(campaign: MinCampaign | Campaign, trunc: number) {
   if (!campaign) return ''
   const { song_title, add_version_info, add_version_info_other, is_radio_edit } = campaign

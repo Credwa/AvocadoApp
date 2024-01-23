@@ -140,7 +140,7 @@ export default function Purchase() {
                           source={songData?.artists.avatar_url}
                           placeholder={defaultBlurhash}
                           contentFit="fill"
-                          cachePolicy="memory"
+                          cachePolicy="disk"
                           style={[tw.style(`h-5 w-5 rounded-full`, { 'opacity-50': pressed })]}
                           alt={`Profile picture for ${songData?.artists.artist_name}`}
                         />

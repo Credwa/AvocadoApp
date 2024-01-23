@@ -54,7 +54,7 @@ const FeaturedItem = ({ item }: { item: MinCampaign | Artist }) => {
               source={newItem.image_url}
               placeholder={getRandomBlurhash()}
               contentFit="fill"
-              cachePolicy="memory"
+              cachePolicy="disk"
               style={[tw.style(`h-40 w-40 rounded-sm`), tw.style({ 'opacity-50': pressed })]}
               alt={`Artwork for ${newItem.title} by ${item.artist_name}`}
             />
@@ -64,7 +64,7 @@ const FeaturedItem = ({ item }: { item: MinCampaign | Artist }) => {
                   song_id: item.song_id,
                   audio_url: item.audio_url,
                   title: getSongTitle(item, 20),
-                  artist: item.artist_name,
+                  artist: item.artist_name as string,
                   duration: item.duration,
                   artwork_url: item.artwork_url
                 }}

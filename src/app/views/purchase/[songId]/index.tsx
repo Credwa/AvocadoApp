@@ -49,7 +49,7 @@ const PurchaseHistory = () => {
             source={songData?.artwork_url}
             placeholder={defaultBlurhash}
             contentFit="fill"
-            cachePolicy="memory"
+            cachePolicy="disk"
             style={[tw.style(`h-20 w-20 rounded-sm`)]}
             alt={`Profile picture for ${songData?.artists.artist_name}`}
           />
@@ -66,7 +66,7 @@ const PurchaseHistory = () => {
                   source={songData?.artists.avatar_url}
                   placeholder={getRandomBlurhash()}
                   contentFit="fill"
-                  cachePolicy="memory"
+                  cachePolicy="disk"
                   style={[tw.style(`h-12 w-12 rounded-full`)]}
                   alt={`Profile picture for ${songData?.artists.artist_name}`}
                 />

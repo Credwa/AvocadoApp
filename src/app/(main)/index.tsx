@@ -86,7 +86,7 @@ const Root = () => {
                 src={data?.avatar_url ?? ''}
                 size={12}
                 styles="mr-2 shadow-offset-1 shadow-md shadow-black mt-2"
-                onPress={() => setMenuOpen((prev) => !prev)}
+                onPress={() => router.push('/views/profile/user')}
               />
               <DropdownMenu data={dropDownItems} open={menuOpen} targetHeight={12} />
             </View>
@@ -135,7 +135,7 @@ const Root = () => {
                             placeholder={getRandomBlurhash()}
                             contentFit="fill"
                             transition={200}
-                            cachePolicy="memory"
+                            cachePolicy="disk"
                             style={[tw.style(`w-12 h-12 rounded-sm`), tw.style({ 'opacity-50': pressed })]}
                             alt="avatar image"
                           />

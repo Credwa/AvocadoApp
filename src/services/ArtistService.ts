@@ -43,6 +43,22 @@ export const displayedStats = {
   }
 } as Record<string, Record<string, number | null>>
 
+const artistActivity = z.object({
+  source: z.string().nullable(),
+  activity_text: z.string().nullable(),
+  activity_url: z.string().nullable(),
+  activity_date: z.string().nullable(),
+  activity_avatar: z.string().nullable(),
+  track_info: z
+    .object({
+      title: z.string().nullable(),
+      avatar: z.string().nullable(),
+      release_date: z.string().nullable()
+    })
+    .nullable()
+})
+export type ArtistActivity = z.infer<typeof artistActivity>
+
 const artistProfile = z.object({
   ...artist.shape,
   bio: z.string().or(z.null()),
@@ -79,6 +95,9 @@ const artistProfile = z.object({
     shazam_shazams_total: z.number().or(z.null()),
     tracklist_tracklist_views_total: z.number().or(z.null()),
     shown_stats: z.array(z.string()).or(z.null())
+  }),
+  artist_activities: z.object({
+    activities: z.array(artistActivity).or(z.null())
   }),
   songs: z.array(
     z.object({
