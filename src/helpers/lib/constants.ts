@@ -24,7 +24,39 @@ export const music_genres = [
   'World'
 ]
 
-export const BASE_URL = 'http://192.168.1.23:8080/api/v1'
+export const environments = {
+  dev: {
+    BASE_URL: 'http://192.168.1.23:8080/api/v1',
+    stripePublishableKey:
+      'pk_test_51OEgCAD0PCnrjk8E0WhE2BnEJ5Ij9zgjD2lITATKCg8vzdEsYcAELFYFcJqMPsDjy0LlhgBBnt6WLHsxhYdMeZ3c00YW7Bp8el'
+  },
+  staging: {
+    BASE_URL: 'https://seashell-app-n3uvl.ondigitalocean.app/api/v1',
+    stripePublishableKey:
+      'pk_test_51OEgCAD0PCnrjk8E0WhE2BnEJ5Ij9zgjD2lITATKCg8vzdEsYcAELFYFcJqMPsDjy0LlhgBBnt6WLHsxhYdMeZ3c00YW7Bp8el'
+  },
+  prod: {
+    BASE_URL: 'https://seashell-app-n3uvl.ondigitalocean.app/api/v1',
+    stripePublishableKey:
+      'pk_test_51OEgCAD0PCnrjk8E0WhE2BnEJ5Ij9zgjD2lITATKCg8vzdEsYcAELFYFcJqMPsDjy0LlhgBBnt6WLHsxhYdMeZ3c00YW7Bp8el'
+  }
+} as const
+
+export const getEnvironment = () => {
+  if (__DEV__ && process.env.NODE_ENV === 'development') {
+    return environments['dev']
+  } else if (__DEV__ && process.env.NODE_ENV !== 'development') {
+    // development builds NODE_ENV is production we want to use staging there
+    // TODO create proper staging env
+    return environments['prod']
+  } else if (!__DEV__ && process.env.NODE_ENV === 'production') {
+    return environments['prod']
+  } else {
+    throw new Error('Unknown environment')
+  }
+}
+
+export const BASE_URL = getEnvironment().BASE_URL
 
 export const defaultBlurhash =
   '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj['

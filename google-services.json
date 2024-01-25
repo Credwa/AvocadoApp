@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "804771859130",
+    "project_id": "avocadoapp-cf5dd",
+    "storage_bucket": "avocadoapp-cf5dd.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:804771859130:android:010743d70fae504d47d083",
+        "android_client_info": {
+          "package_name": "com.avocado.shares.myavocado"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCig6043huXzk6aoUgqETIVhBzSndQhMGk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,58 +1,22 @@
 import { useRouter } from 'expo-router'
-import { FC } from 'react'
-import { Alert, Pressable, SectionList, View } from 'react-native'
+import { Alert, SectionList, View } from 'react-native'
 
+import { ListItem } from '@/components/atoms/ListItem'
 import { Typography } from '@/components/atoms/Typography'
 import { useSession } from '@/context/authContext'
 import { usePlayback } from '@/context/playbackContext'
 import tw from '@/helpers/lib/tailwind'
+import { useAppStore } from '@/store'
 import { Ionicons } from '@expo/vector-icons'
-
-type ListItemProps = {
-  onPress?: () => void
-  children: any
-  icon: JSX.Element
-  index: number
-  length: number
-  showCaret?: boolean
-}
-
-const ListItem: FC<ListItemProps> = ({ icon, onPress, children, index, length, showCaret = true }) => {
-  return (
-    <Pressable
-      onPress={onPress}
-      style={({ pressed }) => [
-        tw.style(`w-full px-4 bg-white dark:bg-zinc-800`),
-        tw.style({
-          'bg-zinc-300 dark:bg-zinc-700': pressed,
-          'rounded-t-md': index === 0 && length > 1,
-          'rounded-b-md': index === length - 1 && length > 1,
-          'rounded-md': length === 1
-        })
-      ]}
-    >
-      <View
-        style={tw.style(`flex-row justify-between py-3 items-center`, {
-          'border-b-0': index === length - 1 && length > 0
-        })}
-      >
-        <View style={tw`flex-row items-center gap-x-4`}>
-          {icon}
-          {children}
-        </View>
-
-        {showCaret && <Ionicons style={tw`items-end pt-1 icon-neutral`} name="chevron-forward" size={16} />}
-      </View>
-    </Pressable>
-  )
-}
 
 export default function Settings() {
   const router = useRouter()
   const { signOut } = useSession() ?? {}
-  const { stop } = usePlayback() ?? {}
+  const { stop, isPlaying } = usePlayback() ?? {}
+  const tabBarHeight = useAppStore((state) => state.tabBarHeight)
+  const playerMarginBottom = isPlaying ? `pb-[${tabBarHeight * 1.3}]` : ''
 
-  const iconStyle = tw`mt-1 icon-neutral`
+  const iconStyle = tw`icon-neutral`
   const iconSize = 20
   const DATA = [
     {
@@ -94,13 +58,13 @@ export default function Settings() {
   }
 
   return (
-    <View style={tw`flex-1 py-10 gutter-md`}>
+    <View style={tw`flex-1 py-10 gutter-md ${playerMarginBottom}`}>
       <SectionList
         sections={DATA}
         keyExtractor={(item, index) => item.title + index}
         renderItem={({ item, index, section }) => (
           <ListItem length={section.data.length} index={index} onPress={item.onPress} icon={item.icon}>
-            <Typography weight={500} style={tw`text-sm text-zinc-950 dark:text-zinc-100`}>
+            <Typography weight={500} style={tw`py-1 text-sm text-zinc-950 dark:text-zinc-100`}>
               {item.title}
             </Typography>
           </ListItem>
@@ -119,7 +83,7 @@ export default function Settings() {
         icon={<Ionicons name="exit-outline" style={iconStyle} size={iconSize} />}
         showCaret={false}
       >
-        <Typography weight={500} style={tw`text-sm text-red-600 dark:text-red-400`}>
+        <Typography weight={500} style={tw`py-1 text-sm text-red-600 dark:text-red-400`}>
           Sign Out
         </Typography>
       </ListItem>

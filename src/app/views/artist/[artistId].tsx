@@ -62,12 +62,14 @@ export default function ArtistProfile() {
             <Typography weight={500} style={tw`p-4 text-3xl text-white`}>
               {artistData?.artist_name}
             </Typography>
-            <MaterialIcons
-              name="verified"
-              style={tw`self-center`}
-              size={32}
-              color={colorScheme === 'dark' ? tw.color('text-primary-main') : tw.color('text-primary-main')}
-            />
+            {artistData?.is_verified && (
+              <MaterialIcons
+                name="verified"
+                style={tw`self-center`}
+                size={32}
+                color={colorScheme === 'dark' ? tw.color('text-primary-main') : tw.color('text-primary-main')}
+              />
+            )}
           </View>
         </SafeAreaView>
       </View>

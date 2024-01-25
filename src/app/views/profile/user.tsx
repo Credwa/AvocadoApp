@@ -5,13 +5,14 @@ import { router } from 'expo-router'
 import React, { useState } from 'react'
 import { Dimensions, Pressable, SafeAreaView, View } from 'react-native'
 
+import { Button } from '@/components/atoms/Button'
 import ShowToast from '@/components/atoms/Toast'
 import { Typography } from '@/components/atoms/Typography'
 import { getRandomBlurhash } from '@/helpers/lib/lib'
 import tw from '@/helpers/lib/tailwind'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import { getPurchasedCampaigns } from '@/services/CampaignService'
-import { getCurrentUserProfile, uploadNewAvatar } from '@/services/UserService'
+import { getCurrentUserProfile, roles, uploadNewAvatar } from '@/services/UserService'
 import { Ionicons } from '@expo/vector-icons'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
@@ -27,11 +28,20 @@ const UserProfile = () => {
     enabled: !!currentUser?.id
   })
 
+  const uploadedPhotoRegex =
+    /profilephotos\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.jpeg$/i
+
   const { mutateAsync } = useMutation({
     mutationFn: async (uri: string) => {
       const imageAsString = await FileSystem.readAsStringAsync(uri, { encoding: 'base64' })
       const base64 = `${imageAsString}`
-      return uploadNewAvatar({ id: currentUser?.id as string, imageBase64: base64 })
+      return uploadNewAvatar({
+        id: currentUser?.id as string,
+        imageBase64: base64,
+        currentAvatar: uploadedPhotoRegex.test(currentUser?.avatar_url as string)
+          ? currentUser?.avatar_url.split('/').pop()?.split('?').shift()
+          : undefined
+      })
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['user/me'] })
@@ -74,7 +84,7 @@ const UserProfile = () => {
   }
 
   return (
-    <View style={tw`flex flex-col flex-1 background-default`}>
+    <View style={tw`relative flex flex-col flex-1 background-default`}>
       <View style={tw`relative h-[${screenHeight / 3}px]`}>
         <Image
           source=""
@@ -106,22 +116,31 @@ const UserProfile = () => {
         </View>
       </View>
 
-      <View style={tw`flex-row justify-around w-full gutter-md top-28`}>
-        <View style={tw`flex-col items-center justify-center`}>
-          <Typography weight={500} style={tw`text-lg dark:text-zinc-300 text-zinc-700`}>
-            Owned Songs
-          </Typography>
-          <Typography weight={600} style={tw`text-2xl`}>
-            {purchasedCampaigns?.length}
-          </Typography>
+      <View style={tw`w-full top-28 gutter-md gap-y-8`}>
+        <View style={tw`flex-row justify-around w-full`}>
+          <View style={tw`flex-col items-center justify-center`}>
+            <Typography weight={500} style={tw`text-lg dark:text-zinc-300 text-zinc-700`}>
+              Owned Songs
+            </Typography>
+            <Typography weight={600} style={tw`text-2xl`}>
+              {purchasedCampaigns?.length}
+            </Typography>
+          </View>
+          <View style={tw`flex-col items-center justify-center`}>
+            <Typography weight={500} style={tw`text-lg dark:text-zinc-300 text-zinc-700`}>
+              Following
+            </Typography>
+            <Typography weight={600} style={tw`text-2xl`}>
+              0
+            </Typography>
+          </View>
         </View>
-        <View style={tw`flex-col items-center justify-center`}>
-          <Typography weight={500} style={tw`text-lg dark:text-zinc-300 text-zinc-700`}>
-            Following
-          </Typography>
-          <Typography weight={600} style={tw`text-2xl`}>
-            0
-          </Typography>
+        <View>
+          {currentUser?.role === roles.Enum.artist && (
+            <Button outline onPress={() => router.push(`/views/artist/${currentUser?.id}`)}>
+              View Artist Profile
+            </Button>
+          )}
         </View>
       </View>
     </View>

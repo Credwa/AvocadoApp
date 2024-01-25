@@ -1,10 +1,11 @@
 import { useFonts } from 'expo-font'
 import * as Linking from 'expo-linking'
+import * as Notifications from 'expo-notifications'
 import { router, Slot, useSegments } from 'expo-router'
 import * as SplashScreen from 'expo-splash-screen'
 import { PostHogProvider } from 'posthog-react-native'
-import { useCallback, useEffect } from 'react'
-import { Appearance as AppAppearance, AppStateStatus, Platform, StatusBar, View } from 'react-native'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { Appearance as AppAppearance, AppStateStatus, Platform, StatusBar } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { RootSiblingParent } from 'react-native-root-siblings'
 import * as Sentry from 'sentry-expo'
@@ -12,10 +13,12 @@ import { useAppColorScheme, useDeviceContext } from 'twrnc'
 
 import { SessionProvider } from '@/context/authContext'
 import { PlaybackProvider } from '@/context/playbackContext'
+import { getEnvironment } from '@/helpers/lib/constants'
 import { createSessionFromUrl } from '@/helpers/lib/lib'
 import tw from '@/helpers/lib/tailwind'
 import { useAppState } from '@/hooks/useAppState'
 import { useOnlineManager } from '@/hooks/useOnlineManager'
+import { registerForPushNotificationsAsync } from '@/services/NotificationService'
 import { useAppStore } from '@/store'
 import { StripeProvider } from '@stripe/stripe-react-native'
 import { focusManager, QueryClient, QueryClientProvider } from '@tanstack/react-query'
@@ -49,9 +52,14 @@ const RootLayout = () => {
   useOnlineManager()
   useAppState(onAppStateChange)
   useDeviceContext(tw, { withDeviceColorScheme: false })
+  const notificationListener = useRef<Notifications.Subscription>()
+  const responseListener = useRef<Notifications.Subscription>()
+  const [expoPushToken, setExpoPushToken] = useState<string | undefined>(undefined)
+  const [notification, setNotification] = useState<Notifications.Notification | undefined>(undefined)
   const setColorScheme = useAppColorScheme(tw)[2]
   const appearance = useAppStore((state) => state.appearance)
 
+  // Handle color scheme changes
   useEffect(() => {
     const subscription = AppAppearance.addChangeListener((scheme) => {
       if (appearance === 'automatic') {
@@ -67,11 +75,34 @@ const RootLayout = () => {
     }
   }, [appearance])
 
+  // Set initial color scheme
   useEffect(() => {
     if (appearance === 'automatic') {
       setColorScheme(AppAppearance.getColorScheme())
     } else {
       setColorScheme(appearance)
+    }
+  }, [])
+
+  // Handle notifications
+  useEffect(() => {
+    registerForPushNotificationsAsync().then((token) => setExpoPushToken(token))
+
+    notificationListener.current = Notifications.addNotificationReceivedListener((notification) => {
+      setNotification(notification)
+    })
+
+    responseListener.current = Notifications.addNotificationResponseReceivedListener((response) => {
+      console.log(response)
+    })
+
+    return () => {
+      if (notificationListener.current) {
+        Notifications.removeNotificationSubscription(notificationListener.current)
+      }
+      if (responseListener.current) {
+        Notifications.removeNotificationSubscription(responseListener.current)
+      }
     }
   }, [])
 
@@ -88,6 +119,7 @@ const RootLayout = () => {
     'REM-Bold': require('~/assets/fonts/REM/REM-Bold.ttf')
   })
 
+  // Handle deep linking
   const init = async () => {
     if (url && segments[0] === '(main)' && !segments[1]) {
       const session = await createSessionFromUrl(url)
@@ -98,10 +130,12 @@ const RootLayout = () => {
     }
   }
 
+  // Handle deep linking
   useEffect(() => {
     init()
   }, [url])
 
+  // Hide splash screen
   const onLayoutRootView = useCallback(async () => {
     if (fontsLoaded || fontError) {
       await SplashScreen.hideAsync()
@@ -122,7 +156,7 @@ const RootLayout = () => {
     >
       <SessionProvider>
         <StripeProvider
-          publishableKey="pk_test_51OEgCAD0PCnrjk8E0WhE2BnEJ5Ij9zgjD2lITATKCg8vzdEsYcAELFYFcJqMPsDjy0LlhgBBnt6WLHsxhYdMeZ3c00YW7Bp8el"
+          publishableKey={getEnvironment().stripePublishableKey}
           urlScheme="app.myavocado" // required for 3D Secure and bank redirects
           merchantIdentifier="merchant.com.shares.app.myavocado" // required for Apple Pay
         >
