@@ -31,7 +31,7 @@ export const PlayButton: FC<PlayButtonProps> = ({ styles, metadata, animationSho
         })
       }
     >
-      {isPlaying && currentMetadata?.audio_url === metadata.audio_url ? (
+      {isPlaying && currentMetadata && currentMetadata?.audio_url === metadata.audio_url ? (
         <Ionicons name="pause-sharp" size={24} color={tw.color('text-zinc-800')} />
       ) : (
         <Ionicons name="play-sharp" size={24} style={tw`ml-1`} color={tw.color('text-zinc-800')} />

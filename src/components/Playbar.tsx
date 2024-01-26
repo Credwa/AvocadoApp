@@ -6,6 +6,7 @@ import { Pressable, View } from 'react-native'
 
 import { usePlayback } from '@/context/playbackContext'
 import { defaultBlurhash } from '@/helpers/lib/constants'
+import { getRandomBlurhash } from '@/helpers/lib/lib'
 import tw from '@/helpers/lib/tailwind'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import { useAppStore } from '@/store'
@@ -30,6 +31,7 @@ export const Playbar: FC<PlaybarProps> = () => {
       ? ['#0f0421', '#0f0421', '#110424', '#120426', '#120426', '#140529', '#15052b']
       : [tw.color('text-primary-dark'), tw.color('text-primary-dark'), tw.color('text-primary-darker')]
 
+  console.log('is playing - ', isPlaying)
   return (
     <View
       style={tw.style(
@@ -50,7 +52,7 @@ export const Playbar: FC<PlaybarProps> = () => {
             <View style={tw`flex-row items-center gap-x-3`}>
               <Image
                 source={artwork_url}
-                placeholder={defaultBlurhash}
+                placeholder={getRandomBlurhash()}
                 contentFit="fill"
                 transition={50}
                 cachePolicy="disk"

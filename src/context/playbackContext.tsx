@@ -1,8 +1,11 @@
 import { Audio, InterruptionModeAndroid, InterruptionModeIOS } from 'expo-av'
+import { usePostHog } from 'posthog-react-native'
 import React, { useEffect, useState } from 'react'
+import { set } from 'react-hook-form'
 import RootSiblingsManager from 'react-native-root-siblings'
 
 import { Playbar } from '@/components/Playbar'
+import { fetchWithAuth } from '@/helpers/lib/lib'
 
 export type PlaybackMetadata = {
   song_id: string
@@ -38,30 +41,34 @@ async function loadAsync(
   hasPermissions: boolean,
   currentAudio: string | null
 ): Promise<Audio.Sound | undefined> {
-  if (currentAudio === audio_url) return
-  if (!audio_url) return
-  if (!hasPermissions) {
-    const { granted } = await Audio.requestPermissionsAsync()
+  try {
+    if (currentAudio === audio_url) return
+    if (!audio_url) return
+    if (!hasPermissions) {
+      const { granted } = await Audio.requestPermissionsAsync()
 
-    if (!granted) {
-      return
+      if (!granted) {
+        return
+      }
     }
+    await Audio.setAudioModeAsync({
+      allowsRecordingIOS: false,
+      playsInSilentModeIOS: true
+    })
+    console.log(`loading music - ${audio_url}`)
+    const playbackObject = new Audio.Sound()
+
+    await playbackObject.loadAsync(
+      {
+        uri: audio_url
+      },
+      { shouldPlay: true }
+    )
+
+    return playbackObject
+  } catch (error) {
+    console.log('load error', error)
   }
-  await Audio.setAudioModeAsync({
-    allowsRecordingIOS: false,
-    playsInSilentModeIOS: true
-  })
-  console.log(`loading music - ${audio_url}`)
-  const playbackObject = new Audio.Sound()
-
-  await playbackObject.loadAsync(
-    {
-      uri: audio_url
-    },
-    { shouldPlay: true }
-  )
-
-  return playbackObject
 }
 
 const PlaybackStatus = {
@@ -76,6 +83,7 @@ const PlaybackStatus = {
 } as const
 
 export function PlaybackProvider(props: React.PropsWithChildren) {
+  const posthog = usePostHog()
   const [currentPlaybackObject, setCurrentPlaybackObject] = useState<Audio.Sound>()
   const [currentPlaybackStatus, setCurrentPlaybackStatus] = useState<keyof typeof PlaybackStatus>(
     PlaybackStatus.UNLOADED
@@ -132,6 +140,7 @@ export function PlaybackProvider(props: React.PropsWithChildren) {
       ? () => {
           console.log('Unloading Ssound')
           stopPlayback()
+          setCurrentPlaybackMetadata(null)
         }
       : undefined
   }, [currentPlaybackObject])
@@ -143,8 +152,10 @@ export function PlaybackProvider(props: React.PropsWithChildren) {
       setCurrentPlaybackObject(undefined)
       playbar?.destroy()
       console.log('stopping audio')
-      await currentPlaybackObject?.stopAsync()
+
       await currentPlaybackObject?.unloadAsync()
+
+      await currentPlaybackObject?.stopAsync()
     } catch (error) {
       console.log('stop errors', error)
     }
@@ -155,29 +166,54 @@ export function PlaybackProvider(props: React.PropsWithChildren) {
       value={{
         play: async (metadata: PlaybackMetadata) => {
           try {
-            if (currentAudio && currentAudio !== metadata.audio_url) {
+            if (currentPlaybackMetadata && currentPlaybackMetadata.audio_url !== metadata.audio_url) {
+              // if different audio stop current audio and play new audio
+              console.log('ran')
               await stopPlayback()
+            } else if (
+              currentPlaybackMetadata &&
+              currentPlaybackMetadata.audio_url === metadata.audio_url &&
+              isPlaying
+            ) {
+              // if playing don't do anything
+              return
+            } else if (
+              currentPlaybackMetadata &&
+              currentPlaybackMetadata.audio_url === metadata.audio_url &&
+              !isPlaying
+            ) {
+              // if paused play
+              await currentPlaybackObject?.playAsync()
+              setIsPlaying(true)
+              return
             }
+            setPlaybar(new RootSiblingsManager(<Playbar />))
             const playbackObject = await loadAsync(metadata.audio_url, hasPermissions, currentAudio)
             setCurrentPlaybackObject(playbackObject ?? currentPlaybackObject)
-            console.log(`playing music -  ${metadata}`)
             setCurrentPlaybackMetadata(metadata)
-            await currentPlaybackObject?.playAsync()
-            if (!playbar) setPlaybar(new RootSiblingsManager(<Playbar />))
+            console.log(`playing music -  ${metadata}`)
+            posthog?.capture('Play', { ...currentPlaybackMetadata })
+            fetchWithAuth(`/campaigns/play/${metadata.song_id}`, undefined, {
+              method: 'POST'
+            })
           } catch (error) {
             console.log('play error', error)
           }
         },
         pause: async () => {
           try {
-            const status = await currentPlaybackObject?.pauseAsync()
-            console.log('paused status', status)
+            await currentPlaybackObject?.pauseAsync()
           } catch (error) {
             console.log('pause error', error)
           }
         },
         stop: async () => {
-          await stopPlayback()
+          try {
+            await stopPlayback()
+            setCurrentPlaybackMetadata(null)
+          } catch (error) {
+            console.log('stop errors', error)
+          }
         },
         isPlaying,
         viewVisible: !!playbar,

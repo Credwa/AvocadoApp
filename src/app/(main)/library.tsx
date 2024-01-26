@@ -142,7 +142,7 @@ const Library = () => {
                       <Typography
                         weight={500}
                         style={tw.style(`text-sm text-zinc-950 dark:text-zinc-100`, {
-                          'dark:text-secondary-dark text-secondary-main': currentSong?.song_id === campaign.song_id
+                          'dark:text-secondary-dark text-secondary-main': currentMetadata?.song_id === campaign.song_id
                         })}
                       >
                         {getSongTitle(campaign, 40)}

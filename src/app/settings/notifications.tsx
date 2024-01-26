@@ -44,7 +44,6 @@ const Notifications = () => {
   const toggleSwitch = async () => {
     if (!isEnabled) {
       const { status: existingStatus } = await PushNotifications.getPermissionsAsync()
-      console.log(existingStatus)
       if (existingStatus === 'granted') {
         mutateAsync({ notifications_enabled: true })
         setIsEnabled(true)
