@@ -27,7 +27,8 @@ const Root = () => {
   const { data } = useQuery({ ...getCurrentUserProfile() })
   const tabBarHeight = useBottomTabBarHeight()
   const setTabBarHeight = useAppStore((state) => state.setTabBarHeight)
-
+  const safeAreaInsets = useSafeAreaInsets()
+  const [refreshing, setRefreshing] = React.useState(false)
   const { data: purchasedCampaigns } = useQuery({
     ...getPurchasedCampaigns(data?.id),
     enabled: !!data?.id
@@ -43,8 +44,6 @@ const Root = () => {
     colorScheme === 'dark'
       ? [tw.color('text-primary-darker'), tw.color('text-primary-dark'), tw.color('text-primary-main')]
       : [tw.color('text-primary-light'), tw.color('text-primary-main'), tw.color('text-primary-dark')]
-  const safeAreaInsets = useSafeAreaInsets()
-  const [refreshing, setRefreshing] = React.useState(false)
 
   const marqueeHeight = height * 0.4
   const onRefresh = React.useCallback(() => {

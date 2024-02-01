@@ -10,9 +10,19 @@ type PlayButtonProps = {
   styles?: string
   metadata: PlaybackMetadata
   animationShown?: boolean
+  iconSize?: number
+  playml?: number
+  pauseml?: number
 }
 
-export const PlayButton: FC<PlayButtonProps> = ({ styles, metadata, animationShown = true }) => {
+export const PlayButton: FC<PlayButtonProps> = ({
+  styles,
+  metadata,
+  animationShown = true,
+  iconSize = 24,
+  playml = 1,
+  pauseml = 0.5
+}) => {
   const { play, pause, isPlaying, currentMetadata } = usePlayback()
 
   return (
@@ -27,14 +37,14 @@ export const PlayButton: FC<PlayButtonProps> = ({ styles, metadata, animationSho
       }}
       style={({ pressed }) =>
         tw.style(`w-10 h-10 rounded-full bg-secondary-main flex justify-center items-center`, styles, {
-          'opacity-80 w-9 h-9': pressed && animationShown
+          'opacity-80': pressed && animationShown
         })
       }
     >
       {isPlaying && currentMetadata && currentMetadata?.audio_url === metadata.audio_url ? (
-        <Ionicons name="pause-sharp" size={24} color={tw.color('text-zinc-800')} />
+        <Ionicons name="pause-sharp" size={iconSize} style={tw`ml-${pauseml}`} color={tw.color('text-zinc-800')} />
       ) : (
-        <Ionicons name="play-sharp" size={24} style={tw`ml-1`} color={tw.color('text-zinc-800')} />
+        <Ionicons name="play-sharp" size={iconSize} style={tw`ml-${playml}`} color={tw.color('text-zinc-800')} />
       )}
     </Pressable>
   )

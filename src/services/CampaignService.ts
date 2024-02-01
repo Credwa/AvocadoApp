@@ -93,6 +93,15 @@ export const getCampaignById = (songId: string) => {
   }
 }
 
+export const getDiscoveryCampaigns = (offset: number) => {
+  return {
+    queryKey: ['campaigns', 'discovery', offset],
+    queryFn: async (): Promise<Campaign[]> => {
+      return fetchWithAuth<Campaign[]>(`/campaigns/discover?limit=8&offset=${offset}`, z.array(campaign))
+    }
+  }
+}
+
 const purchasedCampaign = z.object({
   song_id: z.string(),
   song_title: z.string(),

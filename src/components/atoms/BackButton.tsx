@@ -34,7 +34,7 @@ export default function BackButton({
   return (
     <Pressable
       style={[
-        tw.style(`p-4`, { 'dark:bg-[#1f2937CC] rounded-full w-8 p-0 ml-4 mt-4': hasBackground }),
+        tw.style(`p-4`, { 'dark:bg-[#1f2937CC] bg-[#ffffffCC] rounded-full w-8 p-0 ml-4 mt-4': hasBackground }),
         tw.style(style)
       ]}
       onPress={goBack}

@@ -7,7 +7,7 @@ import { Ionicons } from '@expo/vector-icons'
 type ListItemProps = {
   onPress?: () => void
   children: any
-  icon: JSX.Element
+  icon?: JSX.Element
   index: number
   length: number
   showCaret?: boolean

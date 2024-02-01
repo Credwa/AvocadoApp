@@ -56,7 +56,7 @@ export default function ArtistProfile() {
           alt={`Profile picture for ${artistData?.artist_name}`}
         />
         <SafeAreaView style={tw`flex justify-between flex-1 h-[${screenHeight / 2.3}px]`}>
-          <BackButton hasBackground />
+          <BackButton hasBackground href={url} />
 
           <View style={tw`flex-row`}>
             <Typography weight={500} style={tw`p-4 text-3xl text-white`}>

@@ -96,7 +96,7 @@ const Library = () => {
                   <Typography weight={500} style={tw`text-2xl pt-2`}>
                     Library
                   </Typography>
-                  <Typography weight={300} style={tw``}>
+                  <Typography weight={300} style={tw`text-base`}>
                     {purchasedCampaigns?.length} songs
                   </Typography>
                 </View>

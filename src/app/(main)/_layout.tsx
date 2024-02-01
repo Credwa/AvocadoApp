@@ -52,6 +52,8 @@ export default function Layout() {
     >
       <Tabs.Screen name="index" options={{ ...tabBarOptions('home-sharp', 'Home') }} />
       <Tabs.Screen name="search" options={{ ...tabBarOptions('search', 'Search') }} />
+      <Tabs.Screen name="discover" options={{ ...tabBarOptions('star', 'Discover') }} />
+
       <Tabs.Screen
         name="library"
         options={{

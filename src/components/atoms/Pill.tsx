@@ -12,11 +12,11 @@ type PillProps = PressableProps & {
 }
 
 export const Pill: FC<PillProps> = ({ children, onPress, styles, selected = false }) => {
-  let color = `border dark:border-zinc-400 border-zinc-500`
-  let textColor = `dark:text-zinc-300 text-zinc-500`
+  let color = `border dark:border-secondary-light border-secondary-dark`
+  let textColor = `dark:text-secondary-light text-secondary-dark`
   if (selected) {
-    color = `dark:bg-zinc-700 dark:border-zinc-700 bg-zinc-600 border-zinc-600`
-    textColor = `text-zinc-100`
+    color = `dark:bg-secondary-light dark:border-secondary-light bg-secondary-main border-secondary-main`
+    textColor = `text-zinc-950`
   }
 
   return (

@@ -5,7 +5,6 @@ import { FC } from 'react'
 import { Pressable, View } from 'react-native'
 
 import { usePlayback } from '@/context/playbackContext'
-import { defaultBlurhash } from '@/helpers/lib/constants'
 import { getRandomBlurhash } from '@/helpers/lib/lib'
 import tw from '@/helpers/lib/tailwind'
 import { useColorScheme } from '@/hooks/useColorScheme'
