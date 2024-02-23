@@ -39,8 +39,8 @@ export default function Layout() {
         options={{
           headerShown: true,
           title: 'Purchase History',
-          headerBackVisible: true,
-          headerTitleStyle: tw`text-zinc-100`,
+          headerBackVisible: false,
+          headerTitleStyle: tw`dark:text-zinc-100 text-zinc-950`,
           headerStyle: tw`bg-transparent`,
           headerLeft: () => <BackButton style="p-0" />
         }}

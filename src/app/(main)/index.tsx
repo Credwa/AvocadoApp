@@ -11,7 +11,7 @@ import { DropdownMenu } from '@/components/DropdownMenu'
 import { getRandomBlurhash, getSongTitle } from '@/helpers/lib/lib'
 import tw from '@/helpers/lib/tailwind'
 import { getPurchasedCampaigns } from '@/services/CampaignService'
-import { getCurrentUserProfile } from '@/services/UserService'
+import { getCurrentUserProfile, getStripeAccountBalance, getStripeAccountInfo } from '@/services/UserService'
 import { useAppStore } from '@/store'
 import { Foundation } from '@expo/vector-icons'
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
@@ -24,7 +24,11 @@ const height = Dimensions.get('window').height
 const Root = () => {
   const colorScheme = useColorScheme()
   const [menuOpen, setMenuOpen] = useState(false)
-  const { data } = useQuery({ ...getCurrentUserProfile() })
+  const { data, isLoading } = useQuery({ ...getCurrentUserProfile() })
+  if (!isLoading && !data?.is_onboarded) {
+    router.push('/onboarding')
+  }
+
   const tabBarHeight = useBottomTabBarHeight()
   const setTabBarHeight = useAppStore((state) => state.setTabBarHeight)
   const safeAreaInsets = useSafeAreaInsets()
@@ -33,7 +37,17 @@ const Root = () => {
     ...getPurchasedCampaigns(data?.id),
     enabled: !!data?.id
   })
+  const { data: stripeAccountData, isLoading: isStripeAccDataLoading } = useQuery({
+    ...getStripeAccountInfo(data?.id),
+    enabled: !!data?.id
+  })
 
+  const { data: stripeAccountBalance, isLoading: isStripeAccountBalanceLoading } = useQuery({
+    ...getStripeAccountBalance(data?.id),
+    enabled: !!data?.id
+  })
+
+  console.log('stripeAccountBalance', stripeAccountBalance)
   const shownCampaigns = purchasedCampaigns?.slice(0, 5)
 
   useEffect(() => {
@@ -95,9 +109,18 @@ const Root = () => {
             <View style={tw`flex-row items-center content-center justify-center gap-x-1`}>
               <Foundation name="dollar" size={64} style={tw`mb-3`} color={tw.color('text-zinc-100')} />
               <Typography weight={500} style={tw`text-6xl text-zinc-100`}>
-                244.68
+                {isStripeAccountBalanceLoading
+                  ? '0.00'
+                  : stripeAccountBalance?.available.reduce((acc, curr) => acc + curr.amount / 100, 0).toFixed(2)}
               </Typography>
             </View>
+            {!isStripeAccDataLoading && !stripeAccountData?.charges_enabled && !stripeAccountData?.payouts_enabled && (
+              <Pressable>
+                <Typography weight={500} style={tw`text-base underline text-neutral-200 opacity-90`}>
+                  Tap to fill information onboarding to withdraw
+                </Typography>
+              </Pressable>
+            )}
           </View>
         </LinearGradient>
 

@@ -45,20 +45,26 @@ const PurchaseHistory = () => {
     <ScrollView style={tw`flex-1 py-8 background-default gutter-md`}>
       <SafeAreaView style={tw`mb-[${tabBarHeight * 1.5}px]`}>
         <View style={tw`gap-y-6`}>
-          <Image
-            source={songData?.artwork_url}
-            placeholder={defaultBlurhash}
-            contentFit="fill"
-            cachePolicy="disk"
-            style={[tw.style(`h-20 w-20 rounded-sm`)]}
-            alt={`Profile picture for ${songData?.artists.artist_name}`}
-          />
-          <Typography weight={500} style={tw`text-2xl`}>
-            {getSongTitle(songData!, 100)}
-          </Typography>
+          <Pressable onPress={() => router.push(`/views/song/${songId}`)}>
+            <Image
+              source={songData?.artwork_url}
+              placeholder={defaultBlurhash}
+              contentFit="fill"
+              cachePolicy="disk"
+              style={[tw.style(`h-20 w-20 rounded-sm`)]}
+              alt={`Profile picture for ${songData?.artists.artist_name}`}
+            />
+          </Pressable>
+
+          <Pressable onPress={() => router.push(`/views/song/${songId}`)}>
+            <Typography weight={500} style={tw`text-2xl`}>
+              {getSongTitle(songData!, 100)}
+            </Typography>
+          </Pressable>
+
           <Pressable
             style={tw.style(`self-start justify-end mb-12`)}
-            onPress={() => router.push(`views/artist/${songData?.artists.id}?url=views/purchase/${songId}`)}
+            onPress={() => router.push(`views/artist/${songData?.artists.id}`)}
           >
             {({ pressed }) => (
               <View style={tw.style(`flex-row items-center gap-x-3`, { 'opacity-50': pressed })}>
