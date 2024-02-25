@@ -5,7 +5,7 @@ import LottieView from 'lottie-react-native'
 import { usePostHog } from 'posthog-react-native'
 import { useEffect, useRef, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import { KeyboardAvoidingView, Platform, Pressable, View } from 'react-native'
+import { Alert, KeyboardAvoidingView, Platform, Pressable, View } from 'react-native'
 import { RootSiblingParent } from 'react-native-root-siblings'
 
 import BackButton from '@/components/atoms/BackButton'
@@ -18,10 +18,13 @@ import { defaultBlurhash } from '@/helpers/lib/constants'
 import { getSongTitle } from '@/helpers/lib/lib'
 import tw from '@/helpers/lib/tailwind'
 import { purchaseSchema, TPurchaseSchema } from '@/helpers/schemas/extras'
+import { supabase } from '@/helpers/supabase/supabase'
 import { useColorScheme } from '@/hooks/useColorScheme'
-import { getCampaignById, purchaseCampaign } from '@/services/CampaignService'
+import { getCampaignById, getPaymentSheet, purchaseCampaign } from '@/services/CampaignService'
+import { getCurrentUserProfile } from '@/services/UserService'
 import { useAppStore } from '@/store'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { initPaymentSheet, presentPaymentSheet } from '@stripe/stripe-react-native'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 const successAnim = require('~/assets/lottie/Confetti.json')
@@ -30,7 +33,7 @@ export default function Purchase() {
   const router = useRouter()
   const posthog = usePostHog()
   const queryClient = useQueryClient()
-  const userId = useAppStore((state) => state.user_id)
+  const userId = useAppStore((state: { user_id: string }) => state.user_id)
 
   const [success, setSuccess] = useState(false)
   const [shares, setShares] = useState(0)
@@ -51,20 +54,52 @@ export default function Purchase() {
   if (!songId) {
     router.back()
   }
+
   const { data: songData } = useQuery({
     ...getCampaignById(songId!)
   })
 
-  const { mutateAsync } = useMutation({
-    mutationFn: (shares: number) => {
-      return purchaseCampaign(songId!, userId, shares)
+  // const { mutateAsync } = useMutation({
+  //   mutationFn: (shares: number) => {
+  //     return purchaseCampaign(songId!, userId, shares)
+  //   },
+  //   onSuccess: () => {
+  //     queryClient.invalidateQueries({ queryKey: ['campaigns', songId!] })
+  //     queryClient.invalidateQueries({ queryKey: ['campaigns', 'purchase', userId] })
+  //     setSubmitting(false)
+  //     setSuccess(true)
+  //     posthog?.capture('song purchase', {
+  //       song_id: songData?.id,
+  //       shares,
+  //       total_cost: totalCost
+  //     })
+  //   },
+  //   onError: (error) => {
+  //     console.log(error)
+  //     setSubmitting(false)
+  //   }
+  // })
+
+  const {
+    mutateAsync: mutatePaymentSheet,
+    error: paymentSheetError,
+    isError: paymentSheetIsError
+  } = useMutation({
+    mutationFn: (info: { shares: number; email: string }) => {
+      return getPaymentSheet(
+        userId,
+        songId!,
+        info.shares,
+        info.email,
+        getSongTitle(songData!, 100),
+        songData?.artists.artist_name ?? ''
+      )
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['campaigns', songId!] })
       queryClient.invalidateQueries({ queryKey: ['campaigns', 'purchase', userId] })
       setSubmitting(false)
-      setSuccess(true)
-      posthog?.capture('song purchase', {
+      posthog?.capture('payment sheet open', {
         song_id: songData?.id,
         shares,
         total_cost: totalCost
@@ -76,11 +111,47 @@ export default function Purchase() {
     }
   })
 
+  const initializePaymentSheet = async () => {
+    const {
+      data: { user }
+    } = await supabase.auth.getUser()
+
+    const data = await mutatePaymentSheet({ shares, email: user?.email! })
+
+    const { error } = await initPaymentSheet({
+      merchantDisplayName: 'Avocado Shares',
+      customerId: data.customer,
+      customerEphemeralKeySecret: data.ephemeralKey,
+      paymentIntentClientSecret: data.paymentIntent,
+      allowsDelayedPaymentMethods: false
+    })
+    if (!error) {
+      setSubmitting(false)
+    }
+  }
+
+  const openPaymentSheet = async () => {
+    const { error } = await presentPaymentSheet()
+
+    if (error) {
+      Alert.alert(`Error code: ${error.code}`, error.message)
+    } else {
+      setSubmitting(false)
+      setSuccess(true)
+      posthog?.capture('song purchase', {
+        song_id: songData?.id,
+        shares,
+        total_cost: totalCost
+      })
+    }
+  }
+
   const onSubmit = async (formData: TPurchaseSchema) => {
+    setSubmitting(true)
+    await initializePaymentSheet()
     const sharesToPurchase = Number(formData.numberOfShares)
     if (sharesToPurchase < 1) return
-    setSubmitting(true)
-    await mutateAsync(sharesToPurchase)
+    openPaymentSheet()
   }
 
   useEffect(() => {
@@ -90,6 +161,10 @@ export default function Purchase() {
       }, 500)
     }
   }, [success])
+
+  useEffect(() => {
+    if (paymentSheetIsError) Alert.alert('Error', paymentSheetError?.message)
+  }, [paymentSheetError])
 
   const gradient =
     colorScheme === 'dark'
@@ -103,7 +178,7 @@ export default function Purchase() {
           {success ? (
             <View style={tw`flex items-center flex-1 mt-4 gutter-md gap-y-8`}>
               <Typography weight={500} style={tw`flex-wrap text-xl text-center`}>
-                Purchased {shares} {shares === 1 ? 'share' : 'shares'} of song {getSongTitle(songData!, 40)} by{' '}
+                Order placed for {shares} {shares === 1 ? 'share' : 'shares'} of song {getSongTitle(songData!, 40)} by{' '}
                 {songData?.artists.artist_name} for{' '}
                 {totalCost.toLocaleString('en-US', {
                   style: 'currency',
@@ -113,8 +188,6 @@ export default function Purchase() {
               <LottieView style={tw`w-full h-96 `} source={successAnim} ref={animationRef} autoPlay />
               <View style={tw.style(`w-full`)}>
                 <Button
-                  loading={submitting}
-                  disabled={shares === 0}
                   onPress={() => router.back()}
                   styles="rounded-md w-full text-center flex-col "
                   textStyles="text-white text-center "

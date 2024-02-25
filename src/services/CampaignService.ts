@@ -126,6 +126,30 @@ export const purchaseCampaign = (songId: string, userId: string, shares: number)
   })
 }
 
+const paymentSheet = z.object({
+  paymentIntent: z.string(),
+  ephemeralKey: z.string(),
+  customer: z.string(),
+  publishableKey: z.string()
+})
+
+type PaymentSheet = z.infer<typeof paymentSheet>
+
+export const getPaymentSheet = (
+  uid: string,
+  songId: string,
+  quantity: number,
+  email: string,
+  songName: string,
+  artistName: string
+) => {
+  console.log(email)
+  return fetchWithAuth<PaymentSheet>(`/campaigns/purchase/payment-sheet`, paymentSheet, {
+    method: 'POST',
+    body: JSON.stringify({ uid, songId, quantity, email, songName, artistName })
+  })
+}
+
 export const getPurchasedCampaigns = (userId?: string) => {
   return {
     queryKey: ['campaigns', 'purchase', userId],

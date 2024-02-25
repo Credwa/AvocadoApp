@@ -28,7 +28,7 @@ const accountLinkData = z.object({
 
 type AccountLinkData = z.infer<typeof accountLinkData>
 
-type User = z.infer<typeof user>
+export type User = z.infer<typeof user>
 
 export const getCurrentUserProfile = () => {
   return {

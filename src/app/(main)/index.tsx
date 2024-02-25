@@ -10,10 +10,11 @@ import { Avatar } from '@/components/Avatar'
 import { DropdownMenu } from '@/components/DropdownMenu'
 import { getRandomBlurhash, getSongTitle } from '@/helpers/lib/lib'
 import tw from '@/helpers/lib/tailwind'
+import useStripeOnboarding from '@/hooks/useStripeOnboarding'
 import { getPurchasedCampaigns } from '@/services/CampaignService'
 import { getCurrentUserProfile, getStripeAccountBalance, getStripeAccountInfo } from '@/services/UserService'
 import { useAppStore } from '@/store'
-import { Foundation } from '@expo/vector-icons'
+import { Foundation, Ionicons } from '@expo/vector-icons'
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
 import { useQuery } from '@tanstack/react-query'
 
@@ -28,6 +29,7 @@ const Root = () => {
   if (!isLoading && !data?.is_onboarded) {
     router.push('/onboarding')
   }
+  const { handleStripeOnboarding } = useStripeOnboarding(data, '/')
 
   const tabBarHeight = useBottomTabBarHeight()
   const setTabBarHeight = useAppStore((state) => state.setTabBarHeight)
@@ -41,6 +43,8 @@ const Root = () => {
     ...getStripeAccountInfo(data?.id),
     enabled: !!data?.id
   })
+
+  console.log('stripeAccountData', stripeAccountData)
 
   const { data: stripeAccountBalance, isLoading: isStripeAccountBalanceLoading } = useQuery({
     ...getStripeAccountBalance(data?.id),
@@ -105,7 +109,7 @@ const Root = () => {
             </View>
           </View>
           <View style={tw`flex items-center w-full h-full gap-y-4`} onTouchEnd={() => setMenuOpen(false)}>
-            <Typography style={tw`text-lg text-neutral-200 opacity-90`}>Earnings</Typography>
+            <Typography style={tw`text-lg text-neutral-200 opacity-90`}>Balance</Typography>
             <View style={tw`flex-row items-center content-center justify-center gap-x-1`}>
               <Foundation name="dollar" size={64} style={tw`mb-3`} color={tw.color('text-zinc-100')} />
               <Typography weight={500} style={tw`text-6xl text-zinc-100`}>
@@ -114,13 +118,20 @@ const Root = () => {
                   : stripeAccountBalance?.available.reduce((acc, curr) => acc + curr.amount / 100, 0).toFixed(2)}
               </Typography>
             </View>
-            {!isStripeAccDataLoading && !stripeAccountData?.charges_enabled && !stripeAccountData?.payouts_enabled && (
-              <Pressable>
-                <Typography weight={500} style={tw`text-base underline text-neutral-200 opacity-90`}>
-                  Tap to fill information onboarding to withdraw
-                </Typography>
-              </Pressable>
-            )}
+            {!isStripeAccDataLoading &&
+              !stripeAccountData?.charges_enabled &&
+              !stripeAccountData?.payouts_enabled &&
+              data?.stripe_onboarding_complete && (
+                <Pressable
+                  style={tw`flex-row flex-wrap items-center justify-center gap-x-2`}
+                  onPress={handleStripeOnboarding}
+                >
+                  <Ionicons name="warning" style={tw`text-yellow-400`} size={20} />
+                  <Typography weight={500} style={tw`flex-wrap text-base underline text-neutral-200 opacity-90`}>
+                    Tap to fill information onboarding to withdraw
+                  </Typography>
+                </Pressable>
+              )}
           </View>
         </LinearGradient>
 

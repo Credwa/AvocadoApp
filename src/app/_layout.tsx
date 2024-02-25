@@ -158,7 +158,7 @@ const RootLayout = () => {
         <StripeProvider
           publishableKey={getEnvironment().stripePublishableKey}
           urlScheme="app.myavocado" // required for 3D Secure and bank redirects
-          merchantIdentifier="merchant.com.shares.app.myavocado" // required for Apple Pay
+          merchantIdentifier="merchant.com.myavocado" // required for Apple Pay
         >
           <QueryClientProvider client={queryClient}>
             <PlaybackProvider>

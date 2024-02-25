@@ -34,6 +34,13 @@
     "plugins": [
       "sentry-expo",
       "expo-router",
+      [
+        "@stripe/stripe-react-native",
+        {
+          "merchantIdentifier": "merchant.com.myavocado",
+          "enableGooglePay": false
+        }
+      ],
       "expo-localization",
       ["expo-image-picker", { "photosPermission": "Permission required to upload a new profile photo" }]
     ],

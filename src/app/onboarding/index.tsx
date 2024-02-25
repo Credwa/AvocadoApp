@@ -1,9 +1,7 @@
-import * as Linking from 'expo-linking'
 import { useRouter } from 'expo-router'
-import * as WebBrowser from 'expo-web-browser'
 import LottieView from 'lottie-react-native'
 import { usePostHog } from 'posthog-react-native'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { Pressable, View } from 'react-native'
 import Animated, { Easing, runOnJS, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -13,18 +11,18 @@ import { Button } from '@/components/atoms/Button'
 import { Typography } from '@/components/atoms/Typography'
 import LoadingScreen from '@/components/LoadingScreen'
 import tw from '@/helpers/lib/tailwind'
-import { completeOnboarding, createStripeAccount, getCurrentUserProfile } from '@/services/UserService'
+import useStripeOnboarding from '@/hooks/useStripeOnboarding'
+import { completeOnboarding, getCurrentUserProfile } from '@/services/UserService'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 export default function Onboarding() {
   const router = useRouter()
-  const url = Linking.useURL()
-  const [onboarding, setOnboarding] = useState(false)
   const posthog = usePostHog()
   const queryClient = useQueryClient()
   const { data: currentUser, isLoading: isCurrentUserLoading } = useQuery({ ...getCurrentUserProfile() })
   const headerOpacity = useSharedValue(0)
   const contentOpacity = useSharedValue(0)
+  const { handleStripeOnboarding, onboarding } = useStripeOnboarding(currentUser, '/')
 
   if (currentUser?.is_onboarded) {
     router.push('/')
@@ -70,55 +68,12 @@ export default function Onboarding() {
     }
   })
 
-  const { mutateAsync: mutateStripe } = useMutation({
-    mutationFn: async () => {
-      const appUrl = __DEV__ ? 'http://192.168.1.23:3000/auth/stripe' : 'https://artists.myavocado.app/auth/stripe'
-      return createStripeAccount(
-        currentUser?.id as string,
-        appUrl + `?deepLink=${url + '/onboarding?stripeComplete=true'}`,
-        appUrl + `?deepLink=${url + '/onboarding?stripeRefresh=true'}`
-      )
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['user/me'] })
-    },
-    onError: (error) => {
-      console.log(error)
-    }
-  })
-
   const handleSkipOnboarding = async () => {
     await mutateCompleteOnboarding()
     posthog?.capture('onboarding_skip')
     setTimeout(() => {
       router.push('/')
     }, 1000)
-  }
-
-  const openPage = async (stripeUrl: string) => {
-    try {
-      const result = await WebBrowser.openAuthSessionAsync(stripeUrl)
-      let redirectData
-      if (result.type === 'success' && (redirectData = result.url)) {
-        redirectData = Linking.parse(result.url)
-      }
-      queryClient.invalidateQueries({ queryKey: ['user', 'stripe'] })
-
-      return redirectData
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  const handleStripeOnboarding = async () => {
-    setOnboarding(true)
-    const accountLink = await mutateStripe()
-    console.log(accountLink)
-    await openPage(accountLink.accountLink)
-    await mutateCompleteOnboarding()
-    posthog?.capture('onboarding_stripe_complete')
-    setOnboarding(false)
-    router.push('/')
   }
 
   if (isCurrentUserLoading) {
