@@ -1,6 +1,7 @@
 import { Image } from 'expo-image'
 import { LinearGradient } from 'expo-linear-gradient'
-import { router, useLocalSearchParams } from 'expo-router'
+import * as Linking from 'expo-linking'
+import { router, useLocalSearchParams, usePathname } from 'expo-router'
 import { useState } from 'react'
 import { Pressable, SafeAreaView, View } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'

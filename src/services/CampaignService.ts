@@ -2,6 +2,8 @@ import { z } from 'zod'
 
 import { fetchWithAuth } from '@/helpers/lib/lib'
 
+import { songStatuses } from './ArtistService'
+
 const searchResult = z.object({
   id: z.string(),
   artist_name: z.string(),
@@ -67,6 +69,7 @@ const campaign = z.object({
   add_version_info: z.string(),
   add_version_info_other: z.string(),
   is_radio_edit: z.boolean(),
+  status: z.enum(songStatuses),
   campaign_details: z
     .object({
       available_shares: z.number(),

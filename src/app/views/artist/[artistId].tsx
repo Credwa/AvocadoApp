@@ -11,7 +11,7 @@ import ArtistStats from '@/components/artistComponents/artistStats'
 import BackButton from '@/components/atoms/BackButton'
 import { Typography } from '@/components/atoms/Typography'
 import LoadingScreen from '@/components/LoadingScreen'
-import { getRandomBlurhash, getSongTitle } from '@/helpers/lib/lib'
+import { getImageColorBrightness, getRandomBlurhash, getSongTitle } from '@/helpers/lib/lib'
 import tw from '@/helpers/lib/tailwind'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import { getArtistProfile } from '@/services/ArtistService'
@@ -36,6 +36,10 @@ export default function ArtistProfile() {
     ...getArtistProfile(artistId!)
   })
 
+  useEffect(() => {
+    const value = getImageColorBrightness(artistData?.avatar_url as string)
+  }, [isArtistLoading])
+
   if (isArtistLoading) return <LoadingScreen />
 
   const filteredArtistActivities = artistData?.artist_activities?.activities?.filter(
@@ -43,6 +47,11 @@ export default function ArtistProfile() {
       (activity.activity_avatar && activity.activity_avatar.length > 0) ||
       (activity.track_info?.avatar && activity.track_info?.avatar.length > 0)
   )
+
+  const filteredArtistSongs = artistData?.songs?.filter((song) => {
+    console.log(`song name - ${song.song_title} status`, song.status)
+    return song.status !== 'draft'
+  })
 
   return (
     <ScrollView nestedScrollEnabled style={tw.style(`flex flex-col flex-1 background-default`)}>
@@ -116,14 +125,14 @@ export default function ArtistProfile() {
         )} */}
 
         <View style={tw`w-full my-4 border-b dark:border-zinc-700 border-zinc-300`} />
-        {Boolean(artistData?.songs && artistData?.songs.length > 0) && (
+        {Boolean(filteredArtistSongs && filteredArtistSongs.length > 0) && (
           <View style={tw`flex-col self-start h-52`}>
             <Typography weight={500} style={tw`pb-2 text-2xl`}>
               Available Songs
             </Typography>
 
             <ScrollView>
-              {artistData?.songs.map((campaign) => (
+              {filteredArtistSongs?.map((campaign) => (
                 <Pressable
                   key={campaign.id}
                   style={({ pressed }) => [

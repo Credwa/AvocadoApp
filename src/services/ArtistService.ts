@@ -21,6 +21,7 @@ export const getFeaturedArtists = () => {
     }
   }
 }
+export const songStatuses = ['ongoing', 'released', 'draft'] as const
 
 export const displayedStats = {
   streams: {
@@ -110,7 +111,8 @@ const artistProfile = z.object({
       artist_name: z.string().optional(),
       add_version_info: z.string(),
       add_version_info_other: z.string(),
-      is_radio_edit: z.boolean()
+      is_radio_edit: z.boolean(),
+      status: z.enum(songStatuses)
     })
   )
 })

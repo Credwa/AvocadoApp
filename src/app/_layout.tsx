@@ -3,6 +3,7 @@ import * as Linking from 'expo-linking'
 import * as Notifications from 'expo-notifications'
 import { router, Slot, useSegments } from 'expo-router'
 import * as SplashScreen from 'expo-splash-screen'
+import * as Updates from 'expo-updates'
 import { PostHogProvider } from 'posthog-react-native'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Appearance as AppAppearance, AppStateStatus, Platform, StatusBar } from 'react-native'
@@ -48,6 +49,20 @@ if (!sentryInitialzed) {
   sentryInitialzed = true
 }
 
+async function onFetchUpdateAsync() {
+  try {
+    const update = await Updates.checkForUpdateAsync()
+
+    if (update.isAvailable) {
+      await Updates.fetchUpdateAsync()
+      await Updates.reloadAsync()
+    }
+  } catch (error) {
+    // You can also add an alert() to see the error message in case of an error when fetching updates.
+    alert(`Error fetching latest Expo update: ${error}`)
+  }
+}
+
 const RootLayout = () => {
   useOnlineManager()
   useAppState(onAppStateChange)
@@ -58,6 +73,15 @@ const RootLayout = () => {
   const [notification, setNotification] = useState<Notifications.Notification | undefined>(undefined)
   const setColorScheme = useAppColorScheme(tw)[2]
   const appearance = useAppStore((state) => state.appearance)
+  const { currentlyRunning, availableUpdate, isUpdateAvailable, isUpdatePending } = Updates.useUpdates()
+
+  console.log(currentlyRunning, availableUpdate, isUpdateAvailable, isUpdatePending)
+
+  // useEffect(() => {
+  //   if (isUpdatePending) {
+  //     // Update has successfully downloaded
+  //   }
+  // }, [isUpdatePending])
 
   // Handle color scheme changes
   useEffect(() => {

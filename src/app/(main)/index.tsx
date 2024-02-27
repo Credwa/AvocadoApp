@@ -44,8 +44,6 @@ const Root = () => {
     enabled: !!data?.id
   })
 
-  console.log('stripeAccountData', stripeAccountData)
-
   const { data: stripeAccountBalance, isLoading: isStripeAccountBalanceLoading } = useQuery({
     ...getStripeAccountBalance(data?.id),
     enabled: !!data?.id
@@ -121,7 +119,7 @@ const Root = () => {
             {!isStripeAccDataLoading &&
               !stripeAccountData?.charges_enabled &&
               !stripeAccountData?.payouts_enabled &&
-              data?.stripe_onboarding_complete && (
+              !data?.stripe_onboarding_complete && (
                 <Pressable
                   style={tw`flex-row flex-wrap items-center justify-center gap-x-2`}
                   onPress={handleStripeOnboarding}

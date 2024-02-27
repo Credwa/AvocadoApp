@@ -1,6 +1,7 @@
 import dayjs from 'dayjs'
 import * as QueryParams from 'expo-auth-session/build/QueryParams'
 import { Alert } from 'react-native'
+import ImageColors from 'react-native-image-colors'
 import { z } from 'zod'
 
 import { setStorageItemAsync } from '@/hooks/useStorageState'
@@ -161,5 +162,26 @@ export async function fetchWithAuth<T>(
       throw new Error(error.message)
     }
     throw new Error('An unknown error has occurred.')
+  }
+}
+
+// get image color brightness. > 186 is light, < 186 is dark
+export const getImageColorBrightness = async (imageUrl: string) => {
+  const colors = await ImageColors.getColors(imageUrl, {
+    fallback: 'grey',
+    cache: true,
+    key: imageUrl // Use a unique key for caching; optional
+  })
+
+  if (colors.platform === 'android') {
+    // android returns vibrant by default
+    console.log(colors.vibrant)
+    // const [r, g, b] = colors!.vibrant!.match(/\w\w/g).map((c) => parseInt(c, 16)) ?? [0, 0, 0]
+    return 1
+  } else if (colors.platform === 'ios') {
+    // iOS returns background color by default
+    console.log(colors.background)
+    // const [r, g, b] = colors.background?.vibrant.match(/\w\w/g).map((c) => parseInt(c, 16))
+    return 1
   }
 }

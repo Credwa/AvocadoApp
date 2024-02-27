@@ -26,7 +26,8 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.avocado.shares.myavocado"
+      "package": "com.avocado.shares.myavocado",
+      "permissions": ["android.permission.RECORD_AUDIO"]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -41,8 +42,26 @@
           "enableGooglePay": false
         }
       ],
+      [
+        "@config-plugins/react-native-branch",
+        {
+          "apiKey": "key_live_ltpFXVUsGH7YPDZC93QDkemjwqk61SPc",
+          "iosAppDomain": "ltpqx.app.link"
+        }
+      ],
+      [
+        "expo-updates",
+        {
+          "username": "avocadoadmin"
+        }
+      ],
       "expo-localization",
-      ["expo-image-picker", { "photosPermission": "Permission required to upload a new profile photo" }]
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Permission required to upload a new profile photo"
+        }
+      ]
     ],
     "experiments": {
       "tsconfigPaths": true
@@ -63,6 +82,12 @@
         "projectId": "9dd547c7-ad18-410b-b7bb-e9ee2a73f8ea"
       }
     },
-    "owner": "avocadoadmin"
+    "owner": "avocadoadmin",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/9dd547c7-ad18-410b-b7bb-e9ee2a73f8ea"
+    }
   }
 }
