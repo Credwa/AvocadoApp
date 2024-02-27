@@ -11,7 +11,7 @@ import ArtistStats from '@/components/artistComponents/artistStats'
 import BackButton from '@/components/atoms/BackButton'
 import { Typography } from '@/components/atoms/Typography'
 import LoadingScreen from '@/components/LoadingScreen'
-import { getImageColorBrightness, getRandomBlurhash, getSongTitle } from '@/helpers/lib/lib'
+import { getRandomBlurhash, getSongTitle } from '@/helpers/lib/lib'
 import tw from '@/helpers/lib/tailwind'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import { getArtistProfile } from '@/services/ArtistService'
@@ -36,9 +36,9 @@ export default function ArtistProfile() {
     ...getArtistProfile(artistId!)
   })
 
-  useEffect(() => {
-    const value = getImageColorBrightness(artistData?.avatar_url as string)
-  }, [isArtistLoading])
+  // useEffect(() => {
+  //   const value = getImageColorBrightness(artistData?.avatar_url as string)
+  // }, [isArtistLoading])
 
   if (isArtistLoading) return <LoadingScreen />
 

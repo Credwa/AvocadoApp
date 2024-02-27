@@ -1,7 +1,5 @@
-const { getDefaultConfig } = require('expo/metro-config')
+const { getSentryExpoConfig } = require('@sentry/react-native/metro')
 
-const defaultConfig = getDefaultConfig(__dirname)
+const config = getSentryExpoConfig(__dirname)
 
-defaultConfig.resolver.resolverMainFields = ['sbmodern', ...defaultConfig.resolver.resolverMainFields]
-
-module.exports = defaultConfig
+module.exports = config

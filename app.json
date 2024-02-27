@@ -33,7 +33,14 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "sentry-expo",
+      [
+        "@sentry/react-native/expo",
+        {
+          "url": "https://sentry.io/",
+          "organization": "avocado-zn",
+          "project": "avocado"
+        }
+      ],
       "expo-router",
       [
         "@stripe/stripe-react-native",

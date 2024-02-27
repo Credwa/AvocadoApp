@@ -9,7 +9,6 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { Appearance as AppAppearance, AppStateStatus, Platform, StatusBar } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { RootSiblingParent } from 'react-native-root-siblings'
-import * as Sentry from 'sentry-expo'
 import { useAppColorScheme, useDeviceContext } from 'twrnc'
 
 import { SessionProvider } from '@/context/authContext'
@@ -21,6 +20,7 @@ import { useAppState } from '@/hooks/useAppState'
 import { useOnlineManager } from '@/hooks/useOnlineManager'
 import { registerForPushNotificationsAsync } from '@/services/NotificationService'
 import { useAppStore } from '@/store'
+import * as Sentry from '@sentry/react-native'
 import { StripeProvider } from '@stripe/stripe-react-native'
 import { focusManager, QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
@@ -42,8 +42,7 @@ const postHogKey = __DEV__ ? '' : 'phc_kK42froNyH2xUUXebCZXl3YKF2V9jA2JInAGqhMog
 
 if (!sentryInitialzed) {
   Sentry.init({
-    dsn: 'https://d50d3a482469ae4a1ccb8e142683384e@o4506305008173056.ingest.sentry.io/4506305022263296',
-    enableInExpoDevelopment: false,
+    dsn: 'https://3693efacfda90eb925922d9ace2f379c@o4506305008173056.ingest.sentry.io/4506305022263296',
     debug: __DEV__ // If `true`, Sentry will try to print out useful debugging information if something goes wrong with sending the event. Set it to `false` in production
   })
   sentryInitialzed = true
@@ -199,4 +198,4 @@ const RootLayout = () => {
   )
 }
 
-export default Sentry.Native.wrap(RootLayout)
+export default Sentry.wrap(RootLayout)
