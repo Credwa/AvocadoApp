@@ -6,12 +6,12 @@ import Carousel from 'react-native-reanimated-carousel'
 
 import { getRandomBlurhash, truncate_string } from '@/helpers/lib/lib'
 import tw from '@/helpers/lib/tailwind'
-import { ArtistActivity, ArtistProfile } from '@/services/ArtistService'
+import { ArtistActivity } from '@/services/ArtistService'
 
 import { Typography } from '../atoms/Typography'
 
 type ActivitiesProps = {
-  artistActivities: ArtistProfile['artist_activities']['activities']
+  artistActivities: ArtistActivity[]
 }
 
 const ActivitiesItem = ({ item }: { item: ArtistActivity }) => {
