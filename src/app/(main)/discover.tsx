@@ -128,8 +128,6 @@ export const DiscoveryCard: React.FC<Props> = (props) => {
     duration: campaign.duration
   }
 
-  console.log(campaign.song_title, isCampaignComingSoon(campaign.campaign_details?.campaign_start_date))
-
   const artworkHeight = PAGE_HEIGHT / 3
 
   return (

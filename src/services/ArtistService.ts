@@ -21,7 +21,7 @@ export const getFeaturedArtists = () => {
     }
   }
 }
-export const songStatuses = ['ongoing', 'released', 'draft'] as const
+export const songStatuses = ['ongoing', 'releasing', 'draft'] as const
 
 export const displayedStats = {
   streams: {
