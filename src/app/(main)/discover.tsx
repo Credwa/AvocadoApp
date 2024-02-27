@@ -44,26 +44,28 @@ export default function Discover() {
 
   return (
     <View style={tw`relative justify-center flex-1 w-screen bg-zinc-100 dark:bg-zinc-950`}>
-      <View style={tw`absolute bg-primary-main h-[${PAGE_HEIGHT / 2.2}px] w-full top-0`}>
-        <SafeAreaView style={tw`  flex-row justify-between flex-1 h-[${PAGE_HEIGHT / 3}px]`}>
-          <View style={tw`flex items-center justify-center w-12 ml-[33px] rounded-lg h-13 dark:bg-zinc-900 bg-zinc-50`}>
-            <Image
-              source={require('~/assets/images/AvocadoLogoMinimal.png')}
-              contentFit="fill"
-              cachePolicy="disk"
-              style={[tw.style(`h-10 w-10`)]}
-              alt="Avocado Logo"
-            />
-          </View>
-          <View />
-        </SafeAreaView>
-      </View>
-
-      <ScrollView contentContainerStyle={tw`mt-20 pb-44 gutter-sm`}>
+      <ScrollView contentContainerStyle={tw`pb-44`}>
+        <View style={tw`absolute bg-primary-main h-[${PAGE_HEIGHT / 2.2}px] w-full top-0`}>
+          <SafeAreaView style={tw`flex-row justify-between flex-1 h-[${PAGE_HEIGHT / 3}px]`}>
+            <View
+              style={tw`flex items-center justify-center w-12 ml-[33px] rounded-lg h-13 dark:bg-zinc-900 bg-zinc-50`}
+            >
+              <Image
+                source={require('~/assets/images/AvocadoLogoMinimal.png')}
+                contentFit="fill"
+                cachePolicy="disk"
+                style={[tw.style(`h-10 w-10`)]}
+                alt="Avocado Logo"
+              />
+            </View>
+            <View />
+          </SafeAreaView>
+        </View>
         <View
           style={[
             {
-              alignItems: 'center'
+              alignItems: 'center',
+              marginTop: '20%'
             }
           ]}
         >
@@ -91,7 +93,9 @@ export default function Discover() {
             )}
           />
         </View>
-        <FeaturedView data={upcomingCampaigns} title="Upcoming Songs" returnUrl="discover" />
+        <View style={tw`gutter-sm`}>
+          <FeaturedView data={upcomingCampaigns} title="Upcoming Songs" returnUrl="discover" />
+        </View>
       </ScrollView>
     </View>
   )
