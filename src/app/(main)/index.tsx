@@ -49,7 +49,6 @@ const Root = () => {
     enabled: !!data?.id
   })
 
-  console.log('stripeAccountBalance', stripeAccountBalance)
   const shownCampaigns = purchasedCampaigns?.slice(0, 5)
 
   useEffect(() => {

@@ -30,7 +30,6 @@ export const Playbar: FC<PlaybarProps> = () => {
       ? ['#0f0421', '#0f0421', '#110424', '#120426', '#120426', '#140529', '#15052b']
       : [tw.color('text-primary-dark'), tw.color('text-primary-dark'), tw.color('text-primary-darker')]
 
-  console.log('is playing - ', isPlaying)
   return (
     <View
       style={tw.style(

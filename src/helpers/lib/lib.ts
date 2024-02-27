@@ -190,3 +190,17 @@ export async function fetchWithAuth<T>(
 //     return 0
 //   }
 // }
+
+export const isCampaignComingSoon = (date: string | undefined | null) => {
+  if (!date) return false
+  const start = dayjs(date as string)
+  const now = dayjs()
+  return start.isAfter(now)
+}
+
+export const isCampaignFinished = (date: string | undefined | null, time_restraint: number | undefined) => {
+  if (!date || !time_restraint) return false
+  const campaignEnd = dayjs(date as string).add(time_restraint, 'day')
+  const now = dayjs()
+  return campaignEnd.isBefore(now)
+}

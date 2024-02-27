@@ -14,7 +14,7 @@
     "scheme": "app.myavocado",
     "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true,
+      "supportsTablet": false,
       "bundleIdentifier": "com.avocado.shares.myavocado",
       "infoPlist": {
         "UIBackgroundModes": ["audio"]

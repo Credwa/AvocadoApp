@@ -12,15 +12,16 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { Pill } from '@/components/atoms/Pill'
 import { PlayButton } from '@/components/atoms/PlayButton'
 import { Typography } from '@/components/atoms/Typography'
+import { FeaturedView } from '@/components/campaigns/FeaturedView'
 import LoadingScreen from '@/components/LoadingScreen'
-import { getRandomBlurhash, getSongTitle } from '@/helpers/lib/lib'
+import { getRandomBlurhash, getSongTitle, isCampaignComingSoon } from '@/helpers/lib/lib'
 import tw from '@/helpers/lib/tailwind'
 import { useColorScheme } from '@/hooks/useColorScheme'
-import { Campaign, getDiscoveryCampaigns } from '@/services/CampaignService'
+import { Campaign, getDiscoveryCampaigns, getUpcomingCampaigns } from '@/services/CampaignService'
 import { useQuery } from '@tanstack/react-query'
 
 import type { StyleProp, ViewStyle, ViewProps, ImageSourcePropType } from 'react-native'
-import type { AnimateProps } from 'react-native-reanimated'
+import type { AnimatedProps } from 'react-native-reanimated'
 const PAGE_WIDTH = Dimensions.get('window').width
 const PAGE_HEIGHT = Dimensions.get('window').height
 
@@ -29,20 +30,23 @@ export default function Discover() {
   const safeAreaInsets = useSafeAreaInsets()
 
   const { data: campaigns, isLoading: campaignsLoading } = useQuery({ ...getDiscoveryCampaigns(0) })
+  const { data: upcomingCampaigns, isLoading: upcomingCampaignsLoading } = useQuery({
+    ...getUpcomingCampaigns()
+  })
+
   const progressValue = useSharedValue<number>(0)
 
-  if (campaignsLoading && !campaigns) return <LoadingScreen />
+  if (campaignsLoading && !campaigns && upcomingCampaignsLoading && !upcomingCampaigns) return <LoadingScreen />
 
   const onCardChange = (position: number, absoluteProgress: number) => {
     progressValue.value = absoluteProgress
   }
 
-  console.log(campaigns)
   return (
     <View style={tw`relative justify-center flex-1 w-screen bg-zinc-100 dark:bg-zinc-950`}>
       <View style={tw`absolute bg-primary-main h-[${PAGE_HEIGHT / 2.2}px] w-full top-0`}>
         <SafeAreaView style={tw`  flex-row justify-between flex-1 h-[${PAGE_HEIGHT / 3}px]`}>
-          <View style={tw`flex items-center justify-center w-12 ml-8 rounded-lg h-13 dark:bg-zinc-900 bg-zinc-50`}>
+          <View style={tw`flex items-center justify-center w-12 ml-[33px] rounded-lg h-13 dark:bg-zinc-900 bg-zinc-50`}>
             <Image
               source={require('~/assets/images/AvocadoLogoMinimal.png')}
               contentFit="fill"
@@ -55,37 +59,45 @@ export default function Discover() {
         </SafeAreaView>
       </View>
 
-      <View
-        style={{
-          alignItems: 'center'
-        }}
-      >
-        <Carousel
-          width={PAGE_WIDTH}
-          height={PAGE_HEIGHT * 0.8}
-          style={{
-            width: PAGE_WIDTH
-          }}
-          pagingEnabled
-          snapEnabled
-          loop={false}
-          onProgressChange={onCardChange}
-          mode="parallax"
-          modeConfig={{
-            parallaxScrollingScale: 0.85,
-            parallaxScrollingOffset: 70
-          }}
-          data={campaigns || []}
-          renderItem={({ index, item }) => (
-            <DiscoveryCard campaign={item} index={index} currentIndex={progressValue.value} />
-          )}
-        />
-      </View>
+      <ScrollView contentContainerStyle={tw`mt-20 pb-44 gutter-sm`}>
+        <View
+          style={[
+            {
+              alignItems: 'center'
+            }
+          ]}
+        >
+          <Carousel
+            width={PAGE_WIDTH}
+            height={PAGE_HEIGHT * 0.75}
+            style={{
+              width: PAGE_WIDTH
+            }}
+            pagingEnabled
+            snapEnabled
+            loop={false}
+            panGestureHandlerProps={{
+              activeOffsetX: [-20, 20]
+            }}
+            onProgressChange={onCardChange}
+            mode="parallax"
+            modeConfig={{
+              parallaxScrollingScale: 0.85,
+              parallaxScrollingOffset: 70
+            }}
+            data={campaigns || []}
+            renderItem={({ index, item }) => (
+              <DiscoveryCard campaign={item} index={index} currentIndex={progressValue.value} />
+            )}
+          />
+        </View>
+        <FeaturedView data={upcomingCampaigns} title="Upcoming Songs" returnUrl="discover" />
+      </ScrollView>
     </View>
   )
 }
 
-interface Props extends AnimateProps<ViewProps> {
+interface Props extends AnimatedProps<ViewProps> {
   style?: StyleProp<ViewStyle>
   index?: number
   pretty?: boolean
@@ -97,11 +109,11 @@ interface Props extends AnimateProps<ViewProps> {
 
 export const DiscoveryCard: React.FC<Props> = (props) => {
   const { style, index, currentIndex, pretty, campaign, img, testID, ...animatedViewProps } = props
-  const routere = useRouter()
+  const router = useRouter()
   const gesture = Gesture.Tap()
     .maxDuration(250)
     .onEnd(() => {
-      routere.push(`views/song/${campaign.id}?url=/discover`)
+      router.push(`views/song/${campaign.id}?url=/discover`)
     })
 
   // router.push(`views/song/${campaign.id}?url=/discover`)
@@ -116,7 +128,8 @@ export const DiscoveryCard: React.FC<Props> = (props) => {
     duration: campaign.duration
   }
 
-  // () =>
+  console.log(campaign.song_title, isCampaignComingSoon(campaign.campaign_details?.campaign_start_date))
+
   const artworkHeight = PAGE_HEIGHT / 3
 
   return (
@@ -169,6 +182,22 @@ export const DiscoveryCard: React.FC<Props> = (props) => {
         <View style={tw`absolute self-center bottom-10`}>
           <PlayButton styles="w-18 h-18" playml={2} iconSize={40} pauseml={1} metadata={playbackMetaData} />
         </View>
+        {isCampaignComingSoon(campaign.campaign_details?.campaign_start_date) && (
+          <View style={tw`absolute self-end top-9 -right-3`}>
+            <View
+              style={[
+                tw`rounded-sm bg-primary-main`,
+                {
+                  transform: [{ rotate: '45deg' }]
+                }
+              ]}
+            >
+              <Typography weight={500} style={tw`px-3 py-0.5 text-base text-white`}>
+                Coming Soon
+              </Typography>
+            </View>
+          </View>
+        )}
       </Animated.View>
     </GestureDetector>
   )

@@ -48,10 +48,7 @@ export default function ArtistProfile() {
       (activity.track_info?.avatar && activity.track_info?.avatar.length > 0)
   )
 
-  const filteredArtistSongs = artistData?.songs?.filter((song) => {
-    console.log(`song name - ${song.song_title} status`, song.status)
-    return song.status !== 'draft'
-  })
+  const filteredArtistSongs = artistData?.songs?.filter((song) => song.status !== 'draft')
 
   return (
     <ScrollView nestedScrollEnabled style={tw.style(`flex flex-col flex-1 background-default`)}>

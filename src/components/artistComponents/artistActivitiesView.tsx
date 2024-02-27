@@ -29,8 +29,6 @@ const ActivitiesItem = ({ item }: { item: ArtistActivity }) => {
       ]}
       onPress={() => {
         if (item.activity_url) {
-          console.log(item.activity_url)
-
           router.push(item.activity_url)
         }
       }}

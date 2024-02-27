@@ -10,7 +10,12 @@ import { SearchList } from '@/components/SearchList'
 import tw from '@/helpers/lib/tailwind'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import { getFeaturedArtists } from '@/services/ArtistService'
-import { getFeaturedCampaigns, getRecentCampaigns, getSearchResults } from '@/services/CampaignService'
+import {
+  getFeaturedCampaigns,
+  getRecentCampaigns,
+  getSearchResults,
+  getUpcomingCampaigns
+} from '@/services/CampaignService'
 import { useQuery } from '@tanstack/react-query'
 
 const Search = () => {
@@ -30,6 +35,10 @@ const Search = () => {
 
   const { data: featuredCampaigns } = useQuery({
     ...getFeaturedCampaigns()
+  })
+
+  const { data: upcomingCampaigns } = useQuery({
+    ...getUpcomingCampaigns()
   })
 
   const { data: featuredArtists } = useQuery({
@@ -72,6 +81,9 @@ const Search = () => {
           <View style={tw.style(`flex-col pt-8 gap-y-8 pb-20`, { 'opacity-0': showSearchList })}>
             <FeaturedView data={featuredCampaigns} title="Featured Songs" />
             <RecentCampaignView data={recentCampaigns} />
+            {featuredCampaigns?.length === 0 && recentCampaigns?.length === 0 && (
+              <FeaturedView data={upcomingCampaigns} title="Upcoming Songs" />
+            )}
             <FeaturedView data={featuredArtists} title="Artist Spotlight" />
           </View>
         </ScrollView>

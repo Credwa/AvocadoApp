@@ -15,13 +15,14 @@ import { Typography } from '../atoms/Typography'
 type FeaturedProps = {
   data: MinCampaign[] | Artist[] | undefined
   title: string
+  returnUrl?: string
 }
 
 function isCampaign(data: MinCampaign | Artist): data is MinCampaign {
   return (data as MinCampaign).song_id !== undefined
 }
 
-const FeaturedItem = ({ item }: { item: MinCampaign | Artist }) => {
+const FeaturedItem = ({ item, returnUrl }: { item: MinCampaign | Artist; returnUrl?: string }) => {
   const router = useRouter()
 
   const newItem = {
@@ -41,9 +42,9 @@ const FeaturedItem = ({ item }: { item: MinCampaign | Artist }) => {
       ]}
       onPress={() => {
         if (isCampaign(item)) {
-          router.push(`views/song/${item.song_id}?url=search`)
+          router.push(`views/song/${item.song_id}?url=${returnUrl ? returnUrl : 'search'}`)
         } else {
-          router.push(`views/artist/${item.id}?url=search`)
+          router.push(`views/artist/${item.id}?url=${returnUrl ? returnUrl : 'search'}`)
         }
       }}
     >
@@ -92,7 +93,7 @@ const FeaturedItem = ({ item }: { item: MinCampaign | Artist }) => {
   )
 }
 
-export const FeaturedView: FC<FeaturedProps> = ({ data, title }) => {
+export const FeaturedView: FC<FeaturedProps> = ({ data, title, returnUrl }) => {
   const PAGE_WIDTH = Dimensions.get('window').width - 16
   if (!data) return null
 
@@ -109,7 +110,9 @@ export const FeaturedView: FC<FeaturedProps> = ({ data, title }) => {
         width={PAGE_WIDTH / 2.3}
         style={tw`w-[${PAGE_WIDTH}] content-center items-center h-60`}
         data={[...data]}
-        renderItem={({ item }) => <FeaturedItem key={isCampaign(item) ? item.song_id : item.id} item={item} />}
+        renderItem={({ item }) => (
+          <FeaturedItem returnUrl={returnUrl} key={isCampaign(item) ? item.song_id : item.id} item={item} />
+        )}
       />
     </View>
   )

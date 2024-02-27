@@ -56,6 +56,15 @@ export const getFeaturedCampaigns = () => {
   }
 }
 
+export const getUpcomingCampaigns = () => {
+  return {
+    queryKey: ['campaigns', 'upcoming'],
+    queryFn: async (): Promise<MinCampaign[]> => {
+      return fetchWithAuth<MinCampaign[]>(`/campaigns/upcoming`, z.array(minCampaign))
+    }
+  }
+}
+
 const campaign = z.object({
   id: z.string(),
   song_title: z.string(),
@@ -100,7 +109,7 @@ export const getDiscoveryCampaigns = (offset: number) => {
   return {
     queryKey: ['campaigns', 'discovery', offset],
     queryFn: async (): Promise<Campaign[]> => {
-      return fetchWithAuth<Campaign[]>(`/campaigns/discover?limit=8&offset=${offset}`, z.array(campaign))
+      return fetchWithAuth<Campaign[]>(`/campaigns/discover?limit=20&offset=${offset}`, z.array(campaign))
     }
   }
 }
@@ -146,7 +155,6 @@ export const getPaymentSheet = (
   songName: string,
   artistName: string
 ) => {
-  console.log(email)
   return fetchWithAuth<PaymentSheet>(`/campaigns/purchase/payment-sheet`, paymentSheet, {
     method: 'POST',
     body: JSON.stringify({ uid, songId, quantity, email, songName, artistName })
