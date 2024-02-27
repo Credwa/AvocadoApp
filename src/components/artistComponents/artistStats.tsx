@@ -43,20 +43,17 @@ export default function ArtistStats({ artistStats }: ArtistLinksProps) {
   })
 
   return (
-    <View style={tw`flex-col flex-wrap justify-center px-8 text-center`}>
+    <View style={tw`flex-col flex-wrap px-8`}>
       {Object.keys(stats).map((key) => {
         return (
           <View key={key} style={tw`pt-0`}>
             {Object.keys(stats[key]).length > 0 &&
             Object.keys(stats[key]).find((stat_key) => shownStatsSet.has(stat_key)) ? (
-              <Typography
-                weight={500}
-                style={tw.style(' pb-1 pt-6 text-center text-2xl', null, key !== 'streams' ? 'pt-10' : '')}
-              >
+              <Typography weight={500} style={tw.style(' pb-1 pt-6  text-2xl', null, key !== 'streams' ? 'pt-10' : '')}>
                 {key.charAt(0).toUpperCase() + key.slice(1)}
               </Typography>
             ) : null}
-            <View style={tw`flex-row w-full flex-wrap items-center justify-center gap-x-6`}>
+            <View style={tw`flex-row w-full flex-wrap gap-x-6`}>
               {Object.entries(stats[key]).map(([stat, value]) => {
                 return (
                   <Fragment key={stat}>

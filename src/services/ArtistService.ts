@@ -97,9 +97,11 @@ const artistProfile = z.object({
     tracklist_tracklist_views_total: z.number().or(z.null()),
     shown_stats: z.array(z.string()).or(z.null())
   }),
-  artist_activities: z.object({
-    activities: z.array(artistActivity).or(z.null())
-  }),
+  artist_activities: z
+    .object({
+      activities: z.array(artistActivity).or(z.null())
+    })
+    .or(z.null()),
   songs: z.array(
     z.object({
       id: z.string(),

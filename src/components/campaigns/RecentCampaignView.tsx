@@ -97,8 +97,8 @@ export const RecentCampaignView: FC<RecentCampaignProps> = ({ data }) => {
         Latest Songs
       </Typography>
       <Carousel
-        loop
-        autoPlay
+        loop={data.length > 6}
+        autoPlay={data.length > 6}
         // onConfigurePanGesture={(gestureChain) => gestureChain.activeOffsetX([-10, 10]) as any}
         // onConfigurePan
         panGestureHandlerProps={{
