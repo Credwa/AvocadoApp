@@ -81,6 +81,9 @@ const RootLayout = () => {
   //     // Update has successfully downloaded
   //   }
   // }, [isUpdatePending])
+  useEffect(() => {
+    onFetchUpdateAsync()
+  })
 
   // Handle color scheme changes
   useEffect(() => {

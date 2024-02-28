@@ -119,7 +119,7 @@ export default function Purchase() {
     const data = await mutatePaymentSheet({ shares, email: user?.email! })
 
     const { error } = await initPaymentSheet({
-      merchantDisplayName: 'Avocado Shares',
+      merchantDisplayName: 'Avocado Shares, Inc.',
       customerId: data.customer,
       customerEphemeralKeySecret: data.ephemeralKey,
       paymentIntentClientSecret: data.paymentIntent,

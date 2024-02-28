@@ -2,7 +2,7 @@ import Constants from 'expo-constants'
 import { Image } from 'expo-image'
 import { LinearGradient } from 'expo-linear-gradient'
 import { router, useRouter } from 'expo-router'
-import React, { PropsWithChildren, useState } from 'react'
+import React, { PropsWithChildren, useEffect, useState } from 'react'
 import { Dimensions, Pressable, SafeAreaView, Text, TouchableOpacity, View } from 'react-native'
 import { Gesture, GestureDetector, LongPressGestureHandler, ScrollView } from 'react-native-gesture-handler'
 import Animated, { Extrapolate, interpolate, useAnimatedStyle, useSharedValue } from 'react-native-reanimated'
@@ -13,11 +13,22 @@ import { Pill } from '@/components/atoms/Pill'
 import { PlayButton } from '@/components/atoms/PlayButton'
 import { Typography } from '@/components/atoms/Typography'
 import { FeaturedView } from '@/components/campaigns/FeaturedView'
+import { RecentCampaignView } from '@/components/campaigns/RecentCampaignView'
 import LoadingScreen from '@/components/LoadingScreen'
+import { SearchBar } from '@/components/SearchBar'
+import { SearchList } from '@/components/SearchList'
 import { getRandomBlurhash, getSongTitle, isCampaignComingSoon, isCampaignFinished } from '@/helpers/lib/lib'
 import tw from '@/helpers/lib/tailwind'
 import { useColorScheme } from '@/hooks/useColorScheme'
-import { Campaign, getDiscoveryCampaigns, getUpcomingCampaigns } from '@/services/CampaignService'
+import { getFeaturedArtists } from '@/services/ArtistService'
+import {
+  Campaign,
+  getDiscoveryCampaigns,
+  getFeaturedCampaigns,
+  getRecentCampaigns,
+  getSearchResults,
+  getUpcomingCampaigns
+} from '@/services/CampaignService'
 import { useQuery } from '@tanstack/react-query'
 
 import type { StyleProp, ViewStyle, ViewProps, ImageSourcePropType } from 'react-native'
@@ -28,11 +39,50 @@ const PAGE_HEIGHT = Dimensions.get('window').height
 export default function Discover() {
   const colorScheme = useColorScheme()
   const safeAreaInsets = useSafeAreaInsets()
+  const [query, setSearchQuery] = useState('')
+  const [debouncedQuery, setDebouncedQuery] = useState(query)
+  const [showSearchList, setShowSearchList] = useState(false)
+  const { data: searchData, isLoading: isSearchLoading } = useQuery({
+    ...getSearchResults(query),
+    // only run when search length is a minimum of 3 characters and debouncedQuery is equal to query which is set after specified timeout
+    enabled: debouncedQuery.length > 2 && debouncedQuery === query
+  })
 
+  const { data: recentCampaigns } = useQuery({
+    ...getRecentCampaigns()
+  })
+
+  const { data: featuredCampaigns } = useQuery({
+    ...getFeaturedCampaigns()
+  })
+
+  const { data: featuredArtists } = useQuery({
+    ...getFeaturedArtists()
+  })
   const { data: campaigns, isLoading: campaignsLoading } = useQuery({ ...getDiscoveryCampaigns(0) })
   const { data: upcomingCampaigns, isLoading: upcomingCampaignsLoading } = useQuery({
     ...getUpcomingCampaigns()
   })
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedQuery(query)
+    }, 500)
+
+    return () => {
+      clearTimeout(handler)
+    }
+  }, [query])
+
+  const handleSearch = (searchQuery: string) => {
+    if (searchQuery.length > 2) {
+      setSearchQuery(searchQuery)
+    }
+  }
+
+  const handleFocusStatusChange = (status: boolean) => {
+    setShowSearchList(status)
+  }
 
   const progressValue = useSharedValue<number>(0)
 
@@ -46,7 +96,7 @@ export default function Discover() {
     <View style={tw`relative justify-center flex-1 w-screen bg-zinc-100 dark:bg-zinc-950`}>
       <ScrollView contentContainerStyle={tw`pb-44`}>
         <View style={tw`absolute bg-primary-main h-[${PAGE_HEIGHT / 2.2}px] w-full top-0`}>
-          <SafeAreaView style={tw`flex-row justify-between flex-1 h-[${PAGE_HEIGHT / 3}px]`}>
+          <SafeAreaView style={tw`flex-col gap-x-2 flex-1 h-[${PAGE_HEIGHT / 3}px]`}>
             <View
               style={tw`flex items-center justify-center w-12 ml-[33px] rounded-lg h-13 dark:bg-zinc-900 bg-zinc-50`}
             >
@@ -58,6 +108,16 @@ export default function Discover() {
                 alt="Avocado Logo"
               />
             </View>
+            {/* <View style={tw`relative w-full mt-1`}>
+              <SearchBar
+                styles="w-full"
+                searching={isSearchLoading}
+                placeholder="Search artists and songs..."
+                onChangeText={handleSearch}
+                onFocusStatusChange={handleFocusStatusChange}
+              />
+              {showSearchList && <SearchList searchResults={searchData} />}
+            </View> */}
             <View />
           </SafeAreaView>
         </View>
@@ -95,6 +155,9 @@ export default function Discover() {
         </View>
         <View style={tw`gutter-sm`}>
           <FeaturedView data={upcomingCampaigns} title="Upcoming Songs" returnUrl="discover" />
+          <RecentCampaignView data={recentCampaigns} />
+          <FeaturedView data={featuredCampaigns} title="Featured Songs" />
+          <FeaturedView data={featuredArtists} title="Artist Spotlight" />
         </View>
       </ScrollView>
     </View>
@@ -116,11 +179,7 @@ export const DiscoveryCard: React.FC<Props> = (props) => {
   const router = useRouter()
   const gesture = Gesture.Tap()
     .maxDuration(500)
-    .onEnd(() => {
-      router.push(`/views/song/${campaign.id}?url=/discover`)
-    })
-
-  // router.push(`views/song/${campaign.id}?url=/discover`)
+    .onEnd(() => {})
 
   const playbackMetaData = {
     title: campaign.song_title,
@@ -173,12 +232,19 @@ export const DiscoveryCard: React.FC<Props> = (props) => {
           <Typography weight={500} style={tw`text-2xl -top-10`}>
             {campaign?.artists.artist_name}
           </Typography>
-          <Typography weight={600} style={tw`flex-wrap text-2xl text-center`}>
-            {getSongTitle(campaign!, 120)}
-          </Typography>
+          <Pressable onPress={() => router.push(`views/song/${campaign.id}?url=/discover`)}>
+            <Typography weight={600} style={tw`flex-wrap text-2xl text-center`}>
+              {getSongTitle(campaign!, 120)}
+            </Typography>
+          </Pressable>
+
           <View style={tw`flex-row flex-wrap mt-12 gap-x-2 gap-y-2`}>
-            <Pill>{campaign.primary_genre}</Pill>
-            {campaign.secondary_genre !== 'Select a genre' && <Pill>{campaign.secondary_genre}</Pill>}
+            <Pill onPress={() => router.push(`views/song/${campaign.id}?url=/discover`)}>{campaign.primary_genre}</Pill>
+            {campaign.secondary_genre !== 'Select a genre' && (
+              <Pill onPress={() => router.push(`views/song/${campaign.id}?url=/discover`)}>
+                {campaign.secondary_genre}
+              </Pill>
+            )}
           </View>
         </View>
         <View style={tw`absolute self-center bottom-10`}>

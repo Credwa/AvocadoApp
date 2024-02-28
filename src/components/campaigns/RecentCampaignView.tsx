@@ -44,7 +44,7 @@ const RecentCampaignItem = ({ campaign }: { campaign: MinCampaign }) => {
         })
       ]}
       onPress={() => {
-        router.push(`views/song/${campaign.song_id}?url=search`)
+        router.push(`views/song/${campaign.song_id}?url=discover`)
       }}
     >
       {({ pressed }) => (
@@ -92,8 +92,8 @@ export const RecentCampaignView: FC<RecentCampaignProps> = ({ data }) => {
   const newData = splitArrayIntoChunks(data, 6)
 
   return (
-    <View style={tw`z-0`}>
-      <Typography weight={500} style={tw`pb-2 text-lg dark:text-zinc-300 text-zinc-700`}>
+    <View style={tw`z-0 mb-4`}>
+      <Typography weight={500} style={tw`pb-2 text-xl dark:text-zinc-300 text-zinc-700`}>
         Latest Songs
       </Typography>
       <Carousel

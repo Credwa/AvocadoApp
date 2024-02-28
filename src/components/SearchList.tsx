@@ -36,8 +36,8 @@ const SearchListItem: FC<SearchListItemProps> = ({ item }) => {
         })
       ]}
       onPress={() => {
-        if (item.type === 'artist') router.replace(`views/artist/${item.id}?url=search`)
-        else if (item.type === 'song') router.replace(`views/song/${item.id}?url=search`)
+        if (item.type === 'artist') router.replace(`views/artist/${item.id}?url=discover`)
+        else if (item.type === 'song') router.replace(`views/song/${item.id}?url=discover`)
       }}
     >
       {({ pressed }) => (

@@ -98,8 +98,8 @@ export const FeaturedView: FC<FeaturedProps> = ({ data, title, returnUrl }) => {
   if (!data || !data.length) return null
 
   return (
-    <View style={tw`z-0`}>
-      <Typography weight={500} style={tw`pb-2 text-lg dark:text-zinc-300 text-zinc-700`}>
+    <View style={tw`z-0 mb-2`}>
+      <Typography weight={500} style={tw`pb-2 text-xl dark:text-zinc-300 text-zinc-700`}>
         {title}
       </Typography>
       <Carousel

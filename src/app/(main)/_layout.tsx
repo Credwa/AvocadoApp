@@ -1,22 +1,28 @@
 import { BlurView } from 'expo-blur'
-import { Redirect, Tabs } from 'expo-router'
+import { Redirect, router, Tabs } from 'expo-router'
 import { StyleSheet } from 'react-native'
 
 import { Typography } from '@/components/atoms/Typography'
 import { useSession } from '@/context/authContext'
 import tw from '@/helpers/lib/tailwind'
 import { useColorScheme } from '@/hooks/useColorScheme'
+import { getCurrentUserProfile } from '@/services/UserService'
 import { Ionicons, MaterialIcons } from '@expo/vector-icons'
+import { useQuery } from '@tanstack/react-query'
 
 const iconSize = 24
 
 export default function Layout() {
   const { session, isLoading } = useSession() ?? {}
   const colorScheme = useColorScheme()
-
+  const { data, isLoading: isUserProfileLoading } = useQuery({ ...getCurrentUserProfile() })
+  if (!isUserProfileLoading && !data?.is_onboarded) {
+    router.push('/onboarding')
+  }
   if (!isLoading && !session) {
     return <Redirect href="/sign-in" />
   }
+
   if (isLoading) {
     return <Typography>Loading...</Typography>
   }
@@ -51,7 +57,7 @@ export default function Layout() {
       }}
     >
       <Tabs.Screen name="index" options={{ ...tabBarOptions('home-sharp', 'Home') }} />
-      <Tabs.Screen name="search" options={{ ...tabBarOptions('search', 'Search') }} />
+      <Tabs.Screen name="search" options={{ ...tabBarOptions('search', 'Search'), href: null }} />
       <Tabs.Screen name="discover" options={{ ...tabBarOptions('star', 'Discover') }} />
 
       <Tabs.Screen

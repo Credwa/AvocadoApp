@@ -79,7 +79,7 @@ export default function SignIn() {
     try {
       const session = await signIn(data.email.trim(), data.password.trim())
       if (session) {
-        router.replace('/')
+        router.replace('/discover')
       }
     } catch (error) {
       setSubmitting(false)
