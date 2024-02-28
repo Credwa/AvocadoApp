@@ -22,27 +22,11 @@ const Search = () => {
   useColorScheme()
   const [query, setSearchQuery] = useState('')
   const [debouncedQuery, setDebouncedQuery] = useState(query)
-  const [showSearchList, setShowSearchList] = useState(false)
+  const [showSearchList, setShowSearchList] = useState(true)
   const { data: searchData, isLoading: isSearchLoading } = useQuery({
     ...getSearchResults(query),
     // only run when search length is a minimum of 3 characters and debouncedQuery is equal to query which is set after specified timeout
     enabled: debouncedQuery.length > 2 && debouncedQuery === query
-  })
-
-  const { data: recentCampaigns } = useQuery({
-    ...getRecentCampaigns()
-  })
-
-  const { data: featuredCampaigns } = useQuery({
-    ...getFeaturedCampaigns()
-  })
-
-  const { data: upcomingCampaigns } = useQuery({
-    ...getUpcomingCampaigns()
-  })
-
-  const { data: featuredArtists } = useQuery({
-    ...getFeaturedArtists()
   })
 
   useEffect(() => {
@@ -74,20 +58,8 @@ const Search = () => {
           onChangeText={handleSearch}
           onFocusStatusChange={handleFocusStatusChange}
         />
-        {showSearchList && <SearchList searchResults={searchData} />}
+        <SearchList searchResults={searchData} />
       </View>
-      {!showSearchList && (
-        <ScrollView style={tw``}>
-          <View style={tw.style(`flex-col pt-8 gap-y-8 pb-20`, { 'opacity-0': showSearchList })}>
-            <FeaturedView data={featuredCampaigns} title="Featured Songs" />
-            <RecentCampaignView data={recentCampaigns} />
-            {featuredCampaigns?.length === 0 && recentCampaigns?.length === 0 && (
-              <FeaturedView data={upcomingCampaigns} title="Upcoming Songs" />
-            )}
-            <FeaturedView data={featuredArtists} title="Artist Spotlight" />
-          </View>
-        </ScrollView>
-      )}
     </SafeAreaView>
   )
 }

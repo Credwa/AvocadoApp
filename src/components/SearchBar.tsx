@@ -1,3 +1,4 @@
+import { useRouter } from 'expo-router'
 import LottieView from 'lottie-react-native'
 import { FC, useEffect, useRef, useState } from 'react'
 import { ActivityIndicator, Pressable, TextInput, View } from 'react-native'
@@ -17,11 +18,12 @@ type SearchBarProps = {
 
 export const SearchBar: FC<SearchBarProps> = (props) => {
   const [hasValue, setHasValue] = useState(false)
-  const [isFocused, setIsFocused] = useState(false)
-  const [isActive, setIsActive] = useState(false)
+  const [isFocused, setIsFocused] = useState(true)
+  const [isActive, setIsActive] = useState(true)
   const textInputRef = useRef<TextInput>(null) // Creating a ref for the TextInput
   const loadingAnim = require('~/assets/lottie/Loading.json')
 
+  const router = useRouter()
   const colorScheme = useColorScheme()
   const newProps = { ...props }
   delete newProps.styles
@@ -51,11 +53,11 @@ export const SearchBar: FC<SearchBarProps> = (props) => {
 
   const handleClear = () => {
     if (textInputRef.current) {
-      console.log('handleClear')
       textInputRef.current.blur()
       textInputRef.current.clear()
       props.onFocusStatusChange?.(false)
       setIsActive(false)
+      router.replace('/discover')
     }
   }
 
@@ -70,6 +72,7 @@ export const SearchBar: FC<SearchBarProps> = (props) => {
           />
         </Pressable>
         <TextInput
+          autoFocus
           blurOnSubmit={false}
           ref={textInputRef}
           onFocus={handleFocus}

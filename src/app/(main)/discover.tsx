@@ -1,11 +1,9 @@
-import Constants from 'expo-constants'
 import { Image } from 'expo-image'
-import { LinearGradient } from 'expo-linear-gradient'
 import { router, useRouter } from 'expo-router'
-import React, { PropsWithChildren, useEffect, useState } from 'react'
-import { Dimensions, Pressable, SafeAreaView, Text, TouchableOpacity, View } from 'react-native'
-import { Gesture, GestureDetector, LongPressGestureHandler, ScrollView } from 'react-native-gesture-handler'
-import Animated, { Extrapolate, interpolate, useAnimatedStyle, useSharedValue } from 'react-native-reanimated'
+import React, { useEffect, useState } from 'react'
+import { Dimensions, Pressable, SafeAreaView, View } from 'react-native'
+import { Gesture, GestureDetector, ScrollView } from 'react-native-gesture-handler'
+import Animated, { useSharedValue } from 'react-native-reanimated'
 import Carousel from 'react-native-reanimated-carousel'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
@@ -15,8 +13,6 @@ import { Typography } from '@/components/atoms/Typography'
 import { FeaturedView } from '@/components/campaigns/FeaturedView'
 import { RecentCampaignView } from '@/components/campaigns/RecentCampaignView'
 import LoadingScreen from '@/components/LoadingScreen'
-import { SearchBar } from '@/components/SearchBar'
-import { SearchList } from '@/components/SearchList'
 import { getRandomBlurhash, getSongTitle, isCampaignComingSoon, isCampaignFinished } from '@/helpers/lib/lib'
 import tw from '@/helpers/lib/tailwind'
 import { useColorScheme } from '@/hooks/useColorScheme'
@@ -26,9 +22,9 @@ import {
   getDiscoveryCampaigns,
   getFeaturedCampaigns,
   getRecentCampaigns,
-  getSearchResults,
   getUpcomingCampaigns
 } from '@/services/CampaignService'
+import { Ionicons } from '@expo/vector-icons'
 import { useQuery } from '@tanstack/react-query'
 
 import type { StyleProp, ViewStyle, ViewProps, ImageSourcePropType } from 'react-native'
@@ -37,25 +33,13 @@ const PAGE_WIDTH = Dimensions.get('window').width
 const PAGE_HEIGHT = Dimensions.get('window').height
 
 export default function Discover() {
-  const colorScheme = useColorScheme()
-  const safeAreaInsets = useSafeAreaInsets()
-  const [query, setSearchQuery] = useState('')
-  const [debouncedQuery, setDebouncedQuery] = useState(query)
-  const [showSearchList, setShowSearchList] = useState(false)
-  const { data: searchData, isLoading: isSearchLoading } = useQuery({
-    ...getSearchResults(query),
-    // only run when search length is a minimum of 3 characters and debouncedQuery is equal to query which is set after specified timeout
-    enabled: debouncedQuery.length > 2 && debouncedQuery === query
-  })
-
+  useColorScheme()
   const { data: recentCampaigns } = useQuery({
     ...getRecentCampaigns()
   })
-
   const { data: featuredCampaigns } = useQuery({
     ...getFeaturedCampaigns()
   })
-
   const { data: featuredArtists } = useQuery({
     ...getFeaturedArtists()
   })
@@ -63,26 +47,6 @@ export default function Discover() {
   const { data: upcomingCampaigns, isLoading: upcomingCampaignsLoading } = useQuery({
     ...getUpcomingCampaigns()
   })
-
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedQuery(query)
-    }, 500)
-
-    return () => {
-      clearTimeout(handler)
-    }
-  }, [query])
-
-  const handleSearch = (searchQuery: string) => {
-    if (searchQuery.length > 2) {
-      setSearchQuery(searchQuery)
-    }
-  }
-
-  const handleFocusStatusChange = (status: boolean) => {
-    setShowSearchList(status)
-  }
 
   const progressValue = useSharedValue<number>(0)
 
@@ -96,7 +60,7 @@ export default function Discover() {
     <View style={tw`relative justify-center flex-1 w-screen bg-zinc-100 dark:bg-zinc-950`}>
       <ScrollView contentContainerStyle={tw`pb-44`}>
         <View style={tw`absolute bg-primary-main h-[${PAGE_HEIGHT / 2.2}px] w-full top-0`}>
-          <SafeAreaView style={tw`flex-col gap-x-2 flex-1 h-[${PAGE_HEIGHT / 3}px]`}>
+          <SafeAreaView style={tw`flex-row gap-x-2 justify-between flex-1 h-[${PAGE_HEIGHT / 3}px]`}>
             <View
               style={tw`flex items-center justify-center w-12 ml-[33px] rounded-lg h-13 dark:bg-zinc-900 bg-zinc-50`}
             >
@@ -108,17 +72,9 @@ export default function Discover() {
                 alt="Avocado Logo"
               />
             </View>
-            {/* <View style={tw`relative w-full mt-1`}>
-              <SearchBar
-                styles="w-full"
-                searching={isSearchLoading}
-                placeholder="Search artists and songs..."
-                onChangeText={handleSearch}
-                onFocusStatusChange={handleFocusStatusChange}
-              />
-              {showSearchList && <SearchList searchResults={searchData} />}
-            </View> */}
-            <View />
+            <Pressable style={tw`mt-2.5 ml-2 mr-[33px]`} hitSlop={10} onPress={() => router.push('/search')}>
+              <Ionicons name="search" size={28} color={tw.color('text-zinc-100')} />
+            </Pressable>
           </SafeAreaView>
         </View>
         <View
