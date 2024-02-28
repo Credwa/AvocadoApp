@@ -16,15 +16,16 @@ export default function Layout() {
   const { session, isLoading } = useSession() ?? {}
   const colorScheme = useColorScheme()
   const { data, isLoading: isUserProfileLoading } = useQuery({ ...getCurrentUserProfile() })
-  if (!isUserProfileLoading && !data?.is_onboarded) {
-    router.push('/onboarding')
-  }
+
   if (!isLoading && !session) {
     return <Redirect href="/sign-in" />
   }
 
   if (isLoading) {
     return <Typography>Loading...</Typography>
+  }
+  if (!isUserProfileLoading && !data?.is_onboarded) {
+    router.push('/onboarding')
   }
   const tabBarOptions = (iconName: any, label: string, icon?: React.JSX.Element) => {
     return {

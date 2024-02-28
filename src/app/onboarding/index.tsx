@@ -1,21 +1,19 @@
-import { useRouter } from 'expo-router';
-import LottieView from 'lottie-react-native';
-import { usePostHog } from 'posthog-react-native';
-import { useEffect } from 'react';
-import { Pressable, View } from 'react-native';
-import Animated, {
-    Easing, runOnJS, useAnimatedStyle, useSharedValue, withTiming
-} from 'react-native-reanimated';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import welcomeAnim from '~/assets/lottie/Welcome.json';
+import { useRouter } from 'expo-router'
+import LottieView from 'lottie-react-native'
+import { usePostHog } from 'posthog-react-native'
+import { useEffect } from 'react'
+import { Pressable, View } from 'react-native'
+import Animated, { Easing, runOnJS, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import welcomeAnim from '~/assets/lottie/Welcome.json'
 
-import { Button } from '@/components/atoms/Button';
-import { Typography } from '@/components/atoms/Typography';
-import LoadingScreen from '@/components/LoadingScreen';
-import tw from '@/helpers/lib/tailwind';
-import useStripeOnboarding from '@/hooks/useStripeOnboarding';
-import { completeOnboarding, getCurrentUserProfile } from '@/services/UserService';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { Button } from '@/components/atoms/Button'
+import { Typography } from '@/components/atoms/Typography'
+import LoadingScreen from '@/components/LoadingScreen'
+import tw from '@/helpers/lib/tailwind'
+import useStripeOnboarding from '@/hooks/useStripeOnboarding'
+import { completeOnboarding, getCurrentUserProfile } from '@/services/UserService'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 export default function Onboarding() {
   const router = useRouter()

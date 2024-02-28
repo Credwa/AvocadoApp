@@ -50,6 +50,9 @@ if (!sentryInitialzed) {
 
 async function onFetchUpdateAsync() {
   try {
+    if (__DEV__) {
+      return
+    }
     const update = await Updates.checkForUpdateAsync()
 
     if (update.isAvailable) {
