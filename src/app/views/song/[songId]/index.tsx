@@ -62,6 +62,7 @@ const Song = () => {
 
   if (isSongLoading) return <LoadingScreen />
 
+  console.log('songData', songData)
   const metaData = {
     song_id: songData!.id,
     audio_url: songData!.audio_url,
@@ -148,7 +149,7 @@ const Song = () => {
             <View style={tw`flex-col self-center pt-4`}>
               {campaignState === 'ongoing' && (
                 <Typography
-                  style={tw.style('text-base text-primary-main dark:text-primary-lighter', {
+                  style={tw.style('text-base text-secondary-main dark:text-secondary-lighter', {
                     'dark:text-red-400 text-red-600': daysLeft < 5
                   })}
                 >
@@ -158,8 +159,18 @@ const Song = () => {
               {campaignState === 'coming' && (
                 <View style={tw`flex-col`}>
                   <Typography style={tw.style('text-base self-center ')}>Coming Soon</Typography>
-                  <Typography style={tw.style('text-base self-center text-secondary-dark dark:text-secondary-lighter')}>
+                  <Typography style={tw.style('text-base self-center text-primary-dark dark:text-primary-lighter')}>
                     {dayjs(songData?.campaign_details?.campaign_start_date).format('MMMM D, YYYY')}
+                  </Typography>
+                </View>
+              )}
+              {campaignState === 'released' && (
+                <View style={tw`flex-col`}>
+                  <Typography style={tw.style('text-base self-center ')}>Released on</Typography>
+                  <Typography style={tw.style('text-base self-center text-fuchsia-500 dark:text-fuchsia-400')}>
+                    {dayjs(songData?.campaign_details?.campaign_start_date)
+                      .add(songData?.campaign_details?.time_restraint as number)
+                      .format('MMMM D, YYYY')}
                   </Typography>
                 </View>
               )}

@@ -112,7 +112,7 @@ const artistProfile = z.object({
       explicit_lyrics: z.boolean(),
       artist_name: z.string().optional(),
       add_version_info: z.string(),
-      add_version_info_other: z.string(),
+      add_version_info_other: z.string().nullable(),
       is_radio_edit: z.boolean(),
       status: z.enum(songStatuses)
     })

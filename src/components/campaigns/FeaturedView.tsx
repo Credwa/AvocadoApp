@@ -95,7 +95,7 @@ const FeaturedItem = ({ item, returnUrl }: { item: MinCampaign | Artist; returnU
 
 export const FeaturedView: FC<FeaturedProps> = ({ data, title, returnUrl }) => {
   const PAGE_WIDTH = Dimensions.get('window').width - 16
-  if (!data) return null
+  if (!data || !data.length) return null
 
   return (
     <View style={tw`z-0`}>

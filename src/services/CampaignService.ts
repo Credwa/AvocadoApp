@@ -33,7 +33,7 @@ export const minCampaign = z.object({
   explicit_lyrics: z.boolean(),
   artist_name: z.string().optional(),
   add_version_info: z.string(),
-  add_version_info_other: z.string(),
+  add_version_info_other: z.string().nullable(),
   is_radio_edit: z.boolean()
 })
 export type MinCampaign = z.infer<typeof minCampaign>
@@ -76,7 +76,7 @@ const campaign = z.object({
   duration: z.number().nullable(),
   explicit_lyrics: z.boolean(),
   add_version_info: z.string(),
-  add_version_info_other: z.string(),
+  add_version_info_other: z.string().nullable(),
   is_radio_edit: z.boolean(),
   status: z.enum(songStatuses),
   campaign_details: z
@@ -123,7 +123,7 @@ const purchasedCampaign = z.object({
   duration: z.number().nullable(),
   explicit_lyrics: z.boolean(),
   add_version_info: z.string(),
-  add_version_info_other: z.string(),
+  add_version_info_other: z.string().nullable(),
   is_radio_edit: z.boolean(),
   latest_purchase: z.string(),
   total_shares: z.number()

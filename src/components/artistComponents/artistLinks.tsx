@@ -77,7 +77,7 @@ export default function ArtistLinks({ artistLinks }: ArtistLinksProps) {
   return (
     <>
       {Boolean(links) && (
-        <View style={tw`w-full px-10 flex-row gap-x-6 gap-y-6 py-8 flex-wrap`}>
+        <View style={tw`w-full justify-center flex-row gap-x-6 gap-y-6 py-8 flex-wrap`}>
           {Object.entries(links).map(([key, value]) => {
             if (value.link) {
               return (

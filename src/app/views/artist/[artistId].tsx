@@ -1,5 +1,6 @@
 import { ResizeMode, Video } from 'expo-av'
 import { Image } from 'expo-image'
+import { LinearGradient } from 'expo-linear-gradient'
 import { router, useLocalSearchParams } from 'expo-router'
 import React, { useEffect, useRef, useState } from 'react'
 import { Dimensions, Pressable, SafeAreaView, View } from 'react-native'
@@ -48,7 +49,11 @@ export default function ArtistProfile() {
       (activity.track_info?.avatar && activity.track_info?.avatar.length > 0)
   )
 
+  const gradient = ['#00000000', '#00000033', '#00000066', '#00000099']
+
   const filteredArtistSongs = artistData?.songs?.filter((song) => song.status !== 'draft')
+
+  console.log(JSON.stringify(filteredArtistActivities, null, 2))
 
   return (
     <ScrollView nestedScrollEnabled style={tw.style(`flex flex-col flex-1 background-default`)}>
@@ -64,37 +69,41 @@ export default function ArtistProfile() {
         <SafeAreaView style={tw`flex justify-between flex-1 h-[${screenHeight / 2.3}px]`}>
           <BackButton hasBackground href={url} />
 
-          <View style={tw`flex-row`}>
-            <Typography weight={500} style={tw`p-4 text-3xl text-white`}>
+          <LinearGradient colors={gradient.map((color) => (color ? color : 'transparent'))} style={tw`flex-row `}>
+            <Typography weight={600} style={tw`m-2 text-4xl text-white`}>
               {artistData?.artist_name}
             </Typography>
             {artistData?.is_verified && (
               <MaterialIcons
                 name="verified"
-                style={tw`self-center`}
+                style={tw`self-center mb-1`}
                 size={32}
-                color={colorScheme === 'dark' ? tw.color('text-primary-main') : tw.color('text-primary-main')}
+                color={tw.color('text-primary-main')}
               />
             )}
-          </View>
+          </LinearGradient>
         </SafeAreaView>
       </View>
 
-      <View style={tw`flex items-center gutter-sm pt-3 gap-y-4 pb-[${tabBarHeight * 1.5}px]`}>
+      <View style={tw`flex gutter-sm pt-3 gap-y-4 pb-[${tabBarHeight * 1.5}px]`}>
         {Boolean(artistData?.bio) && (
           <View style={tw`flex-col self-start pt-4`}>
             <Typography weight={500} style={tw`pb-2 text-2xl`}>
               About
             </Typography>
             <Typography style={tw`text-base`} weight={400}>
-              {bioOpen ? artistData?.bio : artistData?.bio!.slice(0, 150) + '...'}
+              {bioOpen
+                ? artistData?.bio
+                : artistData?.bio!.slice(0, 150) + `${artistData?.bio && artistData?.bio!.length > 150 ? '...' : ''}`}
             </Typography>
 
-            <Pressable style={tw`py-2`} onPress={() => setBioOpen((prev) => !prev)}>
-              <Typography weight={500} style={tw`text-base dark:text-primary-lighter text-primary-main`}>
-                {bioOpen ? 'Show less' : 'Show more'}
-              </Typography>
-            </Pressable>
+            {artistData?.bio && artistData?.bio?.length > 150 && (
+              <Pressable style={tw`py-2`} onPress={() => setBioOpen((prev) => !prev)}>
+                <Typography weight={500} style={tw`text-base dark:text-primary-lighter text-primary-main`}>
+                  {bioOpen ? 'Show less' : 'Show more'}
+                </Typography>
+              </Pressable>
+            )}
           </View>
         )}
 
@@ -121,7 +130,7 @@ export default function ArtistProfile() {
           </View>
         )} */}
 
-        <View style={tw`w-full my-4 border-b dark:border-zinc-700 border-zinc-300`} />
+        {Boolean(artistData?.bio) && <View style={tw`w-full my-4 border-b dark:border-zinc-700 border-zinc-300`} />}
         {Boolean(filteredArtistSongs && filteredArtistSongs.length > 0) && (
           <View style={tw`flex-col self-start h-52`}>
             <Typography weight={500} style={tw`pb-2 text-2xl`}>

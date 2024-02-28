@@ -22,7 +22,7 @@ const ActivitiesItem = ({ item }: { item: ArtistActivity }) => {
   return (
     <Pressable
       style={({ pressed }) => [
-        tw.style(`flex-row items-center justify-between py-2 `),
+        tw.style(`flex-row items-center justify-between py-2`),
         tw.style({
           'opacity-50': pressed
         })
@@ -47,11 +47,11 @@ const ActivitiesItem = ({ item }: { item: ArtistActivity }) => {
           </View>
 
           <View style={tw.style(`flex-col gap-y-0.5 pr-1`)}>
-            <Typography weight={500} style={tw`text-sm  text-zinc-600 dark:text-zinc-400`}>
+            <Typography weight={500} style={tw`text-sm text-zinc-600 dark:text-zinc-400`}>
               {truncate_string(item.track_info?.title ?? '', 20)}
             </Typography>
             <View style={tw`flex-row gap-x-0.5`}>
-              <Typography weight={500} style={tw`text-sm text-zinc-950 dark:text-zinc-100`}>
+              <Typography weight={500} style={tw`w-48 text-sm text-zinc-950 dark:text-zinc-100`}>
                 {truncate_string(item.activity_text ?? '', 40)}
               </Typography>
             </View>
@@ -71,17 +71,17 @@ export const ActivitiesView: FC<ActivitiesProps> = ({ artistActivities }) => {
   if (!artistActivities || !artistActivities.length) return null
 
   return (
-    <View style={tw``}>
+    <View style={tw`mt-4`}>
       <Typography weight={500} style={tw`pb-2 text-lg `}>
         Recent Activities
       </Typography>
       <Carousel
-        loop
+        loop={false}
         panGestureHandlerProps={{
           activeOffsetX: [-20, 20]
         }}
-        width={PAGE_WIDTH / 2.3}
-        style={tw`w-[${PAGE_WIDTH}]  justify-center h-70`}
+        width={PAGE_WIDTH / 2.1}
+        style={tw`w-[${PAGE_WIDTH}] content-center items-center  h-70`}
         data={[...artistActivities]}
         renderItem={({ item }) => <ActivitiesItem key={item.activity_url + item.activity_date!} item={item} />}
       />

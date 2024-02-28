@@ -14,7 +14,7 @@ import { PlayButton } from '@/components/atoms/PlayButton'
 import { Typography } from '@/components/atoms/Typography'
 import { FeaturedView } from '@/components/campaigns/FeaturedView'
 import LoadingScreen from '@/components/LoadingScreen'
-import { getRandomBlurhash, getSongTitle, isCampaignComingSoon } from '@/helpers/lib/lib'
+import { getRandomBlurhash, getSongTitle, isCampaignComingSoon, isCampaignFinished } from '@/helpers/lib/lib'
 import tw from '@/helpers/lib/tailwind'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import { Campaign, getDiscoveryCampaigns, getUpcomingCampaigns } from '@/services/CampaignService'
@@ -115,9 +115,9 @@ export const DiscoveryCard: React.FC<Props> = (props) => {
   const { style, index, currentIndex, pretty, campaign, img, testID, ...animatedViewProps } = props
   const router = useRouter()
   const gesture = Gesture.Tap()
-    .maxDuration(250)
+    .maxDuration(500)
     .onEnd(() => {
-      router.push(`views/song/${campaign.id}?url=/discover`)
+      router.push(`/views/song/${campaign.id}?url=/discover`)
     })
 
   // router.push(`views/song/${campaign.id}?url=/discover`)
@@ -200,6 +200,45 @@ export const DiscoveryCard: React.FC<Props> = (props) => {
             </View>
           </View>
         )}
+        {isCampaignFinished(
+          campaign.campaign_details?.campaign_start_date,
+          campaign.campaign_details?.time_restraint
+        ) && (
+          <View style={tw`absolute self-end top-9 -right-3`}>
+            <View
+              style={[
+                tw`rounded-sm bg-fuchsia-500`,
+                {
+                  transform: [{ rotate: '45deg' }]
+                }
+              ]}
+            >
+              <Typography weight={500} style={tw`px-3 py-0.5 text-base text-white min-w-[120px] text-center`}>
+                Released
+              </Typography>
+            </View>
+          </View>
+        )}
+        {!isCampaignFinished(
+          campaign.campaign_details?.campaign_start_date,
+          campaign.campaign_details?.time_restraint
+        ) &&
+          !isCampaignComingSoon(campaign.campaign_details?.campaign_start_date) && (
+            <View style={tw`absolute self-end top-9 -right-3`}>
+              <View
+                style={[
+                  tw`rounded-sm bg-secondary-main`,
+                  {
+                    transform: [{ rotate: '45deg' }]
+                  }
+                ]}
+              >
+                <Typography weight={500} style={tw`px-3 py-0.5 text-base text-white min-w-[120px] text-center`}>
+                  Ongoing
+                </Typography>
+              </View>
+            </View>
+          )}
       </Animated.View>
     </GestureDetector>
   )
