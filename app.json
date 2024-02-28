@@ -16,7 +16,7 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.avocado.shares.myavocado",
-      "buildNumber": "3",
+      "buildNumber": "4",
       "infoPlist": {
         "UIBackgroundModes": ["audio"]
       }
@@ -27,7 +27,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "versionCode": 3,
+      "versionCode": 4,
       "package": "com.avocado.shares.myavocado",
       "permissions": ["android.permission.RECORD_AUDIO"]
     },
