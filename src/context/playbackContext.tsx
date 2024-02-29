@@ -1,7 +1,6 @@
 import { Audio, InterruptionModeAndroid, InterruptionModeIOS } from 'expo-av'
 import { usePostHog } from 'posthog-react-native'
 import React, { useEffect, useState } from 'react'
-import { set } from 'react-hook-form'
 import RootSiblingsManager from 'react-native-root-siblings'
 
 import { Playbar } from '@/components/Playbar'

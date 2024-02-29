@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react'
 import { Dimensions, Pressable, RefreshControl, ScrollView, useColorScheme, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
+import { Button } from '@/components/atoms/Button'
 import { Typography } from '@/components/atoms/Typography'
 import { Avatar } from '@/components/Avatar'
 import { DropdownMenu } from '@/components/DropdownMenu'
@@ -51,6 +52,7 @@ const Root = () => {
 
   const shownCampaigns = purchasedCampaigns?.slice(0, 5)
 
+  // probably redundant...
   useEffect(() => {
     setTabBarHeight(tabBarHeight)
   }, [])
@@ -82,6 +84,10 @@ const Root = () => {
     }
   ]
 
+  const withdrawFunds = () => {
+    router.push('/withdraw')
+  }
+
   return (
     <View style={tw`flex-1 background-default`}>
       <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
@@ -106,7 +112,7 @@ const Root = () => {
             </View>
           </View>
           <View style={tw`flex items-center w-full h-full gap-y-4`} onTouchEnd={() => setMenuOpen(false)}>
-            <Typography style={tw`text-lg text-neutral-200 opacity-90`}>Balance</Typography>
+            <Typography style={tw`text-lg text-neutral-200 opacity-90`}>Earnings</Typography>
             <View style={tw`flex-row items-center content-center justify-center gap-x-1`}>
               <Foundation name="dollar" size={64} style={tw`mb-3`} color={tw.color('text-zinc-100')} />
               <Typography weight={500} style={tw`text-6xl text-zinc-100`}>
@@ -128,6 +134,16 @@ const Root = () => {
                     Tap to fill information onboarding to withdraw
                   </Typography>
                 </Pressable>
+              )}
+
+            {!isStripeAccDataLoading &&
+              stripeAccountBalance &&
+              stripeAccountBalance?.available?.reduce((acc, curr) => acc + curr.amount / 100, 0) > 0 &&
+              stripeAccountData?.charges_enabled &&
+              stripeAccountData?.payouts_enabled && (
+                <Button styles="dark:bg-[#e2e8f0E6] px-5 py-2.5 " textStyles="text-lg dark:text-black">
+                  Withdraw
+                </Button>
               )}
           </View>
         </LinearGradient>

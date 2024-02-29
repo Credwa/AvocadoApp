@@ -6,7 +6,7 @@ import * as SplashScreen from 'expo-splash-screen'
 import * as Updates from 'expo-updates'
 import { PostHogProvider } from 'posthog-react-native'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { Appearance as AppAppearance, AppStateStatus, Platform, StatusBar } from 'react-native'
+import { Alert, Appearance as AppAppearance, AppStateStatus, Platform, StatusBar } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { RootSiblingParent } from 'react-native-root-siblings'
 import { useAppColorScheme, useDeviceContext } from 'twrnc'
@@ -75,18 +75,34 @@ const RootLayout = () => {
   const [notification, setNotification] = useState<Notifications.Notification | undefined>(undefined)
   const setColorScheme = useAppColorScheme(tw)[2]
   const appearance = useAppStore((state) => state.appearance)
-  const { currentlyRunning, availableUpdate, isUpdateAvailable, isUpdatePending } = Updates.useUpdates()
+  const { isUpdateAvailable, isUpdatePending } = Updates.useUpdates()
 
-  console.log(currentlyRunning, availableUpdate, isUpdateAvailable, isUpdatePending)
-
-  // useEffect(() => {
-  //   if (isUpdatePending) {
-  //     // Update has successfully downloaded
-  //   }
-  // }, [isUpdatePending])
   useEffect(() => {
-    onFetchUpdateAsync()
-  })
+    if (isUpdatePending) {
+      // Update has successfully downloaded
+      ;(async () => {
+        // Clean up
+        await Updates.reloadAsync()
+      })()
+    }
+  }, [isUpdatePending])
+
+  useEffect(() => {
+    if (isUpdateAvailable) {
+      // show pop up to user
+      Alert.alert('Update Available', 'A new version of the app is available. Would you like to update?', [
+        {
+          text: 'Yes',
+          onPress: async () => {
+            await Updates.fetchUpdateAsync()
+          }
+        },
+        {
+          text: 'No'
+        }
+      ])
+    }
+  }, [isUpdateAvailable])
 
   // Handle color scheme changes
   useEffect(() => {

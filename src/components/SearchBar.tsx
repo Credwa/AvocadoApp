@@ -1,5 +1,4 @@
 import { useRouter } from 'expo-router'
-import LottieView from 'lottie-react-native'
 import { FC, useEffect, useRef, useState } from 'react'
 import { ActivityIndicator, Pressable, TextInput, View } from 'react-native'
 import Animated, { FadeIn } from 'react-native-reanimated'
@@ -21,7 +20,6 @@ export const SearchBar: FC<SearchBarProps> = (props) => {
   const [isFocused, setIsFocused] = useState(true)
   const [isActive, setIsActive] = useState(true)
   const textInputRef = useRef<TextInput>(null) // Creating a ref for the TextInput
-  const loadingAnim = require('~/assets/lottie/Loading.json')
 
   const router = useRouter()
   const colorScheme = useColorScheme()

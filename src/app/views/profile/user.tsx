@@ -67,7 +67,6 @@ const UserProfile = () => {
       quality: 1
     })
 
-    console.log(result)
     if (!result.canceled) {
       const asset = result.assets[0]
 
