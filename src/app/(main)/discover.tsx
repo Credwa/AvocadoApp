@@ -1,6 +1,6 @@
 import { Image } from 'expo-image'
 import { router, useRouter } from 'expo-router'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Dimensions, Pressable, SafeAreaView, View } from 'react-native'
 import { Gesture, GestureDetector, ScrollView } from 'react-native-gesture-handler'
 import Animated, { useSharedValue } from 'react-native-reanimated'
@@ -32,6 +32,42 @@ import type { AnimatedProps } from 'react-native-reanimated'
 const PAGE_WIDTH = Dimensions.get('window').width
 const PAGE_HEIGHT = Dimensions.get('window').height
 
+const sortAndShuffleDiscoveryCards = (campaigns: Campaign[]) => {
+  // Function to shuffle an array (Fisher-Yates Shuffle)
+  function shuffleArray(array: Campaign[]) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1))
+      ;[array[i], array[j]] = [array[j], array[i]]
+    }
+  }
+
+  // Classifying campaigns
+  const ongoingCampaigns = campaigns.filter((campaign) => {
+    const startDate = campaign.campaign_details?.campaign_start_date
+    const timeRestraint = campaign.campaign_details?.time_restraint
+    return !isCampaignComingSoon(startDate) && !isCampaignFinished(startDate, timeRestraint)
+  })
+
+  const releasedCampaigns = campaigns.filter((campaign) => {
+    const startDate = campaign.campaign_details?.campaign_start_date
+    const timeRestraint = campaign.campaign_details?.time_restraint
+    return isCampaignFinished(startDate, timeRestraint)
+  })
+
+  const upcomingCampaigns = campaigns.filter((campaign) => {
+    const startDate = campaign.campaign_details?.campaign_start_date
+    return isCampaignComingSoon(startDate)
+  })
+
+  // Randomizing each category
+  shuffleArray(ongoingCampaigns)
+  shuffleArray(releasedCampaigns)
+  shuffleArray(upcomingCampaigns)
+
+  // Concatenating the categories
+  return ongoingCampaigns.concat(releasedCampaigns, upcomingCampaigns)
+}
+
 export default function Discover() {
   useColorScheme()
   const { data: recentCampaigns } = useQuery({
@@ -49,6 +85,8 @@ export default function Discover() {
   })
 
   const progressValue = useSharedValue<number>(0)
+
+  const sortedCampaigns = useMemo(() => sortAndShuffleDiscoveryCards(campaigns || []), [campaigns])
 
   if (campaignsLoading && !campaigns && upcomingCampaignsLoading && !upcomingCampaigns) return <LoadingScreen />
 
@@ -103,7 +141,7 @@ export default function Discover() {
               parallaxScrollingScale: 0.85,
               parallaxScrollingOffset: 70
             }}
-            data={campaigns || []}
+            data={sortedCampaigns || []}
             renderItem={({ index, item }) => (
               <DiscoveryCard campaign={item} index={index} currentIndex={progressValue.value} />
             )}
@@ -173,7 +211,7 @@ export const DiscoveryCard: React.FC<Props> = (props) => {
             onPress={() => router.push(`views/artist/${campaign?.artists.id}?url=/discover`)}
           >
             {({ pressed }) => (
-              <View style={tw`flex-row items-center gap-x-2`}>
+              <View style={tw`flex-row items-center bg-white rounded-full dark:bg-zinc-900 gap-x-2`}>
                 <Image
                   source={campaign?.artists.avatar_url}
                   placeholder={getRandomBlurhash()}
