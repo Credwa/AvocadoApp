@@ -1,20 +1,13 @@
 import dayjs from 'dayjs'
 import localizedFormat from 'dayjs/plugin/localizedFormat'
 import { Image } from 'expo-image'
-import { LinearGradient } from 'expo-linear-gradient'
 import { useLocalSearchParams, useRouter } from 'expo-router'
-import { useState } from 'react'
 import { Pressable, SafeAreaView, View } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
 
-import BackButton from '@/components/atoms/BackButton'
-import { Button } from '@/components/atoms/Button'
-import { PlayButton } from '@/components/atoms/PlayButton'
-import ShareButton from '@/components/atoms/ShareButton'
 import { Typography } from '@/components/atoms/Typography'
-import { usePlayback } from '@/context/playbackContext'
 import { defaultBlurhash } from '@/helpers/lib/constants'
-import { getCampaignDaysLeft, getRandomBlurhash, getSongTitle } from '@/helpers/lib/lib'
+import { getRandomBlurhash, getSongTitle } from '@/helpers/lib/lib'
 import tw from '@/helpers/lib/tailwind'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import { getCampaignById, getPurchaseHistoryForSong } from '@/services/CampaignService'
@@ -41,6 +34,8 @@ const PurchaseHistory = () => {
   const { data: purchaseData } = useQuery({
     ...getPurchaseHistoryForSong(songId!, userId)
   })
+
+  console.log(JSON.stringify(purchaseData, null, 2))
   return (
     <ScrollView style={tw`flex-1 py-8 background-default gutter-md`}>
       <SafeAreaView style={tw`mb-[${tabBarHeight * 1.5}px]`}>
@@ -99,21 +94,31 @@ const PurchaseHistory = () => {
             <View style={tw`flex-row items-center`}>
               <View>
                 <Typography weight={500} style={tw`text-base`}>
-                  Purchase
+                  {purchase.shares === 0 ? 'Bought Song' : 'Share Purchase'}
                 </Typography>
                 <Typography style={tw`text-sm text-gray-400`}>{dayjs(purchase.created_at).format('lll')}</Typography>
               </View>
             </View>
             <View style={tw`flex-col items-center`}>
-              <Typography weight={400} style={tw`self-end text-base`}>
-                {purchase.shares} {purchase.shares === 1 ? 'share' : 'shares'}
-              </Typography>
+              {purchase.shares > 0 && (
+                <Typography weight={400} style={tw`self-end text-base`}>
+                  {purchase.shares} {purchase.shares === 1 ? 'share' : 'shares'}
+                </Typography>
+              )}
               <View style={tw`ml-4`}>
-                <Typography weight={300} style={tw`self-end text-base text-secondary-dark dark:text-secondary-main `}>
-                  {(purchase.shares * (songData?.campaign_details?.price_per_share ?? 0)).toLocaleString('en-US', {
-                    style: 'currency',
-                    currency: 'USD'
-                  })}
+                <Typography
+                  weight={300}
+                  style={tw.style(`self-end text-base text-secondary-dark dark:text-secondary-main`)}
+                >
+                  {purchase.shares === 0
+                    ? (purchase.donation_amount! / 100).toLocaleString('en-US', {
+                        style: 'currency',
+                        currency: 'USD'
+                      })
+                    : (purchase.shares * (songData?.campaign_details?.price_per_share ?? 0)).toLocaleString('en-US', {
+                        style: 'currency',
+                        currency: 'USD'
+                      })}
                 </Typography>
               </View>
             </View>

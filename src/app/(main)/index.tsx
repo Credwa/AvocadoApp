@@ -26,11 +26,8 @@ const height = Dimensions.get('window').height
 const Root = () => {
   const colorScheme = useColorScheme()
   const [menuOpen, setMenuOpen] = useState(false)
-  const { data, isLoading } = useQuery({ ...getCurrentUserProfile() })
-  if (!isLoading && !data?.is_onboarded) {
-    router.push('/onboarding')
-  }
-  const { handleStripeOnboarding } = useStripeOnboarding(data, '/')
+  const { data } = useQuery({ ...getCurrentUserProfile() })
+  const { handleStripeOnboarding } = useStripeOnboarding(data, '/discover')
 
   const tabBarHeight = useBottomTabBarHeight()
   const setTabBarHeight = useAppStore((state) => state.setTabBarHeight)
@@ -50,9 +47,9 @@ const Root = () => {
     enabled: !!data?.id
   })
 
-  const shownCampaigns = purchasedCampaigns?.slice(0, 5)
+  const shownCampaigns = purchasedCampaigns?.slice(0, 15).filter((campaign) => campaign.total_shares > 0)
 
-  // probably redundant...
+  console.log(shownCampaigns)
   useEffect(() => {
     setTabBarHeight(tabBarHeight)
   }, [])
@@ -171,7 +168,7 @@ const Root = () => {
                         'opacity-50': pressed
                       })
                     ]}
-                    onPress={() => router.push(`views/purchase/${campaign.song_id}`)}
+                    onPress={() => router.push(`views/purchaseHistory/${campaign.song_id}`)}
                   >
                     {({ pressed }) => (
                       <View style={tw`flex-row items-center justify-between w-full gap-x-3`}>

@@ -241,7 +241,7 @@ const Song = () => {
 
           {campaignState === 'released' && (
             <Button
-              onPress={() => router.push(`views/song/${songId}/purchase-released`)}
+              onPress={() => router.push(`views/song/${songId}/purchaseReleased`)}
               styles="w-full rounded-md"
               textStyles="text-white"
               variant="primary"

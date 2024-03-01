@@ -161,6 +161,20 @@ export const getPaymentSheet = (
   })
 }
 
+export const getReleasedPaymentSheet = (
+  uid: string,
+  songId: string,
+  amount: number,
+  email: string,
+  songName: string,
+  artistName: string
+) => {
+  return fetchWithAuth<PaymentSheet>(`/campaigns/purchase/payment-sheet/released`, paymentSheet, {
+    method: 'POST',
+    body: JSON.stringify({ uid, songId, amount, email, songName, artistName })
+  })
+}
+
 export const getPurchasedCampaigns = (userId?: string) => {
   return {
     queryKey: ['campaigns', 'purchase', userId],
@@ -174,7 +188,8 @@ const purchaseHistory = z.object({
   user_id: z.string(),
   song_id: z.string(),
   created_at: z.string(),
-  shares: z.number()
+  shares: z.number(),
+  donation_amount: z.number().nullable()
 })
 
 export type PurchaseHistory = z.infer<typeof purchaseHistory>

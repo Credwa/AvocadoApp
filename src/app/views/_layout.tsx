@@ -29,20 +29,27 @@ export default function Layout() {
         }}
       />
       <Stack.Screen
+        name="song/[songId]/purchaseReleased"
+        options={{
+          presentation: 'modal',
+          headerShown: false
+        }}
+      />
+      <Stack.Screen
         name="song/[songId]/index"
         options={{
           headerShown: false
         }}
       />
       <Stack.Screen
-        name="purchase/[songId]/index"
+        name="purchaseHistory/[songId]/index"
         options={{
           headerShown: true,
           title: 'Purchase History',
           headerBackVisible: false,
           headerTitleStyle: tw`dark:text-zinc-100 text-zinc-950`,
           headerStyle: tw`bg-transparent`,
-          headerLeft: () => <BackButton style="p-0" />
+          headerLeft: () => <BackButton style="p-0" href="/" />
         }}
       />
     </Stack>

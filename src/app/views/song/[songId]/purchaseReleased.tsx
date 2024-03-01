@@ -17,11 +17,11 @@ import { Typography } from '@/components/atoms/Typography'
 import { defaultBlurhash } from '@/helpers/lib/constants'
 import { getSongTitle } from '@/helpers/lib/lib'
 import tw from '@/helpers/lib/tailwind'
-import { purchaseSchema, TPurchaseSchema } from '@/helpers/schemas/extras'
+import { purchaseReleasedSchema, TPurchaseReleasedSchema } from '@/helpers/schemas/extras'
 import { supabase } from '@/helpers/supabase/supabase'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import useStripeOnboarding from '@/hooks/useStripeOnboarding'
-import { getCampaignById, getPaymentSheet, purchaseCampaign } from '@/services/CampaignService'
+import { getCampaignById, getReleasedPaymentSheet } from '@/services/CampaignService'
 import { getCurrentUserProfile, getStripeAccountInfo } from '@/services/UserService'
 import { useAppStore } from '@/store'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -30,7 +30,22 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 const successAnim = require('~/assets/lottie/Confetti.json')
 
-export default function Purchase() {
+const formatDisplayValue = (value: string) => {
+  // Convert the string to an integer
+  const intValue = parseInt(value, 10)
+
+  // Divide by 100 to get the decimal value
+  const displayValue = (intValue / 100).toFixed(2)
+
+  // Handle the case where the input is empty
+  if (isNaN(Number(displayValue))) {
+    return '0.00'
+  }
+
+  return displayValue
+}
+
+export default function PurchaseReleased() {
   const router = useRouter()
   const posthog = usePostHog()
   const queryClient = useQueryClient()
@@ -46,14 +61,16 @@ export default function Purchase() {
   const [submitting, setSubmitting] = useState(false)
   const animationRef = useRef<LottieView>(null)
 
+  const [amountPaid, setAmountPaid] = useState(0)
   const [totalCost, setTotalCost] = useState(0)
   const colorScheme = useColorScheme()
   const {
     control,
     handleSubmit,
-    formState: { errors }
-  } = useForm<TPurchaseSchema>({
-    resolver: zodResolver(purchaseSchema)
+    formState: { errors },
+    setValue
+  } = useForm<TPurchaseReleasedSchema>({
+    resolver: zodResolver(purchaseReleasedSchema)
   })
 
   const { songId } = useLocalSearchParams<{ songId: string }>()
@@ -91,11 +108,11 @@ export default function Purchase() {
     error: paymentSheetError,
     isError: paymentSheetIsError
   } = useMutation({
-    mutationFn: (info: { shares: number; email: string }) => {
-      return getPaymentSheet(
+    mutationFn: (info: { amount: number; email: string }) => {
+      return getReleasedPaymentSheet(
         userId,
         songId!,
-        info.shares,
+        info.amount,
         info.email,
         getSongTitle(songData!, 100),
         songData?.artists.artist_name ?? ''
@@ -117,12 +134,12 @@ export default function Purchase() {
     }
   })
 
-  const initializePaymentSheet = async () => {
+  const initializePaymentSheet = async (amount: number) => {
     const {
       data: { user }
     } = await supabase.auth.getUser()
 
-    const data = await mutatePaymentSheet({ shares, email: user?.email! })
+    const data = await mutatePaymentSheet({ amount, email: user?.email! })
 
     const { error } = await initPaymentSheet({
       merchantDisplayName: 'Avocado Shares, Inc.',
@@ -152,7 +169,7 @@ export default function Purchase() {
     }
   }
 
-  const onSubmit = async (formData: TPurchaseSchema) => {
+  const onSubmit = async (formData: TPurchaseReleasedSchema) => {
     if (isStripeAccDataLoading) return
 
     if (!stripeAccountData?.charges_enabled && !stripeAccountData?.payouts_enabled) {
@@ -169,10 +186,23 @@ export default function Purchase() {
       return
     }
 
+    if (Number(formData.amount) < 100) {
+      ShowToast(
+        'Minimum amount is $1.00',
+        {
+          backgroundColor: colorScheme === 'dark' ? tw.color('bg-zinc-800') : tw.color('bg-zinc-200'),
+          position: ToastPositionsValues.TOP
+        },
+        false
+      )
+      return
+    }
+
     setSubmitting(true)
-    await initializePaymentSheet()
-    const sharesToPurchase = Number(formData.numberOfShares)
-    if (sharesToPurchase < 1) return
+    await initializePaymentSheet(Number(formData.amount))
+    const amount = Number(formData.amount)
+    if (amount < 1) return
+    setAmountPaid(Number(formData.amount))
     openPaymentSheet()
   }
 
@@ -200,9 +230,9 @@ export default function Purchase() {
           {success ? (
             <View style={tw`flex items-center flex-1 mt-4 gutter-md gap-y-8`}>
               <Typography weight={500} style={tw`flex-wrap text-xl text-center`}>
-                Order placed for {shares} {shares === 1 ? 'share' : 'shares'} of song {getSongTitle(songData!, 40)} by{' '}
-                {songData?.artists.artist_name} for{' '}
-                {totalCost.toLocaleString('en-US', {
+                Thanks for supporting the song {getSongTitle(songData!, 40)} by {songData?.artists.artist_name}. You've
+                paid{' '}
+                {(amountPaid / 100).toLocaleString('en-US', {
                   style: 'currency',
                   currency: 'USD'
                 })}
@@ -250,11 +280,11 @@ export default function Purchase() {
 
               <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={tw`h-full gap-y-2`}>
                 <View>
-                  <View style={tw`relative flex-row items-center justify-between w-full `}>
-                    <Typography weight={400} style={tw`text-base`}>
-                      Number of Shares
-                    </Typography>
-                    <View>
+                  <View style={tw`relative flex-row items-center justify-center w-full`}>
+                    <View style={tw`flex-col gap-y-4`}>
+                      <Typography style={tw`text-lg text-center`} weight={500}>
+                        Pay what you want
+                      </Typography>
                       <Controller
                         control={control}
                         rules={{
@@ -263,74 +293,44 @@ export default function Purchase() {
                         render={({ field: { onChange, onBlur, value } }) => (
                           <TextInput
                             autoFocus
-                            styles="border-0 dark:bg-transparent bg-transparent text-right p-0 shadow-none"
+                            styles="border-0 dark:bg-transparent bg-transparent text-center p-0 shadow-none text-4xl"
                             inputMode="numeric"
-                            maxLength={2}
                             keyboardType="phone-pad"
-                            placeholder="0"
+                            placeholder="0.00"
                             hitSlop={{ top: 10, bottom: 10, left: 200, right: 10 }}
-                            selection={{ start: 2, end: 2 }}
+                            // selection={{ start: 2, end: 2 }}
                             flatPlaceholder
                             onBlur={onBlur}
                             onChangeText={(event) => {
-                              if (
-                                songData?.campaign_details &&
-                                Number(event) > songData?.campaign_details?.available_shares
-                              ) {
-                                event = songData?.campaign_details?.available_shares.toString()
-                                ShowToast(
-                                  `Max shares available is ${songData?.campaign_details?.available_shares}`,
-                                  {
-                                    backgroundColor:
-                                      colorScheme === 'dark' ? tw.color('bg-zinc-800') : tw.color('bg-zinc-200'),
-                                    position: ToastPositionsValues.TOP
-                                  },
-                                  false
-                                )
-                              }
-                              setShares(Number(event))
-                              setTotalCost(Number(event) * (songData?.campaign_details?.price_per_share ?? 0))
-                              onChange(event)
+                              // if (
+                              //   songData?.campaign_details &&
+                              //   Number(event) > songData?.campaign_details?.available_shares
+                              // ) {
+                              //   event = songData?.campaign_details?.available_shares.toString()
+                              //   ShowToast(
+                              //     `Max shares available is ${songData?.campaign_details?.available_shares}`,
+                              //     {
+                              //       backgroundColor:
+                              //         colorScheme === 'dark' ? tw.color('bg-zinc-800') : tw.color('bg-zinc-200'),
+                              //       position: ToastPositionsValues.TOP
+                              //     },
+                              //     false
+                              //   )
+                              // }
+                              const numericText = event.replace(/[^0-9]/g, '')
+
+                              onChange(numericText)
                             }}
-                            value={value}
+                            value={formatDisplayValue(value)}
                           />
                         )}
-                        name="numberOfShares"
+                        name="amount"
                       />
-                      {errors.numberOfShares && <ErrorText>{errors.numberOfShares.message}</ErrorText>}
+                      {errors.amount && <ErrorText>{errors.amount.message}</ErrorText>}
                     </View>
                   </View>
-                  <View style={tw`left-0 w-full border-b dark:border-zinc-800 border-zinc-200`} />
                 </View>
 
-                <View>
-                  <View style={tw`relative flex-row items-center justify-between w-full py-4 `}>
-                    <Typography weight={400} style={tw`text-base`}>
-                      Price
-                    </Typography>
-                    <Typography weight={400} style={tw`text-base`}>
-                      {songData?.campaign_details?.price_per_share.toLocaleString('en-US', {
-                        style: 'currency',
-                        currency: 'USD'
-                      })}
-                    </Typography>
-                  </View>
-                  <View style={tw`left-0 w-full pt-1 border-b dark:border-zinc-800 border-zinc-200`} />
-                </View>
-
-                <View>
-                  <View style={tw`relative flex-row items-center justify-between w-full py-4`}>
-                    <Typography weight={400} style={tw`text-base`}>
-                      Total Cost
-                    </Typography>
-                    <Typography weight={400} style={tw`text-base`}>
-                      {totalCost.toLocaleString('en-US', {
-                        style: 'currency',
-                        currency: 'USD'
-                      })}
-                    </Typography>
-                  </View>
-                </View>
                 <View style={tw.style(`justify-end mt-12 z-50 flex items-center`)}>
                   <Button
                     loading={submitting}
@@ -338,9 +338,9 @@ export default function Purchase() {
                     onPress={handleSubmit(onSubmit)}
                     styles="w-full rounded-md"
                     textStyles="text-white"
-                    variant="secondary"
+                    variant="primary"
                   >
-                    Purchase
+                    Buy Song
                   </Button>
                 </View>
               </KeyboardAvoidingView>
