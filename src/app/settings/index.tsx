@@ -1,3 +1,4 @@
+import * as Application from 'expo-application'
 import { useRouter } from 'expo-router'
 import { Alert, SectionList, View } from 'react-native'
 
@@ -87,6 +88,10 @@ export default function Settings() {
           Sign Out
         </Typography>
       </ListItem>
+
+      <Typography style={tw`pt-4 text-center text-neutral opacity-80`}>
+        {Application.nativeApplicationVersion} ({Application.nativeBuildVersion})
+      </Typography>
     </View>
   )
 }
