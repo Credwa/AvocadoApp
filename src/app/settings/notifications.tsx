@@ -21,6 +21,7 @@ const Notifications = () => {
     if (existingStatus === 'granted' && currentUser?.notification_preferences?.notifications_enabled) {
       setIsEnabled(true)
     } else {
+      mutateAsync({ notifications_enabled: false })
       setIsEnabled(false)
     }
   }
@@ -48,7 +49,7 @@ const Notifications = () => {
         mutateAsync({ notifications_enabled: true })
         setIsEnabled(true)
       } else {
-        Alert.alert('Notifications Enabled', 'Enabled them in your settings to allow notifications.', [
+        Alert.alert('Notifications Enabled', 'Enable them in your settings to allow notifications.', [
           {
             text: 'Cancel',
             onPress: () => null,

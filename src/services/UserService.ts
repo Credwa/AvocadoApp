@@ -19,7 +19,8 @@ const user = z.object({
   role: roles,
   notification_preferences: notificationPreferences,
   is_onboarded: z.boolean(),
-  stripe_onboarding_complete: z.boolean()
+  stripe_onboarding_complete: z.boolean(),
+  expo_push_token: z.string().nullable()
 })
 
 const accountLinkData = z.object({
@@ -105,5 +106,12 @@ export const updateNotificationPreferences = (userId: string, notificationPrefer
   return fetchWithAuth<void>(`/user/me/notifications/${userId}`, undefined, {
     method: 'POST',
     body: JSON.stringify(notificationPreferences)
+  })
+}
+
+export const updateExpoPushToken = (userId: string, token: string) => {
+  return fetchWithAuth<void>(`/user/me/notifications/${userId}/token`, undefined, {
+    method: 'POST',
+    body: JSON.stringify({ token })
   })
 }

@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "AvocadoApp",
-    "slug": "avocadoapp",
+    "name": "MyAvocado",
+    "slug": "myavocado",
     "version": "1.0.2",
     "orientation": "portrait",
     "icon": "./assets/icon.png",

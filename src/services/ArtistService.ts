@@ -2,8 +2,6 @@ import { z } from 'zod'
 
 import { fetchWithAuth } from '@/helpers/lib/lib'
 
-import { minCampaign } from './CampaignService'
-
 const artist = z.object({
   id: z.string(),
   artist_name: z.string(),
@@ -21,7 +19,7 @@ export const getFeaturedArtists = () => {
     }
   }
 }
-export const songStatuses = ['ongoing', 'releasing', 'draft'] as const
+export const songStatuses = ['ongoing', 'releasing', 'released', 'draft'] as const
 
 export const displayedStats = {
   streams: {

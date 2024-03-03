@@ -48,23 +48,6 @@ if (!sentryInitialzed) {
   sentryInitialzed = true
 }
 
-async function onFetchUpdateAsync() {
-  try {
-    if (__DEV__) {
-      return
-    }
-    const update = await Updates.checkForUpdateAsync()
-
-    if (update.isAvailable) {
-      await Updates.fetchUpdateAsync()
-      await Updates.reloadAsync()
-    }
-  } catch (error) {
-    // You can also add an alert() to see the error message in case of an error when fetching updates.
-    alert(`Error fetching latest Expo update: ${error}`)
-  }
-}
-
 const RootLayout = () => {
   useOnlineManager()
   useAppState(onAppStateChange)
@@ -80,21 +63,12 @@ const RootLayout = () => {
   useEffect(() => {
     if (isUpdatePending) {
       // Update has successfully downloaded
-      ;(async () => {
-        // Clean up
-        await Updates.reloadAsync()
-      })()
-    }
-  }, [isUpdatePending])
-
-  useEffect(() => {
-    if (isUpdateAvailable) {
-      // show pop up to user
       Alert.alert('Update Available', 'A new version of the app is available. Would you like to update?', [
         {
           text: 'Yes',
           onPress: async () => {
             await Updates.fetchUpdateAsync()
+            await Updates.reloadAsync()
           }
         },
         {
@@ -102,7 +76,13 @@ const RootLayout = () => {
         }
       ])
     }
-  }, [isUpdateAvailable])
+  }, [isUpdatePending])
+
+  // useEffect(() => {
+  //   if (isUpdateAvailable) {
+  //     // show pop up to user
+  //   }
+  // }, [isUpdateAvailable])
 
   // Handle color scheme changes
   useEffect(() => {
@@ -131,8 +111,6 @@ const RootLayout = () => {
 
   // Handle notifications
   useEffect(() => {
-    registerForPushNotificationsAsync().then((token) => setExpoPushToken(token))
-
     notificationListener.current = Notifications.addNotificationReceivedListener((notification) => {
       setNotification(notification)
     })

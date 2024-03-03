@@ -228,11 +228,11 @@ export const DiscoveryCard: React.FC<Props> = (props) => {
           </Typography>
           <Pressable onPress={() => router.push(`views/song/${campaign.id}?url=/discover`)}>
             <Typography weight={600} style={tw`flex-wrap text-2xl text-center`}>
-              {getSongTitle(campaign!, 120)}
+              {getSongTitle(campaign!, 40)}
             </Typography>
           </Pressable>
 
-          <View style={tw`flex-row flex-wrap mt-12 gap-x-2 gap-y-2`}>
+          <View style={tw`flex-row flex-wrap mt-8 gap-x-2 gap-y-2`}>
             <Pill onPress={() => router.push(`views/song/${campaign.id}?url=/discover`)}>{campaign.primary_genre}</Pill>
             {campaign.secondary_genre !== 'Select a genre' && (
               <Pill onPress={() => router.push(`views/song/${campaign.id}?url=/discover`)}>
@@ -241,7 +241,7 @@ export const DiscoveryCard: React.FC<Props> = (props) => {
             )}
           </View>
         </View>
-        <View style={tw`absolute self-center bottom-10`}>
+        <View style={tw`self-center mt-4`}>
           <PlayButton styles="w-18 h-18" playml={2} iconSize={40} pauseml={1} metadata={playbackMetaData} />
         </View>
         {isCampaignComingSoon(campaign.campaign_details?.campaign_start_date) && (
