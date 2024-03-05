@@ -38,7 +38,7 @@ export const environments = {
   prod: {
     BASE_URL: 'https://seashell-app-n3uvl.ondigitalocean.app/api/v1',
     stripePublishableKey:
-      'pk_test_51OEgCAD0PCnrjk8E0WhE2BnEJ5Ij9zgjD2lITATKCg8vzdEsYcAELFYFcJqMPsDjy0LlhgBBnt6WLHsxhYdMeZ3c00YW7Bp8el'
+      'pk_live_51OEgCAD0PCnrjk8EHWlxvrS7MlMjxpjNw6r20BfRfi4Rl2j73J0tZNtCxROddtczjO4opBbUkj2hERncWImDpxPn00wT8t7PRS'
   }
 } as const
 

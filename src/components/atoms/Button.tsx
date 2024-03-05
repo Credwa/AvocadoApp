@@ -13,6 +13,8 @@ type ButtonProps = PressableProps & {
   textStyles?: string
   outline?: boolean
   loading?: boolean
+  iconRight?: React.ReactNode
+  iconLeft?: React.ReactNode
 }
 
 export const Button: FC<ButtonProps> = ({
@@ -22,7 +24,9 @@ export const Button: FC<ButtonProps> = ({
   styles,
   textStyles,
   variant = 'primary',
-  outline = false
+  outline = false,
+  iconRight,
+  iconLeft
 }) => {
   let color = ``
   let textColor = ``
@@ -45,6 +49,7 @@ export const Button: FC<ButtonProps> = ({
       color = 'bg-danger-main'
       break
     case 'default':
+      color = outline ? 'border dark:border-zinc-400 border-zinc-900' : ''
       textColor = `text-neutral`
   }
 
@@ -52,7 +57,7 @@ export const Button: FC<ButtonProps> = ({
     <Pressable
       style={({ pressed }) => [
         tw.style(
-          `px-5 py-2 rounded-xl shadow-md dark:shadow-lg dark:shadow-offset-1 flex-row justify-center`,
+          `px-5 py-2 rounded-xl gap-x-2 items-center shadow-md dark:shadow-lg dark:shadow-offset-1 flex-row justify-center`,
           color,
           styles
         ),
@@ -65,6 +70,7 @@ export const Button: FC<ButtonProps> = ({
       onPress={onPress}
     >
       {loading && <LottieView autoPlay style={tw`absolute w-12 h-10`} source={loadingAnim} />}
+      {Boolean(iconLeft) && iconLeft}
       <Typography
         weight={500}
         style={[
@@ -74,6 +80,7 @@ export const Button: FC<ButtonProps> = ({
       >
         {children}
       </Typography>
+      {Boolean(iconRight) && iconRight}
     </Pressable>
   )
 }

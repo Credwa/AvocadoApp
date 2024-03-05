@@ -18,14 +18,12 @@ import { createSessionFromUrl } from '@/helpers/lib/lib'
 import tw from '@/helpers/lib/tailwind'
 import { useAppState } from '@/hooks/useAppState'
 import { useOnlineManager } from '@/hooks/useOnlineManager'
-import { registerForPushNotificationsAsync } from '@/services/NotificationService'
 import { useAppStore } from '@/store'
 import * as Sentry from '@sentry/react-native'
 import { StripeProvider } from '@stripe/stripe-react-native'
 import { focusManager, QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 SplashScreen.preventAutoHideAsync()
-
 let sentryInitialzed = false
 const queryClient = new QueryClient({
   defaultOptions: { queries: { retry: 2 } }

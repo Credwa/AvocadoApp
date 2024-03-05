@@ -146,10 +146,6 @@ export default function Onboarding() {
     }, 1000)
   }
 
-  if (isCurrentUserLoading) {
-    return <LoadingScreen />
-  }
-
   const onTokenReceived = async (token?: string) => {
     if (token) {
       setNotificationsLoading(false)
@@ -173,6 +169,10 @@ export default function Onboarding() {
       console.log(token)
     }
     setNotificationsLoading(false)
+  }
+
+  if (isCurrentUserLoading) {
+    return <LoadingScreen />
   }
 
   return (

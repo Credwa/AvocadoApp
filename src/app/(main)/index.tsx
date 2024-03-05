@@ -49,7 +49,6 @@ const Root = () => {
 
   const shownCampaigns = purchasedCampaigns?.slice(0, 15).filter((campaign) => campaign.total_shares > 0)
 
-  console.log(shownCampaigns)
   useEffect(() => {
     setTabBarHeight(tabBarHeight)
   }, [])
@@ -118,20 +117,17 @@ const Root = () => {
                   : stripeAccountBalance?.available.reduce((acc, curr) => acc + curr.amount / 100, 0).toFixed(2)}
               </Typography>
             </View>
-            {!isStripeAccDataLoading &&
-              !stripeAccountData?.charges_enabled &&
-              !stripeAccountData?.payouts_enabled &&
-              !data?.stripe_onboarding_complete && (
-                <Pressable
-                  style={tw`flex-row flex-wrap items-center justify-center gap-x-2`}
-                  onPress={handleStripeOnboarding}
-                >
-                  <Ionicons name="warning" style={tw`text-yellow-400`} size={20} />
-                  <Typography weight={500} style={tw`flex-wrap text-base underline text-neutral-200 opacity-90`}>
-                    Tap to fill information onboarding to withdraw
-                  </Typography>
-                </Pressable>
-              )}
+            {!isStripeAccDataLoading && !stripeAccountData?.charges_enabled && !stripeAccountData?.payouts_enabled && (
+              <Pressable
+                style={tw`flex-row flex-wrap items-center justify-center gap-x-2`}
+                onPress={handleStripeOnboarding}
+              >
+                <Ionicons name="warning" style={tw`text-yellow-400`} size={20} />
+                <Typography weight={500} style={tw`flex-wrap text-base underline text-neutral-200 opacity-90`}>
+                  Tap to fill information onboarding to withdraw
+                </Typography>
+              </Pressable>
+            )}
 
             {!isStripeAccDataLoading &&
               stripeAccountBalance &&

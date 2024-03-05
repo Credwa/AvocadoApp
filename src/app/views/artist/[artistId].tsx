@@ -10,6 +10,7 @@ import { ActivitiesView } from '@/components/artistComponents/artistActivitiesVi
 import ArtistLinks from '@/components/artistComponents/artistLinks'
 import ArtistStats from '@/components/artistComponents/artistStats'
 import BackButton from '@/components/atoms/BackButton'
+import { Button } from '@/components/atoms/Button'
 import { Typography } from '@/components/atoms/Typography'
 import LoadingScreen from '@/components/LoadingScreen'
 import { getRandomBlurhash, getSongTitle } from '@/helpers/lib/lib'
@@ -17,24 +18,86 @@ import tw from '@/helpers/lib/tailwind'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import { getArtistProfile } from '@/services/ArtistService'
 import { Campaign } from '@/services/CampaignService'
+import { followArtist, getArtistFollowStatus, unfollowArtist } from '@/services/RelationshipService'
+import { getCurrentUserProfile } from '@/services/UserService'
 import { useAppStore } from '@/store'
-import { MaterialIcons } from '@expo/vector-icons'
-import { useQuery } from '@tanstack/react-query'
+import { FontAwesome5, MaterialIcons } from '@expo/vector-icons'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 export default function ArtistProfile() {
   const colorScheme = useColorScheme()
   const tabBarHeight = useAppStore((state) => state.tabBarHeight)
   const [bioOpen, setBioOpen] = useState(false)
   const screenHeight = Dimensions.get('window').height
+  const queryClient = useQueryClient()
+
   const video = useRef(null)
   const [status, setStatus] = useState<any>(null)
   const { artistId, url } = useLocalSearchParams<{ artistId: string; url?: string }>()
   if (!artistId) {
     router.back()
   }
+  const { data: currentUser } = useQuery({ ...getCurrentUserProfile() })
 
   const { data: artistData, isLoading: isArtistLoading } = useQuery({
     ...getArtistProfile(artistId!)
+  })
+
+  const { data: followStatus, isLoading: isFollowStatusLoading } = useQuery({
+    ...getArtistFollowStatus(currentUser?.id as string, artistData?.id as string),
+    enabled: !!currentUser?.id
+  })
+
+  console.log('hi', followStatus)
+
+  const { mutateAsync: followArtistAsync } = useMutation({
+    mutationFn: async (data: { userId: string; artistId: string }) => {
+      return followArtist(data.userId as string, data.artistId)
+    },
+    onMutate: async (newVal) => {
+      // await queryClient.cancelQueries({
+      //   queryKey: ['relationships', 'follow-status', currentUser?.id, artistData?.id]
+      // })
+      // const previousData = queryClient.getQueryData(['relationships', 'follow-status', currentUser?.id, artistData?.id])
+      // queryClient.setQueryData(['relationships', 'follow-status', currentUser?.id, artistData?.id], (old: any) => [
+      //   ...old,
+      //   { isFollowing: true }
+      // ])
+      // return { previousData }
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['relationships', 'follow-status', currentUser?.id, artistData?.id]
+      })
+    },
+    onError: (error) => {
+      console.log(error)
+    }
+  })
+
+  const { mutateAsync: unfollowArtistAsync } = useMutation({
+    mutationFn: async (data: { userId: string; artistId: string }) => {
+      return unfollowArtist(data.userId as string, data.artistId)
+    },
+    onMutate: async (newVal) => {
+      // await queryClient.cancelQueries({
+      //   queryKey: ['relationships', 'follow', 'artist-status', currentUser?.id, artistData?.id]
+      // })
+      // const previousData = queryClient.getQueryData(['relationships', 'follow-status', currentUser?.id, artistData?.id])
+      // queryClient.setQueryData(['relationships', 'follow-status', currentUser?.id, artistData?.id], (old: any) => [
+      //   ...old,
+      //   { isFollowing: false }
+      // ])
+      // return { previousData }
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['relationships', 'follow-status', currentUser?.id, artistData?.id]
+      })
+    },
+    onError: (error) => {
+      console.log(error)
+    }
   })
 
   // useEffect(() => {
@@ -52,8 +115,6 @@ export default function ArtistProfile() {
   const gradient = ['#00000000', '#00000033', '#00000066', '#00000099']
 
   const filteredArtistSongs = artistData?.songs?.filter((song) => song.status !== 'draft')
-
-  console.log(JSON.stringify(filteredArtistActivities, null, 2))
 
   return (
     <ScrollView nestedScrollEnabled style={tw.style(`flex flex-col flex-1 background-default`)}>
@@ -86,6 +147,48 @@ export default function ArtistProfile() {
       </View>
 
       <View style={tw`flex gutter-sm pt-3 gap-y-4 pb-[${tabBarHeight * 1.5}px]`}>
+        {isFollowStatusLoading || currentUser?.id === artistData?.id ? null : (
+          <View style={tw`self-end`}>
+            {followStatus?.isFollowing ? (
+              <Button
+                styles="rounded-full -mb-5"
+                variant="default"
+                outline
+                onPress={() =>
+                  unfollowArtistAsync({ userId: currentUser?.id as string, artistId: artistData?.id as string })
+                }
+                iconLeft={
+                  <FontAwesome5
+                    name="user-check"
+                    size={16}
+                    color={colorScheme === 'dark' ? tw.color('text-zinc-200') : tw.color('text-zinc-700')}
+                  />
+                }
+              >
+                Followed
+              </Button>
+            ) : (
+              <Button
+                styles="rounded-full -mb-5"
+                variant="default"
+                outline
+                onPress={() =>
+                  followArtistAsync({ userId: currentUser?.id as string, artistId: artistData?.id as string })
+                }
+                iconLeft={
+                  <FontAwesome5
+                    name="user-plus"
+                    size={16}
+                    color={colorScheme === 'dark' ? tw.color('text-zinc-200') : tw.color('text-zinc-700')}
+                  />
+                }
+              >
+                Follow
+              </Button>
+            )}
+          </View>
+        )}
+
         {Boolean(artistData?.bio) && (
           <View style={tw`flex-col self-start pt-4`}>
             <Typography weight={500} style={tw`pb-2 text-2xl`}>
