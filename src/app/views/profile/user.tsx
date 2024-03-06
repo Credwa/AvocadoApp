@@ -12,6 +12,7 @@ import { getRandomBlurhash } from '@/helpers/lib/lib'
 import tw from '@/helpers/lib/tailwind'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import { getPurchasedCampaigns } from '@/services/CampaignService'
+import { getFollowingCount } from '@/services/RelationshipService'
 import { getCurrentUserProfile, roles, uploadNewAvatar } from '@/services/UserService'
 import { Ionicons } from '@expo/vector-icons'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
@@ -25,6 +26,10 @@ const UserProfile = () => {
   const { data: currentUser } = useQuery({ ...getCurrentUserProfile() })
   const { data: purchasedCampaigns } = useQuery({
     ...getPurchasedCampaigns(currentUser?.id),
+    enabled: !!currentUser?.id
+  })
+  const { data: followerCount } = useQuery({
+    ...getFollowingCount(currentUser?.id as string),
     enabled: !!currentUser?.id
   })
 
@@ -130,7 +135,7 @@ const UserProfile = () => {
               Following
             </Typography>
             <Typography weight={600} style={tw`text-2xl`}>
-              0
+              {followerCount?.count ?? 0}
             </Typography>
           </View>
         </View>

@@ -63,24 +63,19 @@ const RootLayout = () => {
       // Update has successfully downloaded
       Alert.alert('Update Available', 'A new version of the app is available. Would you like to update?', [
         {
+          text: 'No',
+          style: 'destructive'
+        },
+        {
           text: 'Yes',
           onPress: async () => {
             await Updates.fetchUpdateAsync()
             await Updates.reloadAsync()
           }
-        },
-        {
-          text: 'No'
         }
       ])
     }
   }, [isUpdatePending])
-
-  // useEffect(() => {
-  //   if (isUpdateAvailable) {
-  //     // show pop up to user
-  //   }
-  // }, [isUpdateAvailable])
 
   // Handle color scheme changes
   useEffect(() => {
