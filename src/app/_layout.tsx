@@ -7,6 +7,7 @@ import * as Updates from 'expo-updates'
 import { PostHogProvider } from 'posthog-react-native'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Alert, Appearance as AppAppearance, AppStateStatus, Platform, StatusBar } from 'react-native'
+import branch from 'react-native-branch'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { RootSiblingParent } from 'react-native-root-siblings'
 import { useAppColorScheme, useDeviceContext } from 'twrnc'
@@ -52,6 +53,7 @@ const RootLayout = () => {
   useDeviceContext(tw, { withDeviceColorScheme: false })
   const notificationListener = useRef<Notifications.Subscription>()
   const responseListener = useRef<Notifications.Subscription>()
+  const [initialUrl, setInitialUrl] = useState<string | null>(null)
   const [expoPushToken, setExpoPushToken] = useState<string | undefined>(undefined)
   const [notification, setNotification] = useState<Notifications.Notification | undefined>(undefined)
   const setColorScheme = useAppColorScheme(tw)[2]
@@ -76,6 +78,42 @@ const RootLayout = () => {
       ])
     }
   }, [isUpdatePending])
+
+  // branch deep links subscription
+  // useEffect(() => {
+  //   if (__DEV__) return
+  //   const branchUnsub = branch.subscribe({
+  //     onOpenStart: ({ uri, cachedInitialEvent }) => {
+  //       console.log('subscribe onOpenStart, will open ' + uri + ' cachedInitialEvent is ' + cachedInitialEvent)
+  //     },
+  //     onOpenComplete: ({ error, params, uri }) => {
+  //       if (error) {
+  //         console.error('subscribe onOpenComplete, Error from opening uri: ' + uri + ' error: ' + error)
+  //         return
+  //       } else if (params) {
+  //         if (!params['+clicked_branch_link']) {
+  //           if (params['+non_branch_link']) {
+  //             console.log('non_branch_link: ' + uri)
+  //             // Route based on non-Branch links
+  //             return
+  //           }
+  //         } else {
+  //           // Handle params
+  //           let deepLinkPath = params.$deeplink_path as string
+  //           let canonicalUrl = params.$canonical_url as string
+  //           // Route based on Branch link data
+  //           console.log(deepLinkPath)
+  //           console.log(canonicalUrl)
+  //           return
+  //         }
+  //       }
+  //     }
+  //   })
+
+  //   return () => {
+  //     branchUnsub()
+  //   }
+  // }, [])
 
   // Handle color scheme changes
   useEffect(() => {
@@ -136,9 +174,10 @@ const RootLayout = () => {
   })
 
   // Handle deep linking
-  const init = async () => {
-    if (url && segments[0] === '(main)' && !segments[1]) {
-      const session = await createSessionFromUrl(url)
+  const init = async (initUrl: string) => {
+    // const prefix = Linking.createURL('/')
+    if (initUrl && segments[0] === '(main)' && !segments[1]) {
+      const session = await createSessionFromUrl(initUrl)
 
       if (session) {
         router.replace('/sign-in')
@@ -148,8 +187,27 @@ const RootLayout = () => {
 
   // Handle deep linking
   useEffect(() => {
-    init()
-  }, [url])
+    if (initialUrl === null) return
+    init(initialUrl)
+  }, [url, initialUrl])
+
+  useEffect(() => {
+    async function updateURL() {
+      if (initialUrl === undefined) {
+        const initialUrl = await Linking.getInitialURL()
+        setInitialUrl(initialUrl)
+        return
+      }
+
+      if (url === initialUrl) {
+        return
+      }
+
+      setInitialUrl(url)
+    }
+
+    void updateURL()
+  }, [url, initialUrl])
 
   // Hide splash screen
   const onLayoutRootView = useCallback(async () => {

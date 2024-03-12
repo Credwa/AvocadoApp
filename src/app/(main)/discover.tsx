@@ -1,4 +1,5 @@
 import { Image } from 'expo-image'
+import { LinearGradient } from 'expo-linear-gradient'
 import { router, useRouter } from 'expo-router'
 import React, { useEffect, useMemo, useState } from 'react'
 import { Dimensions, Pressable, SafeAreaView, View } from 'react-native'
@@ -69,7 +70,7 @@ const sortAndShuffleDiscoveryCards = (campaigns: Campaign[]) => {
 }
 
 export default function Discover() {
-  useColorScheme()
+  const scheme = useColorScheme()
   const { data: recentCampaigns } = useQuery({
     ...getRecentCampaigns()
   })
@@ -94,10 +95,18 @@ export default function Discover() {
     progressValue.value = absoluteProgress
   }
 
+  const gradient =
+    scheme === 'dark'
+      ? [tw.color('bg-zinc-700'), tw.color('bg-zinc-800'), tw.color('bg-zinc-900'), tw.color('bg-zinc-950')]
+      : [tw.color('bg-zinc-400'), tw.color('bg-zinc-300'), tw.color('bg-zinc-200'), tw.color('bg-zinc-100')]
+
   return (
     <View style={tw`relative justify-center flex-1 w-screen bg-zinc-100 dark:bg-zinc-950`}>
       <ScrollView contentContainerStyle={tw`pb-44`}>
-        <View style={tw`absolute bg-primary-main h-[${PAGE_HEIGHT / 2.2}px] w-full top-0`}>
+        <LinearGradient
+          colors={gradient.map((color) => (color ? color : 'transparent'))}
+          style={tw`absolute h-[${PAGE_HEIGHT / 2.2}px] w-full top-0`}
+        >
           <SafeAreaView style={tw`flex-row gap-x-2 justify-between flex-1 h-[${PAGE_HEIGHT / 3}px]`}>
             <View
               style={tw`flex items-center justify-center w-12 ml-[33px] rounded-lg h-13 dark:bg-zinc-900 bg-zinc-50`}
@@ -114,7 +123,7 @@ export default function Discover() {
               <Ionicons name="search" size={28} color={tw.color('text-zinc-100')} />
             </Pressable>
           </SafeAreaView>
-        </View>
+        </LinearGradient>
         <View
           style={[
             {
@@ -124,10 +133,10 @@ export default function Discover() {
           ]}
         >
           <Carousel
-            width={PAGE_WIDTH}
-            height={PAGE_HEIGHT * 0.75}
+            width={PAGE_WIDTH * 0.92}
+            height={PAGE_HEIGHT * 0.78}
             style={{
-              width: PAGE_WIDTH
+              width: PAGE_WIDTH * 0.92
             }}
             pagingEnabled
             snapEnabled

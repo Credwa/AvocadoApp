@@ -1,23 +1,27 @@
-import { Image } from 'expo-image'
-import { LinearGradient } from 'expo-linear-gradient'
-import { router } from 'expo-router'
-import React, { useEffect, useState } from 'react'
-import { Dimensions, Pressable, RefreshControl, ScrollView, useColorScheme, View } from 'react-native'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { Image } from 'expo-image';
+import { LinearGradient } from 'expo-linear-gradient';
+import { router } from 'expo-router';
+import React, { useEffect, useState } from 'react';
+import {
+    Dimensions, Pressable, RefreshControl, ScrollView, useColorScheme, View
+} from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { Button } from '@/components/atoms/Button'
-import { Typography } from '@/components/atoms/Typography'
-import { Avatar } from '@/components/Avatar'
-import { DropdownMenu } from '@/components/DropdownMenu'
-import { getRandomBlurhash, getSongTitle } from '@/helpers/lib/lib'
-import tw from '@/helpers/lib/tailwind'
-import useStripeOnboarding from '@/hooks/useStripeOnboarding'
-import { getPurchasedCampaigns } from '@/services/CampaignService'
-import { getCurrentUserProfile, getStripeAccountBalance, getStripeAccountInfo } from '@/services/UserService'
-import { useAppStore } from '@/store'
-import { Foundation, Ionicons } from '@expo/vector-icons'
-import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
-import { useQuery } from '@tanstack/react-query'
+import { Button } from '@/components/atoms/Button';
+import { Typography } from '@/components/atoms/Typography';
+import { Avatar } from '@/components/Avatar';
+import { DropdownMenu } from '@/components/DropdownMenu';
+import { getRandomBlurhash, getSongTitle } from '@/helpers/lib/lib';
+import tw from '@/helpers/lib/tailwind';
+import useStripeOnboarding from '@/hooks/useStripeOnboarding';
+import { getPurchasedCampaigns } from '@/services/CampaignService';
+import {
+    getCurrentUserProfile, getStripeAccountBalance, getStripeAccountInfo
+} from '@/services/UserService';
+import { useAppStore } from '@/store';
+import { Foundation, Ionicons } from '@expo/vector-icons';
+import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
+import { useQuery } from '@tanstack/react-query';
 
 const storybookEnabled = process.env.EXPO_PUBLIC_STORYBOOK_ENABLED === 'true'
 
@@ -146,7 +150,7 @@ const Root = () => {
           onTouchEnd={() => setMenuOpen(false)}
         >
           <Typography style={tw`text-xl dark:text-zinc-300 text-zinc-700`} weight={500}>
-            Owned Songs
+            My Songs
           </Typography>
           <View style={tw`flex-col pt-4 gap-y-3`}>
             {shownCampaigns && shownCampaigns?.length === 0 ? (

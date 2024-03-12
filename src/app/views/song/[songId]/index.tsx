@@ -5,6 +5,7 @@ import * as Linking from 'expo-linking'
 import { router, useLocalSearchParams, usePathname } from 'expo-router'
 import { useEffect, useState } from 'react'
 import { Pressable, SafeAreaView, View } from 'react-native'
+import branch from 'react-native-branch'
 import { ScrollView } from 'react-native-gesture-handler'
 
 import BackButton from '@/components/atoms/BackButton'
@@ -62,7 +63,6 @@ const Song = () => {
 
   if (isSongLoading) return <LoadingScreen />
 
-  console.log('songData', songData)
   const metaData = {
     song_id: songData!.id,
     audio_url: songData!.audio_url,
@@ -87,7 +87,11 @@ const Song = () => {
       <SafeAreaView style={tw`flex flex-1`}>
         <View style={tw`flex-row items-center justify-between mt-4`}>
           <BackButton href={url} />
-          <ShareButton />
+          {/* <ShareButton
+            title={`Buy ${songData?.song_title} by ${songData?.artists.artist_name}`}
+            id={`song/${songId}`}
+            contentDescription={`Check out this song by ${songData?.artists.artist_name} on ${songData?.song_title}!`}
+          /> */}
         </View>
         <ScrollView contentContainerStyle={tw`items-center`} style={tw`flex-col flex-1 gap-y-12 gutter-md`}>
           <View style={tw`items-center w-full gap-y-8`}>

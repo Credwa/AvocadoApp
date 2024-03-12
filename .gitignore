@@ -40,3 +40,5 @@ web-build/
 
 /android
 /ios
+
+*.ipa

@@ -124,7 +124,7 @@ const UserProfile = () => {
         <View style={tw`flex-row justify-around w-full`}>
           <View style={tw`flex-col items-center justify-center`}>
             <Typography weight={500} style={tw`text-lg dark:text-zinc-300 text-zinc-700`}>
-              Owned Songs
+              Songs
             </Typography>
             <Typography weight={600} style={tw`text-2xl`}>
               {purchasedCampaigns?.length}

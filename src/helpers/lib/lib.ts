@@ -17,12 +17,16 @@ let storedTokenHash = ''
 /** Creates a session from a url when deep linked into the app from email sign up */
 export const createSessionFromUrl = async (url: string) => {
   const { params, errorCode } = QueryParams.getQueryParams(url)
+  console.log(params, errorCode)
 
   if (errorCode) throw new Error(errorCode)
   const { token, mode, token_hash } = params
+
+  console.log('mode', mode)
+  console.log('token_hash', token_hash)
   if (mode !== 'app') return
   if (token_hash === storedTokenHash) return
-  storedTokenHash = token as string
+  storedTokenHash = token_hash as string
   try {
     const { data, error } = await supabase.auth.verifyOtp({
       type: 'signup',
@@ -100,6 +104,7 @@ export async function fetchWithAuth<T>(
   options: RequestInit = {}
 ): Promise<T> {
   try {
+    console.log(BASE_URL)
     /** Gets the session in storage */
     const {
       data: { session }

@@ -252,7 +252,7 @@ export default function Purchase() {
                 <View>
                   <View style={tw`relative flex-row items-center justify-between w-full `}>
                     <Typography weight={400} style={tw`text-base`}>
-                      Number of Shares
+                      Number of Slices
                     </Typography>
                     <View>
                       <Controller

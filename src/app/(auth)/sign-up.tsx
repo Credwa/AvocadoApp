@@ -39,7 +39,7 @@ export default function SignUp() {
         email: data.email,
         password: data.password,
         options: {
-          emailRedirectTo: `${redirectTo}?mode=app&email=${data.email}`
+          emailRedirectTo: `http://192.168.1.23:3000?mode=app&email=${data.email}&app_redirect=${redirectTo}(main)`
         }
       })
 
