@@ -170,11 +170,8 @@ const Song = () => {
               )}
               {campaignState === 'released' && (
                 <View style={tw`flex-col`}>
-                  <Typography style={tw.style('text-base self-center ')}>Released on</Typography>
                   <Typography style={tw.style('text-base self-center text-fuchsia-500 dark:text-fuchsia-400')}>
-                    {dayjs(songData?.campaign_details?.campaign_start_date)
-                      .add(songData?.campaign_details?.time_restraint as number)
-                      .format('MMMM D, YYYY')}
+                    Released
                   </Typography>
                 </View>
               )}

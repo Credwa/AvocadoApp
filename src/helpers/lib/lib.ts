@@ -204,7 +204,7 @@ export const isCampaignComingSoon = (date: string | undefined | null) => {
 }
 
 export const isCampaignFinished = (date: string | undefined | null, time_restraint: number | undefined) => {
-  if (!date || !time_restraint) return false
+  if (!date || !time_restraint) return true
   const campaignEnd = dayjs(date as string).add(time_restraint, 'day')
   const now = dayjs()
   return campaignEnd.isBefore(now)
