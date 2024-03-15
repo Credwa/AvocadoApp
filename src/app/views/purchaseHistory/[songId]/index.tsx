@@ -6,7 +6,7 @@ import { Pressable, SafeAreaView, View } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
 
 import { Typography } from '@/components/atoms/Typography'
-import { defaultBlurhash } from '@/helpers/lib/constants'
+import { AndroidSafeAreaPaddingTop, defaultBlurhash } from '@/helpers/lib/constants'
 import { getRandomBlurhash, getSongTitle } from '@/helpers/lib/lib'
 import tw from '@/helpers/lib/tailwind'
 import { useColorScheme } from '@/hooks/useColorScheme'
@@ -38,7 +38,7 @@ const PurchaseHistory = () => {
   console.log(JSON.stringify(purchaseData, null, 2))
   return (
     <ScrollView style={tw`flex-1 py-8 background-default gutter-md`}>
-      <SafeAreaView style={tw`mb-[${tabBarHeight * 1.5}px]`}>
+      <SafeAreaView style={tw.style(`mb-[${tabBarHeight * 1.5}px]`, AndroidSafeAreaPaddingTop)}>
         <View style={tw`gap-y-6`}>
           <Pressable onPress={() => router.push(`/views/song/${songId}`)}>
             <Image

@@ -18,6 +18,7 @@ import welcomeAnim from '~/assets/lottie/Welcome.json'
 import { Button } from '@/components/atoms/Button'
 import { Typography } from '@/components/atoms/Typography'
 import LoadingScreen from '@/components/LoadingScreen'
+import { AndroidSafeAreaPaddingTop } from '@/helpers/lib/constants'
 import tw from '@/helpers/lib/tailwind'
 import useStripeOnboarding from '@/hooks/useStripeOnboarding'
 import { registerForPushNotificationsAsync } from '@/services/NotificationService'
@@ -176,7 +177,9 @@ export default function Onboarding() {
   }
 
   return (
-    <SafeAreaView style={tw`items-center justify-between flex-1 py-10 bg-primary-main`}>
+    <SafeAreaView
+      style={tw.style(`items-center justify-between flex-1 py-10 bg-primary-main`, AndroidSafeAreaPaddingTop)}
+    >
       {!notificationsEnabled ? (
         <>
           <View style={tw`items-center gap-y-4`}>

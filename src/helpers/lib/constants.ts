@@ -1,3 +1,5 @@
+import { Platform, StatusBar } from 'react-native'
+
 export const music_genres = [
   'Alternative',
   'Anime',
@@ -23,6 +25,10 @@ export const music_genres = [
   'Soul',
   'World'
 ]
+
+export const AndroidSafeAreaPaddingTop = {
+  paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0
+}
 
 export const WEB_URL = __DEV__ ? 'http://192.168.1.23:3000' : 'https://app.myavocado.com'
 

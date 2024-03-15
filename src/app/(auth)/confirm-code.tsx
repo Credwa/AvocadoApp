@@ -11,6 +11,7 @@ import { TextInput } from '@/components/atoms/TextInput'
 import ShowToast from '@/components/atoms/Toast'
 import { Typography } from '@/components/atoms/Typography'
 import { useSession } from '@/context/authContext'
+import { AndroidSafeAreaPaddingTop } from '@/helpers/lib/constants'
 import { handleErrors } from '@/helpers/lib/Errors'
 import tw from '@/helpers/lib/tailwind'
 import { confirmCodeSchema, TConfirmCodeSchema } from '@/helpers/schemas/auth'
@@ -107,7 +108,7 @@ export default function ConfirmCode() {
   }
 
   return (
-    <SafeAreaView style={tw`flex flex-1`}>
+    <SafeAreaView style={tw.style(`flex flex-1`, AndroidSafeAreaPaddingTop)}>
       <BackButton />
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}

@@ -15,6 +15,7 @@ import ShareButton from '@/components/atoms/ShareButton'
 import { Typography } from '@/components/atoms/Typography'
 import LoadingScreen from '@/components/LoadingScreen'
 import { usePlayback } from '@/context/playbackContext'
+import { AndroidSafeAreaPaddingTop } from '@/helpers/lib/constants'
 import {
   getCampaignDaysLeft,
   getRandomBlurhash,
@@ -84,7 +85,7 @@ const Song = () => {
 
   return (
     <LinearGradient colors={gradient.map((color) => (color ? color : 'transparent'))} style={tw`flex-1 gutter-sm`}>
-      <SafeAreaView style={tw`flex flex-1`}>
+      <SafeAreaView style={tw.style(`flex flex-1`, AndroidSafeAreaPaddingTop)}>
         <View style={tw`flex-row items-center justify-between mt-4`}>
           <BackButton href={url} />
           {/* <ShareButton

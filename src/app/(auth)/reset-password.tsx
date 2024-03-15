@@ -11,6 +11,7 @@ import { ErrorText } from '@/components/atoms/ErrorText'
 import { TextInput } from '@/components/atoms/TextInput'
 import ShowToast from '@/components/atoms/Toast'
 import { Typography } from '@/components/atoms/Typography'
+import { AndroidSafeAreaPaddingTop } from '@/helpers/lib/constants'
 import { handleErrors } from '@/helpers/lib/Errors'
 import tw from '@/helpers/lib/tailwind'
 import { passwordResetSchema, TPasswordResetSchema } from '@/helpers/schemas/auth'
@@ -51,7 +52,7 @@ export default function ResetPassword() {
   }
 
   return (
-    <SafeAreaView style={tw`flex flex-1`}>
+    <SafeAreaView style={tw.style(`flex flex-1`, AndroidSafeAreaPaddingTop)}>
       <BackButton />
 
       <KeyboardAvoidingView

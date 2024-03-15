@@ -13,6 +13,7 @@ import BackButton from '@/components/atoms/BackButton'
 import { Button } from '@/components/atoms/Button'
 import { Typography } from '@/components/atoms/Typography'
 import LoadingScreen from '@/components/LoadingScreen'
+import { AndroidSafeAreaPaddingTop } from '@/helpers/lib/constants'
 import { getRandomBlurhash, getSongTitle } from '@/helpers/lib/lib'
 import tw from '@/helpers/lib/tailwind'
 import { useColorScheme } from '@/hooks/useColorScheme'
@@ -127,7 +128,9 @@ export default function ArtistProfile() {
           style={[tw.style(`w-full absolute h-[${screenHeight / 2.3}px]`)]}
           alt={`Profile picture for ${artistData?.artist_name}`}
         />
-        <SafeAreaView style={tw`flex justify-between flex-1 h-[${screenHeight / 2.3}px]`}>
+        <SafeAreaView
+          style={tw.style(`flex justify-between flex-1 h-[${screenHeight / 2.3}px]`, AndroidSafeAreaPaddingTop)}
+        >
           <BackButton hasBackground href={url} />
 
           <LinearGradient colors={gradient.map((color) => (color ? color : 'transparent'))} style={tw`flex-row `}>

@@ -2,7 +2,7 @@ import { Image } from 'expo-image'
 import { LinearGradient } from 'expo-linear-gradient'
 import { router, useRouter } from 'expo-router'
 import React, { useEffect, useMemo, useState } from 'react'
-import { Dimensions, Pressable, SafeAreaView, View } from 'react-native'
+import { Dimensions, Platform, Pressable, SafeAreaView, StatusBar, View } from 'react-native'
 import { Gesture, GestureDetector, ScrollView } from 'react-native-gesture-handler'
 import Animated, { useSharedValue } from 'react-native-reanimated'
 import Carousel from 'react-native-reanimated-carousel'
@@ -14,6 +14,7 @@ import { Typography } from '@/components/atoms/Typography'
 import { FeaturedView } from '@/components/campaigns/FeaturedView'
 import { RecentCampaignView } from '@/components/campaigns/RecentCampaignView'
 import LoadingScreen from '@/components/LoadingScreen'
+import { AndroidSafeAreaPaddingTop } from '@/helpers/lib/constants'
 import { getRandomBlurhash, getSongTitle, isCampaignComingSoon, isCampaignFinished } from '@/helpers/lib/lib'
 import tw from '@/helpers/lib/tailwind'
 import { useColorScheme } from '@/hooks/useColorScheme'
@@ -107,7 +108,12 @@ export default function Discover() {
           colors={gradient.map((color) => (color ? color : 'transparent'))}
           style={tw`absolute h-[${PAGE_HEIGHT / 2.2}px] w-full top-0`}
         >
-          <SafeAreaView style={tw`flex-row gap-x-2 justify-between flex-1 h-[${PAGE_HEIGHT / 3}px]`}>
+          <SafeAreaView
+            style={tw.style(
+              `flex-row gap-x-2 justify-between flex-1 h-[${PAGE_HEIGHT / 3}px]`,
+              AndroidSafeAreaPaddingTop
+            )}
+          >
             <View
               style={tw`flex items-center justify-center w-12 ml-[33px] rounded-lg h-13 dark:bg-zinc-900 bg-zinc-50`}
             >
@@ -240,8 +246,10 @@ export const DiscoveryCard: React.FC<Props> = (props) => {
               {getSongTitle(campaign!, 40)}
             </Typography>
           </Pressable>
-
-          <View style={tw`flex-row flex-wrap mt-8 gap-x-2 gap-y-2`}>
+          <View style={tw`self-center mt-4`}>
+            <PlayButton styles="w-18 h-18" playml={2} iconSize={40} pauseml={1} metadata={playbackMetaData} />
+          </View>
+          <View style={tw`flex-row items-center justify-center w-full mt-8 flex-nowrap gap-x-2 gap-y-2`}>
             <Pill onPress={() => router.push(`views/song/${campaign.id}?url=/discover`)}>{campaign.primary_genre}</Pill>
             {campaign.secondary_genre !== 'Select a genre' && (
               <Pill onPress={() => router.push(`views/song/${campaign.id}?url=/discover`)}>
@@ -250,9 +258,7 @@ export const DiscoveryCard: React.FC<Props> = (props) => {
             )}
           </View>
         </View>
-        <View style={tw`self-center mt-4`}>
-          <PlayButton styles="w-18 h-18" playml={2} iconSize={40} pauseml={1} metadata={playbackMetaData} />
-        </View>
+
         {isCampaignComingSoon(campaign.campaign_details?.campaign_start_date) && (
           <View style={tw`absolute self-end top-9 -right-3`}>
             <View

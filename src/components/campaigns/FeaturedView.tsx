@@ -108,7 +108,7 @@ export const FeaturedView: FC<FeaturedProps> = ({ data, title, returnUrl }) => {
           activeOffsetX: [-20, 20]
         }}
         width={PAGE_WIDTH / 2.3}
-        style={tw`w-[${PAGE_WIDTH}] content-center items-center h-60`}
+        style={tw`w-[${PAGE_WIDTH}] content-center items-center h-72`}
         data={[...data]}
         renderItem={({ item }) => (
           <FeaturedItem returnUrl={returnUrl} key={isCampaign(item) ? item.song_id : item.id} item={item} />

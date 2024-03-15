@@ -10,6 +10,7 @@ import { ErrorText } from '@/components/atoms/ErrorText'
 import { Link } from '@/components/atoms/Link'
 import { TextInput } from '@/components/atoms/TextInput'
 import { useSession } from '@/context/authContext'
+import { AndroidSafeAreaPaddingTop } from '@/helpers/lib/constants'
 import tw from '@/helpers/lib/tailwind'
 import { signInSchema, TSignInSchema } from '@/helpers/schemas/auth'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -92,7 +93,7 @@ export default function SignIn() {
   }
 
   return (
-    <SafeAreaView style={tw`flex flex-1 gutter-sm`}>
+    <SafeAreaView style={tw.style(`flex flex-1 gutter-sm`, AndroidSafeAreaPaddingTop)}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={tw`flex-col justify-center flex-1 gap-10`}

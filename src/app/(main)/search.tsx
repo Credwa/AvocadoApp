@@ -7,6 +7,7 @@ import { FeaturedView } from '@/components/campaigns/FeaturedView'
 import { RecentCampaignView } from '@/components/campaigns/RecentCampaignView'
 import { SearchBar } from '@/components/SearchBar'
 import { SearchList } from '@/components/SearchList'
+import { AndroidSafeAreaPaddingTop } from '@/helpers/lib/constants'
 import tw from '@/helpers/lib/tailwind'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import { getFeaturedArtists } from '@/services/ArtistService'
@@ -50,7 +51,7 @@ const Search = () => {
   }
 
   return (
-    <SafeAreaView style={tw`flex-1 pt-4 background-default gutter-sm`}>
+    <SafeAreaView style={tw.style(`flex-1 pt-4 background-default gutter-sm`, AndroidSafeAreaPaddingTop)}>
       <View style={tw`relative`}>
         <SearchBar
           searching={isSearchLoading}

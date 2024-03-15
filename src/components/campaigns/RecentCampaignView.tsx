@@ -104,7 +104,7 @@ export const RecentCampaignView: FC<RecentCampaignProps> = ({ data }) => {
         panGestureHandlerProps={{
           activeOffsetX: [-20, 20]
         }}
-        style={tw`z-10 h-52`}
+        style={tw`z-10 h-60`}
         width={width}
         data={newData}
         autoPlayInterval={5000}

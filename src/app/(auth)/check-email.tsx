@@ -8,6 +8,7 @@ import BackButton from '@/components/atoms/BackButton'
 import { Button } from '@/components/atoms/Button'
 import ShowToast from '@/components/atoms/Toast'
 import { Typography } from '@/components/atoms/Typography'
+import { AndroidSafeAreaPaddingTop } from '@/helpers/lib/constants'
 import { handleErrors } from '@/helpers/lib/Errors'
 import tw from '@/helpers/lib/tailwind'
 import { supabase } from '@/helpers/supabase/supabase'
@@ -55,7 +56,7 @@ export default function CheckEmail() {
   }
 
   return (
-    <SafeAreaView style={tw`flex flex-1`}>
+    <SafeAreaView style={tw.style(`flex flex-1`, AndroidSafeAreaPaddingTop)}>
       <BackButton />
       <View style={tw`flex-col justify-center flex-1 gap-2 pb-4 gutter-sm`}>
         <Image style={tw`self-center w-16 h-16 mb-6`} source={require('~/assets/images/AvocadoLogoMinimal.png')} />

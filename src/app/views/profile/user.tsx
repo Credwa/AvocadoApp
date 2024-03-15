@@ -8,6 +8,7 @@ import { Dimensions, Pressable, SafeAreaView, View } from 'react-native'
 import { Button } from '@/components/atoms/Button'
 import ShowToast from '@/components/atoms/Toast'
 import { Typography } from '@/components/atoms/Typography'
+import { AndroidSafeAreaPaddingTop } from '@/helpers/lib/constants'
 import { getRandomBlurhash } from '@/helpers/lib/lib'
 import tw from '@/helpers/lib/tailwind'
 import { useColorScheme } from '@/hooks/useColorScheme'
@@ -99,7 +100,9 @@ const UserProfile = () => {
           alt="Your profile picture"
         />
         <View style={tw`flex flex-col items-center justify-between flex-1 gutter-md`}>
-          <SafeAreaView style={tw`flex flex-row items-center justify-between w-full p-4`}>
+          <SafeAreaView
+            style={tw.style(`flex flex-row items-center justify-between w-full p-4`, AndroidSafeAreaPaddingTop)}
+          >
             <Pressable style={tw`p-1.5 rounded-full bg-zinc-600`} onPress={() => router.back()}>
               <Ionicons name="chevron-back" size={24} color={tw.color('text-zinc-100')} />
             </Pressable>

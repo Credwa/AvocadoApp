@@ -7,6 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { PlayButton } from '@/components/atoms/PlayButton'
 import { Typography } from '@/components/atoms/Typography'
 import { PlaybackMetadata, usePlayback } from '@/context/playbackContext'
+import { AndroidSafeAreaPaddingTop } from '@/helpers/lib/constants'
 import { getRandomBlurhash, getSongTitle } from '@/helpers/lib/lib'
 import tw from '@/helpers/lib/tailwind'
 import { getPurchasedCampaigns, PurchasedCampaign } from '@/services/CampaignService'
@@ -82,7 +83,7 @@ const Library = () => {
         ListHeaderComponent={() => (
           <View style={tw``}>
             <LinearGradient colors={gradient.map((color) => (color ? color : 'transparent'))} style={tw`gutter-sm `}>
-              <SafeAreaView>
+              <SafeAreaView style={tw.style(AndroidSafeAreaPaddingTop)}>
                 <View style={tw`gap-y-1`}>
                   <View>
                     {/* <View style={tw`py-2`}>
