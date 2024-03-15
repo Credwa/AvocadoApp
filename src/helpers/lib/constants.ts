@@ -24,6 +24,8 @@ export const music_genres = [
   'World'
 ]
 
+export const WEB_URL = __DEV__ ? 'http://192.168.1.23:3000' : 'https://app.myavocado.com'
+
 export const environments = {
   dev: {
     BASE_URL: 'http://192.168.1.23:8080/api/v1',

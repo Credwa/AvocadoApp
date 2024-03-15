@@ -10,6 +10,7 @@ import { ErrorText } from '@/components/atoms/ErrorText'
 import { Link } from '@/components/atoms/Link'
 import { TextInput } from '@/components/atoms/TextInput'
 import { Typography } from '@/components/atoms/Typography'
+import { WEB_URL } from '@/helpers/lib/constants'
 import { handleErrors } from '@/helpers/lib/Errors'
 import tw from '@/helpers/lib/tailwind'
 import { signUpSchema, TSignUpSchema } from '@/helpers/schemas/auth'
@@ -39,7 +40,7 @@ export default function SignUp() {
         email: data.email,
         password: data.password,
         options: {
-          emailRedirectTo: `http://192.168.1.23:3000?mode=app&email=${data.email}&app_redirect=${redirectTo}(main)`
+          emailRedirectTo: `${WEB_URL}?mode=app&email=${data.email}&app_redirect=${redirectTo}(main)`
         }
       })
 
