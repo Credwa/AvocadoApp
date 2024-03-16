@@ -165,7 +165,11 @@ export function PlaybackProvider(props: React.PropsWithChildren) {
       value={{
         play: async (metadata: PlaybackMetadata) => {
           try {
-            if (currentPlaybackMetadata && currentPlaybackMetadata.audio_url !== metadata.audio_url) {
+            if (
+              currentPlaybackMetadata &&
+              currentPlaybackMetadata.audio_url &&
+              currentPlaybackMetadata.audio_url !== metadata.audio_url
+            ) {
               // if different audio stop current audio and play new audio
               await stopPlayback()
             } else if (
