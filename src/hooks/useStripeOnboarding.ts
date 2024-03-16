@@ -16,7 +16,7 @@ const useStripeOnboarding = (currentUser: User | undefined, redirectUrl: string)
 
   const { mutateAsync: mutateStripe } = useMutation({
     mutationFn: async () => {
-      const appUrl = __DEV__ ? 'http://192.168.1.23:3000/auth/stripe' : 'https://artists.myavocado.app/auth/stripe'
+      const appUrl = 'app.myavocado://'
       return createStripeAccount(
         currentUser?.id as string,
         `${appUrl}?deepLink=${url}/onboarding?stripeComplete=true`,

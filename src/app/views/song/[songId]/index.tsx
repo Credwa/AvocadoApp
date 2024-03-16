@@ -132,7 +132,7 @@ const Song = () => {
                   {songData?.artist_features && songData.artist_features.length > 0 && (
                     <>
                       <Typography style={tw`pt-1 text-sm`} weight={500}>
-                        Ft. {songData.artist_features.map((artist) => artist).join(', ')}
+                        + {songData.artist_features.map((artist) => artist).join(', ')}
                       </Typography>
                     </>
                   )}

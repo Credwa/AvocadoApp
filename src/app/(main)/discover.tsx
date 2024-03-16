@@ -247,7 +247,7 @@ export const DiscoveryCard: React.FC<Props> = (props) => {
             {campaign?.artist_features && campaign.artist_features.length > 0 && (
               <>
                 <Typography style={tw`pt-1 text-base text-center -top-10`} weight={500}>
-                  Ft. {campaign.artist_features.map((artist) => artist).join(', ')}
+                  + {campaign.artist_features.map((artist) => artist).join(', ')}
                 </Typography>
               </>
             )}
