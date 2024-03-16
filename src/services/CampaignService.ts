@@ -79,6 +79,7 @@ const campaign = z.object({
   add_version_info_other: z.string().nullable(),
   is_radio_edit: z.boolean(),
   status: z.enum(songStatuses),
+  artist_features: z.array(z.string()).optional().nullable(),
   campaign_details: z
     .object({
       available_shares: z.number(),

@@ -163,7 +163,7 @@ export default function Discover() {
           />
         </View>
         <View style={tw`gutter-sm`}>
-          <FeaturedView data={upcomingCampaigns} title="Upcoming Songs" returnUrl="discover" />
+          <FeaturedView data={upcomingCampaigns} title="Upcoming Campaigns" returnUrl="discover" />
           <RecentCampaignView data={recentCampaigns} />
           <FeaturedView data={featuredCampaigns} title="Featured Songs" />
           <FeaturedView data={featuredArtists} title="Artist Spotlight" />
@@ -210,14 +210,16 @@ export const DiscoveryCard: React.FC<Props> = (props) => {
         {...animatedViewProps}
       >
         <View style={tw`relative h-[${artworkHeight}px]`}>
-          <Image
-            source={campaign.artwork_url}
-            placeholder={getRandomBlurhash()}
-            contentFit="fill"
-            cachePolicy="disk"
-            style={[tw.style(`w-full absolute rounded-t-xl h-[${artworkHeight}px]`)]}
-            alt={`Artwork for ${campaign.song_title} by ${campaign.artists.artist_name}`}
-          />
+          <Pressable onPress={() => router.push(`views/song/${campaign.id}?url=/discover`)}>
+            <Image
+              source={campaign.artwork_url}
+              placeholder={getRandomBlurhash()}
+              contentFit="fill"
+              cachePolicy="disk"
+              style={[tw.style(`w-full absolute rounded-t-xl h-[${artworkHeight}px]`)]}
+              alt={`Artwork for ${campaign.song_title} by ${campaign.artists.artist_name}`}
+            />
+          </Pressable>
           {/* <View style={tw`flex justify-between flex-1 h-[${artworkHeight}px]`}></View> */}
         </View>
         <View style={tw`items-center justify-center gutter-sm `}>
@@ -238,9 +240,19 @@ export const DiscoveryCard: React.FC<Props> = (props) => {
               </View>
             )}
           </Pressable>
-          <Typography weight={500} style={tw`text-2xl -top-10`}>
-            {campaign?.artists.artist_name}
-          </Typography>
+          <View>
+            <Typography weight={500} style={tw`text-2xl text-center -top-10`}>
+              {campaign?.artists.artist_name}
+            </Typography>
+            {campaign?.artist_features && campaign.artist_features.length > 0 && (
+              <>
+                <Typography style={tw`pt-1 text-base text-center -top-10`} weight={500}>
+                  Ft. {campaign.artist_features.map((artist) => artist).join(', ')}
+                </Typography>
+              </>
+            )}
+          </View>
+
           <Pressable onPress={() => router.push(`views/song/${campaign.id}?url=/discover`)}>
             <Typography weight={600} style={tw`flex-wrap text-2xl text-center`}>
               {getSongTitle(campaign!, 40)}
