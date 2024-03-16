@@ -247,7 +247,7 @@ export const DiscoveryCard: React.FC<Props> = (props) => {
             </Typography>
           </Pressable>
           <View style={tw`self-center mt-4`}>
-            <PlayButton styles="w-18 h-18" playml={2} iconSize={40} pauseml={1} metadata={playbackMetaData} />
+            <PlayButton styles="w-18 h-18" playml={2} iconSize={40} metadata={playbackMetaData} />
           </View>
           <View style={tw`flex-row items-center justify-center w-full mt-8 flex-nowrap gap-x-2 gap-y-2`}>
             <Pill onPress={() => router.push(`views/song/${campaign.id}?url=/discover`)}>{campaign.primary_genre}</Pill>

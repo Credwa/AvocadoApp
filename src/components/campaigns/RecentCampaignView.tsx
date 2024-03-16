@@ -88,13 +88,13 @@ function splitArrayIntoChunks(array: MinCampaign[], chunkSize: number) {
 
 export const RecentCampaignView: FC<RecentCampaignProps> = ({ data }) => {
   const width = Dimensions.get('window').width - 16
-  if (!data) return null
+  if (!data || !data.length) return null
   const newData = splitArrayIntoChunks(data, 6)
 
   return (
     <View style={tw`z-0 mb-4`}>
       <Typography weight={500} style={tw`pb-2 text-xl dark:text-zinc-300 text-zinc-700`}>
-        Latest Songs
+        New Releases
       </Typography>
       <Carousel
         loop={data.length > 6}

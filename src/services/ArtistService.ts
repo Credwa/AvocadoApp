@@ -62,39 +62,43 @@ const artistProfile = z.object({
   ...artist.shape,
   bio: z.string().or(z.null()),
   video_url: z.string().or(z.null()),
-  artist_links: z.object({
-    spotify_url: z.string().trim().or(z.null()),
-    apple_music_url: z.string().trim().or(z.null()),
-    soundcloud_url: z.string().trim().or(z.null()),
-    deezer_url: z.string().trim().or(z.null()),
-    amazon_url: z.string().trim().or(z.null()),
-    tidal_url: z.string().trim().or(z.null()),
-    shazam_url: z.string().trim().or(z.null()),
-    tiktok_url: z.string().trim().or(z.null()),
-    facebook_url: z.string().trim().or(z.null()),
-    instagram_url: z.string().trim().or(z.null()),
-    youtube_url: z.string().trim().or(z.null()),
-    twitter_url: z.string().trim().or(z.null())
-  }),
-  artist_stats: z.object({
-    spotify_streams_total: z.number().or(z.null()),
-    spotify_monthly_listeners_current: z.number().or(z.null()),
-    spotify_followers_total: z.number().or(z.null()),
-    amazon_followers_total: z.number().or(z.null()),
-    deezer_followers_total: z.number().or(z.null()),
-    youtube_video_views_total: z.number().or(z.null()),
-    instagram_followers_total: z.number().or(z.null()),
-    tiktok_views_total: z.number().or(z.null()),
-    youtube_subscribers_total: z.number().or(z.null()),
-    soundcloud_streams_total: z.number().or(z.null()),
-    soundcloud_followers_total: z.number().or(z.null()),
-    twitter_followers_total: z.number().or(z.null()),
-    facebook_followers_total: z.number().or(z.null()),
-    instagram_views_total: z.number().or(z.null()),
-    shazam_shazams_total: z.number().or(z.null()),
-    tracklist_tracklist_views_total: z.number().or(z.null()),
-    shown_stats: z.array(z.string()).or(z.null())
-  }),
+  artist_links: z
+    .object({
+      spotify_url: z.string().trim().or(z.null()),
+      apple_music_url: z.string().trim().or(z.null()),
+      soundcloud_url: z.string().trim().or(z.null()),
+      deezer_url: z.string().trim().or(z.null()),
+      amazon_url: z.string().trim().or(z.null()),
+      tidal_url: z.string().trim().or(z.null()),
+      shazam_url: z.string().trim().or(z.null()),
+      tiktok_url: z.string().trim().or(z.null()),
+      facebook_url: z.string().trim().or(z.null()),
+      instagram_url: z.string().trim().or(z.null()),
+      youtube_url: z.string().trim().or(z.null()),
+      twitter_url: z.string().trim().or(z.null())
+    })
+    .or(z.null()),
+  artist_stats: z
+    .object({
+      spotify_streams_total: z.number().or(z.null()),
+      spotify_monthly_listeners_current: z.number().or(z.null()),
+      spotify_followers_total: z.number().or(z.null()),
+      amazon_followers_total: z.number().or(z.null()),
+      deezer_followers_total: z.number().or(z.null()),
+      youtube_video_views_total: z.number().or(z.null()),
+      instagram_followers_total: z.number().or(z.null()),
+      tiktok_views_total: z.number().or(z.null()),
+      youtube_subscribers_total: z.number().or(z.null()),
+      soundcloud_streams_total: z.number().or(z.null()),
+      soundcloud_followers_total: z.number().or(z.null()),
+      twitter_followers_total: z.number().or(z.null()),
+      facebook_followers_total: z.number().or(z.null()),
+      instagram_views_total: z.number().or(z.null()),
+      shazam_shazams_total: z.number().or(z.null()),
+      tracklist_tracklist_views_total: z.number().or(z.null()),
+      shown_stats: z.array(z.string()).or(z.null())
+    })
+    .or(z.null()),
   artist_activities: z
     .object({
       activities: z.array(artistActivity).or(z.null())
