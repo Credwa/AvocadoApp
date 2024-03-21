@@ -47,9 +47,11 @@ export default function Layout() {
     <Tabs
       initialRouteName="discover"
       backBehavior="history"
-      screenOptions={{
+      screenOptions={({ route }) => ({
         headerShown: false,
-        tabBarStyle: tw`absolute bg-transparent dark:border-t-zinc-800`,
+        tabBarStyle: tw.style(`absolute bg-transparent dark:border-t-zinc-800`, {
+          display: route.name.match('views') ? 'none' : 'flex'
+        }),
         tabBarBackground: () => (
           <BlurView
             tint={colorScheme === 'dark' ? 'dark' : 'light'}
@@ -57,10 +59,12 @@ export default function Layout() {
             style={[{ ...StyleSheet.absoluteFillObject }, tw`overflow-hidden bg-zinc-100 dark:bg-black`]}
           />
         )
-      }}
+      })}
     >
       <Tabs.Screen name="index" options={{ ...tabBarOptions('home-sharp', 'Home') }} />
       <Tabs.Screen name="search" options={{ ...tabBarOptions('search', 'Search'), href: null }} />
+
+      <Tabs.Screen name="views" options={{ ...tabBarOptions('search', 'Artist'), href: null }} />
 
       <Tabs.Screen name="discover" options={{ ...tabBarOptions('star', 'Discover') }} />
 
