@@ -122,7 +122,7 @@ const createRenderItem =
             style={[
               {
                 alignItems: 'center',
-                marginTop: '20%'
+                marginTop: '-75%'
               }
             ]}
           >
@@ -235,7 +235,7 @@ export default function Discover() {
         ListHeaderComponent={
           <LinearGradient
             colors={gradient.map((color) => (color ? color : 'transparent'))}
-            style={tw`absolute h-[${PAGE_HEIGHT / 2.2}px] w-full top-0 `}
+            style={tw` h-[${PAGE_HEIGHT / 2.2}px] w-full top-0 `}
           >
             <SafeAreaView
               style={tw.style(
@@ -260,8 +260,7 @@ export default function Discover() {
             </SafeAreaView>
           </LinearGradient>
         }
-        ListHeaderComponentStyle={tw`absolute h-[${PAGE_HEIGHT / 2.2}px] w-full`}
-        // Add any additional props for FlatList here
+        ListHeaderComponentStyle={tw` h-[${PAGE_HEIGHT / 2.2}px] w-full`}
       />
     </View>
   )
