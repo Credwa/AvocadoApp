@@ -2,7 +2,7 @@ import { Image } from 'expo-image'
 import { LinearGradient } from 'expo-linear-gradient'
 import { router, useRouter } from 'expo-router'
 import React, { useEffect, useMemo, useState } from 'react'
-import { Dimensions, Platform, Pressable, SafeAreaView, StatusBar, View } from 'react-native'
+import { Dimensions, FlatList, Platform, Pressable, SafeAreaView, StatusBar, View } from 'react-native'
 import { Gesture, GestureDetector, ScrollView } from 'react-native-gesture-handler'
 import Animated, { useSharedValue } from 'react-native-reanimated'
 import Carousel from 'react-native-reanimated-carousel'
@@ -18,21 +18,29 @@ import { AndroidSafeAreaPaddingTop } from '@/helpers/lib/constants'
 import { getRandomBlurhash, getSongTitle, isCampaignComingSoon, isCampaignFinished } from '@/helpers/lib/lib'
 import tw from '@/helpers/lib/tailwind'
 import { useColorScheme } from '@/hooks/useColorScheme'
-import { getFeaturedArtists } from '@/services/ArtistService'
+import { Artist, getFeaturedArtists } from '@/services/ArtistService'
 import {
   Campaign,
   getDiscoveryCampaigns,
   getFeaturedCampaigns,
   getRecentCampaigns,
-  getUpcomingCampaigns
+  getUpcomingCampaigns,
+  MinCampaign
 } from '@/services/CampaignService'
 import { Ionicons } from '@expo/vector-icons'
 import { useQuery } from '@tanstack/react-query'
 
-import type { StyleProp, ViewStyle, ViewProps, ImageSourcePropType } from 'react-native'
-import type { AnimatedProps } from 'react-native-reanimated'
+import type { StyleProp, ViewStyle, ViewProps, ImageSourcePropType, ListRenderItem } from 'react-native'
+import type { AnimatedProps, SharedValue } from 'react-native-reanimated'
 const PAGE_WIDTH = Dimensions.get('window').width
 const PAGE_HEIGHT = Dimensions.get('window').height
+
+interface FlatListItem {
+  type: string
+  key: string
+  data?: Campaign[] | Artist[] | MinCampaign[]
+  title?: string
+}
 
 const sortAndShuffleDiscoveryCards = (campaigns: Campaign[]) => {
   // Function to shuffle an array (Fisher-Yates Shuffle)
@@ -70,6 +78,110 @@ const sortAndShuffleDiscoveryCards = (campaigns: Campaign[]) => {
   return ongoingCampaigns.concat(releasedCampaigns, upcomingCampaigns)
 }
 
+const createRenderItem =
+  (
+    progressValue: SharedValue<number>,
+    onCardChange: (position: number, absoluteProgress: number) => void
+  ): ListRenderItem<FlatListItem> =>
+  ({ item }: { item: FlatListItem }) => {
+    switch (item.type) {
+      case 'header':
+        return (
+          <LinearGradient colors={['transparent']} style={tw`absolute h-[${PAGE_HEIGHT / 2.2}px] w-full top-0`}>
+            <SafeAreaView
+              style={tw.style(
+                `flex-row gap-x-2 justify-between flex-1 h-[${PAGE_HEIGHT / 3}px]`,
+                AndroidSafeAreaPaddingTop
+              )}
+            >
+              <View
+                style={tw`flex items-center justify-center w-12 ml-[33px] rounded-lg h-13 dark:bg-zinc-900 bg-zinc-50`}
+              >
+                <Image
+                  source={require('~/assets/images/AvocadoLogoMinimal.png')}
+                  contentFit="fill"
+                  cachePolicy="disk"
+                  style={[tw.style(`h-10 w-10`)]}
+                  alt="Avocado Logo"
+                />
+              </View>
+              <Pressable style={tw`mt-2.5 ml-2 mr-[33px]`} hitSlop={10} onPress={() => router.push('/search')}>
+                <Ionicons name="search" size={28} color={tw.color('text-zinc-100')} />
+              </Pressable>
+            </SafeAreaView>
+          </LinearGradient>
+        )
+      case 'carousel':
+        const discoverCampaigns = item.data as Campaign[]
+        return (
+          <View
+            style={[
+              {
+                alignItems: 'center',
+                marginTop: '20%'
+              }
+            ]}
+          >
+            <Carousel
+              width={PAGE_WIDTH * 0.92}
+              height={PAGE_HEIGHT * 0.78}
+              style={{
+                width: PAGE_WIDTH * 0.92
+              }}
+              pagingEnabled
+              snapEnabled
+              loop={false}
+              panGestureHandlerProps={{
+                activeOffsetX: [-20, 20]
+              }}
+              onProgressChange={onCardChange}
+              mode="parallax"
+              modeConfig={{
+                parallaxScrollingScale: 0.85,
+                parallaxScrollingOffset: 70
+              }}
+              data={discoverCampaigns || []}
+              renderItem={({ index, item }) => (
+                <DiscoveryCard campaign={item} index={index} currentIndex={progressValue.value} />
+              )}
+            />
+          </View>
+        )
+      case 'upcoming':
+        const upcomingCampaigns = item.data as MinCampaign[]
+        return (
+          <View style={tw`gutter-sm`}>
+            <FeaturedView data={upcomingCampaigns} title="Upcoming Campaigns" returnUrl="discover" />
+          </View>
+        )
+      case 'recent':
+        const recentCampaigns = item.data as MinCampaign[]
+        return (
+          <View style={tw`gutter-sm`}>
+            <RecentCampaignView data={recentCampaigns} />
+          </View>
+        )
+      case 'featured':
+        const featuredCampaigns = item.data as MinCampaign[]
+        return (
+          <View style={tw`gutter-sm`}>
+            <FeaturedView data={featuredCampaigns} title="Featured Songs" />
+          </View>
+        )
+      case 'featuredArtists':
+        const featuredArtists = item.data as Artist[]
+        return (
+          <View style={tw`gutter-sm`}>
+            <FeaturedView data={featuredArtists} title="Artist Spotlight" />
+          </View>
+        )
+      default:
+        return <View />
+    }
+  }
+
+const keyExtractor = (item: FlatListItem) => item.key
+
 export default function Discover() {
   const scheme = useColorScheme()
   const { data: recentCampaigns } = useQuery({
@@ -96,6 +208,15 @@ export default function Discover() {
     progressValue.value = absoluteProgress
   }
 
+  const data = [
+    { type: 'header', key: 'gradientHeader' }, // Your gradient header
+    { type: 'carousel', key: 'mainCarousel', data: sortedCampaigns }, // Carousel
+    { type: 'upcoming', key: 'upcomingCampaigns', data: upcomingCampaigns },
+    { type: 'recent', key: 'recentCampaigns', data: recentCampaigns },
+    { type: 'featured', key: 'featuredCampaigns', data: featuredCampaigns },
+    { type: 'featuredArtists', key: 'featuredArtists', data: featuredArtists }
+  ]
+
   const gradient =
     scheme === 'dark'
       ? [tw.color('bg-zinc-700'), tw.color('bg-zinc-800'), tw.color('bg-zinc-900'), tw.color('bg-zinc-950')]
@@ -103,7 +224,7 @@ export default function Discover() {
 
   return (
     <View style={tw`relative justify-center flex-1 w-screen bg-zinc-100 dark:bg-zinc-950`}>
-      <ScrollView contentContainerStyle={tw`pb-44`}>
+      {/* <ScrollView contentContainerStyle={tw`pb-44`}>
         <LinearGradient
           colors={gradient.map((color) => (color ? color : 'transparent'))}
           style={tw`absolute h-[${PAGE_HEIGHT / 2.2}px] w-full top-0`}
@@ -168,7 +289,14 @@ export default function Discover() {
           <FeaturedView data={featuredCampaigns} title="Featured Songs" />
           <FeaturedView data={featuredArtists} title="Artist Spotlight" />
         </View>
-      </ScrollView>
+      </ScrollView> */}
+      <FlatList
+        data={data}
+        renderItem={createRenderItem(progressValue, onCardChange)}
+        keyExtractor={keyExtractor}
+        initialNumToRender={2}
+        // Add any additional props for FlatList here
+      />
     </View>
   )
 }

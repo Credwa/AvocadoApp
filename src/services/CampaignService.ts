@@ -110,7 +110,7 @@ export const getDiscoveryCampaigns = (offset: number) => {
   return {
     queryKey: ['campaigns', 'discovery', offset],
     queryFn: async (): Promise<Campaign[]> => {
-      return fetchWithAuth<Campaign[]>(`/campaigns/discover?limit=20&offset=${offset}`, z.array(campaign))
+      return fetchWithAuth<Campaign[]>(`/campaigns/discover?limit=5&offset=${offset}`, z.array(campaign))
     }
   }
 }

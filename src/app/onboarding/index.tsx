@@ -187,7 +187,7 @@ export default function Onboarding() {
               <AnimatedText textStyle="text-3xl text-zinc-100 " text="Welcome to Avocado" delay={200} />
               <AnimatedText
                 textStyle="text-lg text-zinc-100 opacity-90"
-                text=" Where artists and their fans earn together"
+                text=" Where artists and music lovers earn together"
                 delay={300}
               />
             </Animated.View>
