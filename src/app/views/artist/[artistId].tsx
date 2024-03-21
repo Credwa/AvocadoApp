@@ -253,7 +253,7 @@ export default function ArtistProfile() {
                       'opacity-50': pressed
                     })
                   ]}
-                  onPress={() => router.replace(`views/song/${campaign.id}`)}
+                  onPress={() => router.navigate(`views/song/${campaign.id}`)}
                 >
                   {({ pressed }) => (
                     <View style={tw`flex-row items-center justify-between w-full gap-x-3`}>

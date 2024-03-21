@@ -45,6 +45,8 @@ export default function Layout() {
 
   return (
     <Tabs
+      initialRouteName="discover"
+      backBehavior="history"
       screenOptions={{
         headerShown: false,
         tabBarStyle: tw`absolute bg-transparent dark:border-t-zinc-800`,
@@ -59,6 +61,7 @@ export default function Layout() {
     >
       <Tabs.Screen name="index" options={{ ...tabBarOptions('home-sharp', 'Home') }} />
       <Tabs.Screen name="search" options={{ ...tabBarOptions('search', 'Search'), href: null }} />
+
       <Tabs.Screen name="discover" options={{ ...tabBarOptions('star', 'Discover') }} />
 
       <Tabs.Screen

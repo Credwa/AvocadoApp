@@ -27,7 +27,7 @@ export default function BackButton({
   if (forceColorScheme) colorScheme = forceColorScheme
 
   const goBack = () => {
-    if (href) router.replace(href)
+    if (href) router.navigate(href)
     else router.back()
   }
 

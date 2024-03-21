@@ -114,7 +114,9 @@ const Song = () => {
                   </View>
 
                   <Pressable
-                    onPress={() => router.push(`views/artist/${songData?.artists.id}?url=views/song/${songId}`)}
+                    onPress={() =>
+                      router.navigate(`views/artist/${songData?.artists.id}?url=views/song/${songData?.id}`)
+                    }
                   >
                     {({ pressed }) => (
                       <View style={tw`flex-row items-center gap-x-2`}>
@@ -206,7 +208,7 @@ const Song = () => {
 
           <Pressable
             style={tw.style(`self-start justify-end mb-36 mt-20`, viewVisible && 'mb-36')}
-            onPress={() => router.push(`views/artist/${songData?.artists.id}?url=views/song/${songId}`)}
+            onPress={() => router.navigate(`views/artist/${songData?.artists.id}?url=views/song/${songId}`)}
           >
             {({ pressed }) => (
               <View style={tw.style(`flex-row items-center gap-x-3`, { 'opacity-50': pressed })}>
@@ -241,7 +243,7 @@ const Song = () => {
         >
           {campaignState === 'ongoing' && (
             <Button
-              onPress={() => router.push(`views/song/${songId}/purchase`)}
+              onPress={() => router.navigate(`views/song/${songId}/purchase`)}
               styles="w-full rounded-md"
               textStyles="text-white"
               variant="secondary"
@@ -252,7 +254,7 @@ const Song = () => {
 
           {campaignState === 'released' && (
             <Button
-              onPress={() => router.push(`views/song/${songId}/purchaseReleased`)}
+              onPress={() => router.navigate(`views/song/${songId}/purchaseReleased`)}
               styles="w-full rounded-md"
               textStyles="text-white"
               variant="primary"

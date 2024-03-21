@@ -275,7 +275,7 @@ export const DiscoveryCard: React.FC<Props> = (props) => {
         {...animatedViewProps}
       >
         <View style={tw`relative h-[${artworkHeight}px]`}>
-          <Pressable onPress={() => router.push(`views/song/${campaign.id}?url=/discover`)}>
+          <Pressable onPress={() => router.navigate(`views/song/${campaign.id}?url=discover`)}>
             <Image
               source={campaign.artwork_url}
               placeholder={getRandomBlurhash()}
@@ -290,7 +290,7 @@ export const DiscoveryCard: React.FC<Props> = (props) => {
         <View style={tw`items-center justify-center gutter-sm `}>
           <Pressable
             style={tw`-top-12`}
-            onPress={() => router.push(`views/artist/${campaign?.artists.id}?url=/discover`)}
+            onPress={() => router.navigate(`views/artist/${campaign?.artists.id}?url=/discover`)}
           >
             {({ pressed }) => (
               <View style={tw`flex-row items-center bg-white rounded-full dark:bg-zinc-900 gap-x-2`}>
@@ -318,7 +318,7 @@ export const DiscoveryCard: React.FC<Props> = (props) => {
             )}
           </View>
 
-          <Pressable onPress={() => router.push(`views/song/${campaign.id}?url=/discover`)}>
+          <Pressable onPress={() => router.navigate(`views/song/${campaign.id}?url=/discover`)}>
             <Typography weight={600} style={tw`flex-wrap text-2xl text-center`}>
               {getSongTitle(campaign!, 40)}
             </Typography>
@@ -331,9 +331,11 @@ export const DiscoveryCard: React.FC<Props> = (props) => {
             />
           </View>
           <View style={tw`flex-row items-center justify-center w-full mt-8 flex-nowrap gap-x-2 gap-y-2`}>
-            <Pill onPress={() => router.push(`views/song/${campaign.id}?url=/discover`)}>{campaign.primary_genre}</Pill>
+            <Pill onPress={() => router.navigate(`views/song/${campaign.id}?url=/discover`)}>
+              {campaign.primary_genre}
+            </Pill>
             {campaign.secondary_genre !== 'Select a genre' && (
-              <Pill onPress={() => router.push(`views/song/${campaign.id}?url=/discover`)}>
+              <Pill onPress={() => router.navigate(`views/song/${campaign.id}?url=/discover`)}>
                 {campaign.secondary_genre}
               </Pill>
             )}
@@ -342,7 +344,7 @@ export const DiscoveryCard: React.FC<Props> = (props) => {
 
         {isCampaignComingSoon(campaign.campaign_details?.campaign_start_date) && (
           <View style={tw`absolute -top-[28px] w-full`}>
-            <View style={[tw`self-center rounded-sm bg-primary-main max-w-30`]}>
+            <View style={[tw`self-center rounded-sm bg-primary-main max-w-72`]}>
               <Typography weight={500} style={tw`px-3 py-0.5 text-base text-white`}>
                 Coming Soon
               </Typography>
@@ -354,7 +356,7 @@ export const DiscoveryCard: React.FC<Props> = (props) => {
           campaign.campaign_details?.time_restraint
         ) && (
           <View style={tw`absolute -top-[28px] w-full`}>
-            <View style={[tw`self-center rounded-sm bg-fuchsia-500 max-w-30`]}>
+            <View style={[tw`self-center rounded-sm bg-fuchsia-500 max-w-72`]}>
               <Typography weight={500} style={tw`px-3 py-0.5 text-base text-white min-w-[120px] text-center`}>
                 Released
               </Typography>
@@ -367,7 +369,7 @@ export const DiscoveryCard: React.FC<Props> = (props) => {
         ) &&
           !isCampaignComingSoon(campaign.campaign_details?.campaign_start_date) && (
             <View style={tw`absolute -top-[28px] w-full`}>
-              <View style={[tw`self-center rounded-sm bg-secondary-main max-w-30`]}>
+              <View style={[tw`self-center rounded-sm bg-secondary-main max-w-72`]}>
                 <Typography weight={500} style={tw`px-3 py-0.5 text-base text-white min-w-[120px] text-center`}>
                   Ongoing
                 </Typography>
