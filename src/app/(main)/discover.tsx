@@ -81,36 +81,40 @@ const sortAndShuffleDiscoveryCards = (campaigns: Campaign[]) => {
 const createRenderItem =
   (
     progressValue: SharedValue<number>,
-    onCardChange: (position: number, absoluteProgress: number) => void
+    onCardChange: (position: number, absoluteProgress: number) => void,
+    gradient: (string | undefined)[]
   ): ListRenderItem<FlatListItem> =>
   ({ item }: { item: FlatListItem }) => {
     switch (item.type) {
-      case 'header':
-        return (
-          <LinearGradient colors={['transparent']} style={tw`absolute h-[${PAGE_HEIGHT / 2.2}px] w-full top-0`}>
-            <SafeAreaView
-              style={tw.style(
-                `flex-row gap-x-2 justify-between flex-1 h-[${PAGE_HEIGHT / 3}px]`,
-                AndroidSafeAreaPaddingTop
-              )}
-            >
-              <View
-                style={tw`flex items-center justify-center w-12 ml-[33px] rounded-lg h-13 dark:bg-zinc-900 bg-zinc-50`}
-              >
-                <Image
-                  source={require('~/assets/images/AvocadoLogoMinimal.png')}
-                  contentFit="fill"
-                  cachePolicy="disk"
-                  style={[tw.style(`h-10 w-10`)]}
-                  alt="Avocado Logo"
-                />
-              </View>
-              <Pressable style={tw`mt-2.5 ml-2 mr-[33px]`} hitSlop={10} onPress={() => router.push('/search')}>
-                <Ionicons name="search" size={28} color={tw.color('text-zinc-100')} />
-              </Pressable>
-            </SafeAreaView>
-          </LinearGradient>
-        )
+      // case 'header':
+      //   return (
+      //     <LinearGradient
+      //       colors={gradient.map((color) => (color ? color : 'transparent'))}
+      //       style={tw`absolute h-[${PAGE_HEIGHT / 2.2}px] w-full top-0`}
+      //     >
+      //       <SafeAreaView
+      //         style={tw.style(
+      //           `flex-row gap-x-2 justify-between flex-1 h-[${PAGE_HEIGHT / 3}px]`,
+      //           AndroidSafeAreaPaddingTop
+      //         )}
+      //       >
+      //         <View
+      //           style={tw`flex items-center justify-center w-12 ml-[33px] rounded-lg h-13 dark:bg-zinc-900 bg-zinc-50`}
+      //         >
+      //           <Image
+      //             source={require('~/assets/images/AvocadoLogoMinimal.png')}
+      //             contentFit="fill"
+      //             cachePolicy="disk"
+      //             style={[tw.style(`h-10 w-10`)]}
+      //             alt="Avocado Logo"
+      //           />
+      //         </View>
+      //         <Pressable style={tw`mt-2.5 ml-2 mr-[33px]`} hitSlop={10} onPress={() => router.push('/search')}>
+      //           <Ionicons name="search" size={28} color={tw.color('text-zinc-100')} />
+      //         </Pressable>
+      //       </SafeAreaView>
+      //     </LinearGradient>
+      //   )
       case 'carousel':
         const discoverCampaigns = item.data as Campaign[]
         return (
@@ -209,7 +213,6 @@ export default function Discover() {
   }
 
   const data = [
-    { type: 'header', key: 'gradientHeader' }, // Your gradient header
     { type: 'carousel', key: 'mainCarousel', data: sortedCampaigns }, // Carousel
     { type: 'upcoming', key: 'upcomingCampaigns', data: upcomingCampaigns },
     { type: 'recent', key: 'recentCampaigns', data: recentCampaigns },
@@ -224,77 +227,40 @@ export default function Discover() {
 
   return (
     <View style={tw`relative justify-center flex-1 w-screen bg-zinc-100 dark:bg-zinc-950`}>
-      {/* <ScrollView contentContainerStyle={tw`pb-44`}>
-        <LinearGradient
-          colors={gradient.map((color) => (color ? color : 'transparent'))}
-          style={tw`absolute h-[${PAGE_HEIGHT / 2.2}px] w-full top-0`}
-        >
-          <SafeAreaView
-            style={tw.style(
-              `flex-row gap-x-2 justify-between flex-1 h-[${PAGE_HEIGHT / 3}px]`,
-              AndroidSafeAreaPaddingTop
-            )}
-          >
-            <View
-              style={tw`flex items-center justify-center w-12 ml-[33px] rounded-lg h-13 dark:bg-zinc-900 bg-zinc-50`}
-            >
-              <Image
-                source={require('~/assets/images/AvocadoLogoMinimal.png')}
-                contentFit="fill"
-                cachePolicy="disk"
-                style={[tw.style(`h-10 w-10`)]}
-                alt="Avocado Logo"
-              />
-            </View>
-            <Pressable style={tw`mt-2.5 ml-2 mr-[33px]`} hitSlop={10} onPress={() => router.push('/search')}>
-              <Ionicons name="search" size={28} color={tw.color('text-zinc-100')} />
-            </Pressable>
-          </SafeAreaView>
-        </LinearGradient>
-        <View
-          style={[
-            {
-              alignItems: 'center',
-              marginTop: '20%'
-            }
-          ]}
-        >
-          <Carousel
-            width={PAGE_WIDTH * 0.92}
-            height={PAGE_HEIGHT * 0.78}
-            style={{
-              width: PAGE_WIDTH * 0.92
-            }}
-            pagingEnabled
-            snapEnabled
-            loop={false}
-            panGestureHandlerProps={{
-              activeOffsetX: [-20, 20]
-            }}
-            onProgressChange={onCardChange}
-            mode="parallax"
-            modeConfig={{
-              parallaxScrollingScale: 0.85,
-              parallaxScrollingOffset: 70
-            }}
-            data={sortedCampaigns || []}
-            renderItem={({ index, item }) => (
-              <DiscoveryCard campaign={item} index={index} currentIndex={progressValue.value} />
-            )}
-          />
-        </View>
-        <View style={tw`gutter-sm`}>
-          <FeaturedView data={upcomingCampaigns} title="Upcoming Campaigns" returnUrl="discover" />
-          <RecentCampaignView data={recentCampaigns} />
-          <FeaturedView data={featuredCampaigns} title="Featured Songs" />
-          <FeaturedView data={featuredArtists} title="Artist Spotlight" />
-        </View>
-      </ScrollView> */}
       <FlatList
         data={data}
-        renderItem={createRenderItem(progressValue, onCardChange)}
+        renderItem={createRenderItem(progressValue, onCardChange, gradient)}
         keyExtractor={keyExtractor}
-        initialNumToRender={2}
+        initialNumToRender={3}
+        ListHeaderComponent={
+          <LinearGradient
+            colors={gradient.map((color) => (color ? color : 'transparent'))}
+            style={tw`absolute h-[${PAGE_HEIGHT / 2.2}px] w-full top-0 `}
+          >
+            <SafeAreaView
+              style={tw.style(
+                `flex-row gap-x-2 justify-between flex-1 h-[${PAGE_HEIGHT / 3}px]`,
+                AndroidSafeAreaPaddingTop
+              )}
+            >
+              <View
+                style={tw`flex items-center justify-center w-12 ml-[33px] rounded-lg h-13 dark:bg-zinc-900 bg-zinc-50`}
+              >
+                <Image
+                  source={require('~/assets/images/AvocadoLogoMinimal.png')}
+                  contentFit="fill"
+                  cachePolicy="disk"
+                  style={[tw.style(`h-10 w-10`)]}
+                  alt="Avocado Logo"
+                />
+              </View>
+              <Pressable style={tw`mt-2.5 ml-2 mr-[33px]`} hitSlop={10} onPress={() => router.push('/search')}>
+                <Ionicons name="search" size={28} color={tw.color('text-zinc-100')} />
+              </Pressable>
+            </SafeAreaView>
+          </LinearGradient>
+        }
+        ListHeaderComponentStyle={tw`absolute h-[${PAGE_HEIGHT / 2.2}px] w-full`}
         // Add any additional props for FlatList here
       />
     </View>
@@ -400,15 +366,8 @@ export const DiscoveryCard: React.FC<Props> = (props) => {
         </View>
 
         {isCampaignComingSoon(campaign.campaign_details?.campaign_start_date) && (
-          <View style={tw`absolute self-end top-9 -right-3`}>
-            <View
-              style={[
-                tw`rounded-sm bg-primary-main`,
-                {
-                  transform: [{ rotate: '45deg' }]
-                }
-              ]}
-            >
+          <View style={tw`absolute -top-[28px] w-full`}>
+            <View style={[tw`self-center rounded-sm bg-primary-main max-w-30`]}>
               <Typography weight={500} style={tw`px-3 py-0.5 text-base text-white`}>
                 Coming Soon
               </Typography>
@@ -419,15 +378,8 @@ export const DiscoveryCard: React.FC<Props> = (props) => {
           campaign.campaign_details?.campaign_start_date,
           campaign.campaign_details?.time_restraint
         ) && (
-          <View style={tw`absolute self-end top-9 -right-3`}>
-            <View
-              style={[
-                tw`rounded-sm bg-fuchsia-500`,
-                {
-                  transform: [{ rotate: '45deg' }]
-                }
-              ]}
-            >
+          <View style={tw`absolute -top-[28px] w-full`}>
+            <View style={[tw`self-center rounded-sm bg-fuchsia-500 max-w-30`]}>
               <Typography weight={500} style={tw`px-3 py-0.5 text-base text-white min-w-[120px] text-center`}>
                 Released
               </Typography>
@@ -439,15 +391,8 @@ export const DiscoveryCard: React.FC<Props> = (props) => {
           campaign.campaign_details?.time_restraint
         ) &&
           !isCampaignComingSoon(campaign.campaign_details?.campaign_start_date) && (
-            <View style={tw`absolute self-end top-9 -right-3`}>
-              <View
-                style={[
-                  tw`rounded-sm bg-secondary-main`,
-                  {
-                    transform: [{ rotate: '45deg' }]
-                  }
-                ]}
-              >
+            <View style={tw`absolute -top-[28px] w-full`}>
+              <View style={[tw`self-center rounded-sm bg-secondary-main max-w-30`]}>
                 <Typography weight={500} style={tw`px-3 py-0.5 text-base text-white min-w-[120px] text-center`}>
                   Ongoing
                 </Typography>
