@@ -107,9 +107,12 @@ const Song = () => {
             <View style={tw`flex-row items-center self-center justify-between w-full`}>
               <View style={tw`flex-row gap-x-2`}>
                 <View>
-                  <Typography weight={600} style={tw`text-xl`}>
-                    {getSongTitle(songData!, 40)}
-                  </Typography>
+                  <View style={tw`flex-row max-w-70`}>
+                    <Typography weight={600} style={tw`text-xl`}>
+                      {getSongTitle(songData!, 40)}
+                    </Typography>
+                  </View>
+
                   <Pressable
                     onPress={() => router.push(`views/artist/${songData?.artists.id}?url=views/song/${songId}`)}
                   >
@@ -138,7 +141,6 @@ const Song = () => {
                   )}
                 </View>
               </View>
-
               <View style={tw`justify-end`}>
                 <PlayButton styles="h-12 w-12" metadata={metaData} />
               </View>
