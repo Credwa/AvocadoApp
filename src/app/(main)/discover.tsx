@@ -99,7 +99,7 @@ const createRenderItem =
           >
             <Carousel
               width={PAGE_WIDTH * 0.92}
-              height={PAGE_HEIGHT * 0.78}
+              height={800}
               style={{
                 width: PAGE_WIDTH * 0.92
               }}
@@ -265,7 +265,7 @@ export const DiscoveryCard: React.FC<Props> = (props) => {
     duration: campaign.duration
   }
 
-  const artworkHeight = PAGE_HEIGHT / 3
+  const artworkHeight = PAGE_WIDTH * 0.92
 
   return (
     <GestureDetector gesture={Gesture.Exclusive(gesture)}>
@@ -274,14 +274,14 @@ export const DiscoveryCard: React.FC<Props> = (props) => {
         style={tw`relative flex-1 bg-white rounded-xl dark:bg-zinc-900`}
         {...animatedViewProps}
       >
-        <View style={tw`relative h-[${artworkHeight}px]`}>
+        <View style={tw`relative h-[${artworkHeight}px] bg-transparent`}>
           <Pressable onPress={() => router.navigate(`views/song/${campaign.id}?url=discover`)}>
             <Image
               source={campaign.artwork_url}
               placeholder={getRandomBlurhash()}
               contentFit="fill"
               cachePolicy="disk"
-              style={[tw.style(`w-full absolute rounded-t-xl h-[${artworkHeight}px]`)]}
+              style={[tw.style(`w-full absolute rounded-t-xl h-[${artworkHeight}px] w-[${artworkHeight}px]`)]}
               alt={`Artwork for ${campaign.song_title} by ${campaign.artists.artist_name}`}
             />
           </Pressable>
@@ -323,13 +323,6 @@ export const DiscoveryCard: React.FC<Props> = (props) => {
               {getSongTitle(campaign!, 40)}
             </Typography>
           </Pressable>
-          <View style={tw`self-center mt-4`}>
-            <PlayButton
-              styles={`${Platform.OS === 'android' ? 'w-12 h-12' : 'w-16 h-16'}`}
-              iconSize={Platform.OS === 'android' ? 30 : 40}
-              metadata={playbackMetaData}
-            />
-          </View>
           <View style={tw`flex-row items-center justify-center w-full mt-8 flex-nowrap gap-x-2 gap-y-2`}>
             <Pill onPress={() => router.navigate(`views/song/${campaign.id}?url=/discover`)}>
               {campaign.primary_genre}
@@ -339,6 +332,13 @@ export const DiscoveryCard: React.FC<Props> = (props) => {
                 {campaign.secondary_genre}
               </Pill>
             )}
+          </View>
+          <View style={tw`self-center mt-4`}>
+            <PlayButton
+              styles={`${Platform.OS === 'android' ? 'w-12 h-12' : 'w-16 h-16'}`}
+              iconSize={Platform.OS === 'android' ? 30 : 40}
+              metadata={playbackMetaData}
+            />
           </View>
         </View>
 

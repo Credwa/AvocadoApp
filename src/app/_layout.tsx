@@ -42,6 +42,7 @@ const postHogKey = __DEV__ ? '' : 'phc_kK42froNyH2xUUXebCZXl3YKF2V9jA2JInAGqhMog
 if (!sentryInitialzed) {
   Sentry.init({
     dsn: 'https://3693efacfda90eb925922d9ace2f379c@o4506305008173056.ingest.sentry.io/4506305022263296',
+    tracesSampleRate: 0.15,
     debug: __DEV__ // If `true`, Sentry will try to print out useful debugging information if something goes wrong with sending the event. Set it to `false` in production
   })
   sentryInitialzed = true
