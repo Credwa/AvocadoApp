@@ -86,35 +86,6 @@ const createRenderItem =
   ): ListRenderItem<FlatListItem> =>
   ({ item }: { item: FlatListItem }) => {
     switch (item.type) {
-      // case 'header':
-      //   return (
-      //     <LinearGradient
-      //       colors={gradient.map((color) => (color ? color : 'transparent'))}
-      //       style={tw`absolute h-[${PAGE_HEIGHT / 2.2}px] w-full top-0`}
-      //     >
-      //       <SafeAreaView
-      //         style={tw.style(
-      //           `flex-row gap-x-2 justify-between flex-1 h-[${PAGE_HEIGHT / 3}px]`,
-      //           AndroidSafeAreaPaddingTop
-      //         )}
-      //       >
-      //         <View
-      //           style={tw`flex items-center justify-center w-12 ml-[33px] rounded-lg h-13 dark:bg-zinc-900 bg-zinc-50`}
-      //         >
-      //           <Image
-      //             source={require('~/assets/images/AvocadoLogoMinimal.png')}
-      //             contentFit="fill"
-      //             cachePolicy="disk"
-      //             style={[tw.style(`h-10 w-10`)]}
-      //             alt="Avocado Logo"
-      //           />
-      //         </View>
-      //         <Pressable style={tw`mt-2.5 ml-2 mr-[33px]`} hitSlop={10} onPress={() => router.push('/search')}>
-      //           <Ionicons name="search" size={28} color={tw.color('text-zinc-100')} />
-      //         </Pressable>
-      //       </SafeAreaView>
-      //     </LinearGradient>
-      //   )
       case 'carousel':
         const discoverCampaigns = item.data as Campaign[]
         return (
@@ -132,6 +103,7 @@ const createRenderItem =
               style={{
                 width: PAGE_WIDTH * 0.92
               }}
+              windowSize={3}
               pagingEnabled
               snapEnabled
               loop={false}
@@ -231,7 +203,7 @@ export default function Discover() {
         data={data}
         renderItem={createRenderItem(progressValue, onCardChange, gradient)}
         keyExtractor={keyExtractor}
-        initialNumToRender={3}
+        initialNumToRender={2}
         ListHeaderComponent={
           <LinearGradient
             colors={gradient.map((color) => (color ? color : 'transparent'))}

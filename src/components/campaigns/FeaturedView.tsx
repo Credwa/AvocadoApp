@@ -104,6 +104,7 @@ export const FeaturedView: FC<FeaturedProps> = ({ data, title, returnUrl }) => {
       </Typography>
       <Carousel
         loop={false}
+        windowSize={3}
         panGestureHandlerProps={{
           activeOffsetX: [-20, 20]
         }}
