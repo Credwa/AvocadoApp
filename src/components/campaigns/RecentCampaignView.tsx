@@ -1,7 +1,7 @@
 import { Image } from 'expo-image'
 import { useRouter } from 'expo-router'
 import React, { FC } from 'react'
-import { Dimensions, Pressable, View } from 'react-native'
+import { Dimensions, Platform, Pressable, View } from 'react-native'
 import Carousel from 'react-native-reanimated-carousel'
 
 import { getRandomBlurhash, getSongTitle } from '@/helpers/lib/lib'
@@ -60,12 +60,18 @@ const RecentCampaignItem = ({ campaign }: { campaign: MinCampaign }) => {
           />
           <View style={tw.style(`flex-col gap-y-0.5`)}>
             <View style={tw`flex-row gap-x-0.5`}>
-              <Typography weight={500} style={tw`text-sm text-zinc-950 dark:text-zinc-100`}>
+              <Typography
+                weight={500}
+                style={tw`${Platform.OS === 'android' ? 'text-xs' : 'text-sm'} text-zinc-950 dark:text-zinc-100`}
+              >
                 {getSongTitle(campaign, 15)}
               </Typography>
             </View>
 
-            <Typography weight={400} style={tw`text-sm text-zinc-600 dark:text-zinc-400`}>
+            <Typography
+              weight={400}
+              style={tw`${Platform.OS === 'android' ? 'text-xs' : 'text-sm'} text-zinc-600 dark:text-zinc-400`}
+            >
               {campaign.artist_name}
             </Typography>
           </View>

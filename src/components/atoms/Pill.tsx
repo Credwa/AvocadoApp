@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { Pressable, PressableProps } from 'react-native'
+import { Platform, Pressable, PressableProps } from 'react-native'
 
 import tw from '@/helpers/lib/tailwind'
 
@@ -22,14 +22,20 @@ export const Pill: FC<PillProps> = ({ children, onPress, styles, selected = fals
   return (
     <Pressable
       style={({ pressed }) => [
-        tw.style(`px-5 py-2 rounded-full flex-row justify-center border shadow-none`, color, styles),
+        tw.style(`px-4 py-1.5 rounded-full flex-row justify-center border shadow-none`, color, styles),
         tw.style({
           'opacity-80': pressed
         })
       ]}
       onPress={onPress}
     >
-      <Typography weight={500} style={[tw`text-base font-semibold text-neutral`, tw.style(textColor)]}>
+      <Typography
+        weight={500}
+        style={[
+          tw`${Platform.OS === 'android' ? 'text-xs' : 'text-sm'} font-semibold text-neutral`,
+          tw.style(textColor)
+        ]}
+      >
         {children}
       </Typography>
     </Pressable>

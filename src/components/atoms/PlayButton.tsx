@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { Pressable } from 'react-native'
+import { Pressable, View } from 'react-native'
 
 import { PlaybackMetadata, usePlayback } from '@/context/playbackContext'
 import tw from '@/helpers/lib/tailwind'
@@ -42,7 +42,7 @@ export const PlayButton: FC<PlayButtonProps> = ({
       }
     >
       {isPlaying && currentMetadata && currentMetadata?.audio_url === metadata.audio_url ? (
-        <Ionicons name="pause-sharp" size={iconSize} style={tw`ml-${pauseml}`} color={tw.color('text-zinc-800')} />
+        <Ionicons name="pause-sharp" size={iconSize} style={tw`self-center`} color={tw.color('text-zinc-800')} />
       ) : (
         <Ionicons name="play-sharp" size={iconSize} style={tw`ml-${playml}`} color={tw.color('text-zinc-800')} />
       )}

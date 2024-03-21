@@ -90,14 +90,7 @@ export function PlaybackProvider(props: React.PropsWithChildren) {
   const [currentPlaybackMetadata, setCurrentPlaybackMetadata] = useState<PlaybackMetadata | null>(null)
   const [currentAudio, setCurrentAudio] = useState<string | null>(null)
   const [isPlaying, setIsPlaying] = useState(false)
-  const [hasPermissions, setHasPermissions] = useState(false)
   const [playbar, setPlaybar] = useState<RootSiblingsManager | null>(null)
-
-  Audio.getPermissionsAsync().then((resp) => {
-    if (resp.granted) {
-      setHasPermissions(true)
-    }
-  })
 
   Audio.setAudioModeAsync({
     allowsRecordingIOS: false,
@@ -190,7 +183,7 @@ export function PlaybackProvider(props: React.PropsWithChildren) {
               return
             }
             setPlaybar(new RootSiblingsManager(<Playbar />))
-            const playbackObject = await loadAsync(metadata.audio_url, hasPermissions, currentAudio)
+            const playbackObject = await loadAsync(metadata.audio_url, true, currentAudio)
             setCurrentPlaybackObject(playbackObject ?? currentPlaybackObject)
             setCurrentPlaybackMetadata(metadata)
             console.log(`playing music -  ${metadata}`)
