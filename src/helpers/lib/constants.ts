@@ -30,7 +30,7 @@ export const AndroidSafeAreaPaddingTop = {
   paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0
 }
 
-export const WEB_URL = __DEV__ ? 'http://192.168.1.23:3000' : 'https://myavocado.app'
+export const WEB_URL = __DEV__ ? 'http://192.168.1.23:3000' : 'https://artists.myavocado.app'
 
 export const environments = {
   dev: {
