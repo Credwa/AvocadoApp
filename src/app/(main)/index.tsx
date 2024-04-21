@@ -5,19 +5,26 @@ import React, { useEffect, useState } from 'react'
 import { Dimensions, Pressable, RefreshControl, ScrollView, useColorScheme, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-import { Button } from '@/components/atoms/Button'
+import ShowModal, { HideModal } from '@/components/atoms/Modal'
+import ShowToast from '@/components/atoms/Toast'
 import { Typography } from '@/components/atoms/Typography'
 import { Avatar } from '@/components/Avatar'
 import { DropdownMenu } from '@/components/DropdownMenu'
 import { getRandomBlurhash, getSongTitle } from '@/helpers/lib/lib'
 import tw from '@/helpers/lib/tailwind'
+import { useEmailEntryForm } from '@/hooks/useEmailEntry'
 import useStripeOnboarding from '@/hooks/useStripeOnboarding'
 import { getPurchasedCampaigns } from '@/services/CampaignService'
-import { getCurrentUserProfile, getStripeAccountBalance, getStripeAccountInfo } from '@/services/UserService'
+import {
+  getCurrentUserProfile,
+  getStripeAccountBalance,
+  getStripeAccountInfo,
+  updatePaypalAccount
+} from '@/services/UserService'
 import { useAppStore } from '@/store'
 import { Foundation, Ionicons } from '@expo/vector-icons'
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 const storybookEnabled = process.env.EXPO_PUBLIC_STORYBOOK_ENABLED === 'true'
 
@@ -26,8 +33,25 @@ const height = Dimensions.get('window').height
 const Root = () => {
   const colorScheme = useColorScheme()
   const [menuOpen, setMenuOpen] = useState(false)
+  const queryClient = useQueryClient()
   const { data } = useQuery({ ...getCurrentUserProfile() })
   const { handleStripeOnboarding } = useStripeOnboarding(data, '/discover')
+  const { mutateAsync: mutatePaypalAsync } = useMutation({
+    mutationFn: async (token: string) => {
+      return updatePaypalAccount(data?.id as string, token)
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['user/me'] })
+      ShowToast('Successfully updated paypal account.', {
+        backgroundColor: colorScheme === 'dark' ? tw.color('bg-zinc-800') : tw.color('bg-zinc-200')
+      })
+    },
+    onError: (error) => {
+      console.log(error)
+    }
+  })
+
+  const { emailInput, emailError, handleSubmit } = useEmailEntryForm(mutatePaypalAsync, HideModal)
 
   const tabBarHeight = useBottomTabBarHeight()
   const setTabBarHeight = useAppStore((state) => state.setTabBarHeight)
@@ -84,6 +108,30 @@ const Root = () => {
     router.push('/withdraw')
   }
 
+  const handlePaypalOnboarding = () => {
+    ShowModal({
+      buttons: [
+        {
+          text: 'Okay',
+          action: 'confirm',
+          onPress: () => {
+            handleSubmit()
+            console.log(emailError)
+          }
+        },
+        {
+          text: 'Cancel',
+          action: 'cancel',
+          onPress: () => {
+            HideModal()
+          }
+        }
+      ],
+      title: 'Add Paypal Account',
+      body: emailInput
+    })
+  }
+
   return (
     <View style={tw`flex-1 background-default`}>
       <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
@@ -112,32 +160,20 @@ const Root = () => {
             <View style={tw`flex-row items-center content-center justify-center gap-x-1`}>
               <Foundation name="dollar" size={64} style={tw`mb-3`} color={tw.color('text-zinc-100')} />
               <Typography weight={500} style={tw`text-6xl text-zinc-100`}>
-                {isStripeAccountBalanceLoading
-                  ? '0.00'
-                  : stripeAccountBalance?.available.reduce((acc, curr) => acc + curr.amount / 100, 0).toFixed(2)}
+                0.00
               </Typography>
             </View>
-            {/* {!isStripeAccDataLoading && !stripeAccountData?.charges_enabled && !stripeAccountData?.payouts_enabled && (
+            {!Boolean(data?.paypal) && (
               <Pressable
                 style={tw`flex-row flex-wrap items-center justify-center gap-x-2`}
-                onPress={handleStripeOnboarding}
+                onPress={handlePaypalOnboarding}
               >
                 <Ionicons name="warning" style={tw`text-yellow-400`} size={20} />
                 <Typography weight={500} style={tw`flex-wrap text-base underline text-neutral-200 opacity-90`}>
-                  Connect to Stripe to withdraw
+                  Add your paypal account to receive royalties
                 </Typography>
               </Pressable>
             )}
-
-            {!isStripeAccDataLoading &&
-              stripeAccountBalance &&
-              stripeAccountBalance?.available?.reduce((acc, curr) => acc + curr.amount / 100, 0) > 0 &&
-              stripeAccountData?.charges_enabled &&
-              stripeAccountData?.payouts_enabled && (
-                <Button styles="dark:bg-[#e2e8f0E6] px-5 py-2.5 " textStyles="text-lg dark:text-black">
-                  Withdraw
-                </Button>
-              )} */}
           </View>
         </LinearGradient>
 

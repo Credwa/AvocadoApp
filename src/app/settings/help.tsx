@@ -38,7 +38,7 @@ export default function PrivacyAndSecurity() {
         keyExtractor={(item, index) => item.title + index}
         renderItem={({ item, index, section }) => (
           <ListItem length={section.data.length} index={index} onPress={item.onPress}>
-            <Typography weight={500} style={tw`py-1 text-sm text-zinc-950 dark:text-zinc-100`}>
+            <Typography weight={500} style={tw`py-1 text-sm text-zinc-950 dark:text-red-400`}>
               {item.title}
             </Typography>
           </ListItem>

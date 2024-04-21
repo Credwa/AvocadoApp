@@ -3,22 +3,72 @@ import { useRouter } from 'expo-router'
 import { Alert, SectionList, View } from 'react-native'
 
 import { ListItem } from '@/components/atoms/ListItem'
+import ShowModal, { HideModal } from '@/components/atoms/Modal'
+import ShowToast from '@/components/atoms/Toast'
 import { Typography } from '@/components/atoms/Typography'
 import { useSession } from '@/context/authContext'
 import { usePlayback } from '@/context/playbackContext'
 import tw from '@/helpers/lib/tailwind'
+import { useEmailEntryForm } from '@/hooks/useEmailEntry'
+import { getCurrentUserProfile, updatePaypalAccount } from '@/services/UserService'
 import { useAppStore } from '@/store'
 import { Ionicons } from '@expo/vector-icons'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 export default function Settings() {
   const router = useRouter()
   const { signOut } = useSession() ?? {}
   const { stop, isPlaying } = usePlayback() ?? {}
+  const { data: currentUser } = useQuery({ ...getCurrentUserProfile() })
+
   const tabBarHeight = useAppStore((state) => state.tabBarHeight)
   const playerMarginBottom = isPlaying ? `pb-[${tabBarHeight * 1.3}]` : ''
+  const queryClient = useQueryClient()
 
   const iconStyle = tw`icon-neutral`
   const iconSize = 20
+
+  const { mutateAsync: mutatePaypalAsync } = useMutation({
+    mutationFn: async (token: string) => {
+      return updatePaypalAccount(currentUser?.id as string, token)
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['user/me'] })
+    },
+    onError: (error) => {
+      console.log(error)
+    }
+  })
+  const { emailInput, emailError, handleSubmit } = useEmailEntryForm(
+    mutatePaypalAsync,
+    HideModal,
+    currentUser?.paypal ?? ''
+  )
+
+  const handlePaypalOnboarding = () => {
+    ShowModal({
+      buttons: [
+        {
+          text: 'Okay',
+          action: 'confirm',
+          onPress: () => {
+            handleSubmit()
+            console.log(emailError)
+          }
+        },
+        {
+          text: 'Cancel',
+          action: 'cancel',
+          onPress: () => {
+            HideModal()
+          }
+        }
+      ],
+      title: 'Update Paypal Account',
+      body: emailInput
+    })
+  }
+
   const DATA = [
     {
       title: 'Account Settings',
@@ -37,6 +87,11 @@ export default function Settings() {
           title: 'Appearance',
           onPress: () => router.push('/settings/appearance'),
           icon: <Ionicons name="eye" style={iconStyle} size={iconSize} />
+        },
+        {
+          title: 'Update Paypal Account',
+          onPress: handlePaypalOnboarding,
+          icon: <Ionicons name="mail-unread-sharp" style={iconStyle} size={iconSize} />
         },
         {
           title: 'Help',

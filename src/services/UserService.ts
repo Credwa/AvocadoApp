@@ -20,7 +20,8 @@ const user = z.object({
   notification_preferences: notificationPreferences,
   is_onboarded: z.boolean(),
   stripe_onboarding_complete: z.boolean(),
-  expo_push_token: z.string().nullable()
+  expo_push_token: z.string().nullable(),
+  paypal: z.string().trim().email().nullable()
 })
 
 const accountLinkData = z.object({
@@ -113,5 +114,12 @@ export const updateExpoPushToken = (userId: string, token: string) => {
   return fetchWithAuth<void>(`/user/me/notifications/${userId}/token`, undefined, {
     method: 'POST',
     body: JSON.stringify({ token })
+  })
+}
+
+export const updatePaypalAccount = (userId: string, email: string) => {
+  return fetchWithAuth<void>(`/user/me/paypal/${userId}`, undefined, {
+    method: 'POST',
+    body: JSON.stringify({ email })
   })
 }
