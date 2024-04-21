@@ -2,7 +2,7 @@
   "expo": {
     "name": "MyAvocado",
     "slug": "avocadoapp",
-    "version": "1.0.2",
+    "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
@@ -16,7 +16,7 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.avocado.shares.myavocado",
-      "buildNumber": "7",
+      "buildNumber": "2",
       "infoPlist": {
         "UIBackgroundModes": ["audio"]
       }
@@ -27,7 +27,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "versionCode": 7,
+      "versionCode": 2,
       "package": "com.avocado.shares.myavocado",
       "permissions": ["android.permission.RECORD_AUDIO"]
     },
