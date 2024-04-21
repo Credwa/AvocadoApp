@@ -33,13 +33,13 @@ const Appearance = () => {
             label="Automatic"
             value="automatic"
           />
-          <RadioButton
+          {/* <RadioButton
             styles={`w-full justify-between flex-row-reverse bg-white dark:bg-zinc-800 py-3 px-4 ${
               appearance === 'light' ? 'bg-zinc-50 dark:bg-zinc-700' : ''
             }`}
             label="Light"
             value="light"
-          />
+          /> */}
           <RadioButton
             styles={`w-full justify-between flex-row-reverse bg-white dark:bg-zinc-800 py-3 px-4 rounded-b-md ${
               appearance === 'dark' ? 'bg-zinc-50 dark:bg-zinc-700' : ''

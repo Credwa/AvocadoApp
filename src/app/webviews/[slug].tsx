@@ -14,7 +14,6 @@ export default function Page() {
   const { url, slug } = useLocalSearchParams<{ slug: string; url?: string }>()
 
   const headerTitle = toTitleCase(slug ?? '')
-
   if (!url) {
     router.back()
   }

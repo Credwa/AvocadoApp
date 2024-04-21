@@ -176,7 +176,9 @@ export default function Discover() {
 
   const progressValue = useSharedValue<number>(0)
 
-  const sortedCampaigns = useMemo(() => sortAndShuffleDiscoveryCards(campaigns || []), [campaigns])
+  const verifiedCampaigns = useMemo(() => campaigns?.filter((campaign) => campaign.artists.is_verified), [campaigns])
+
+  const sortedCampaigns = useMemo(() => sortAndShuffleDiscoveryCards(verifiedCampaigns || []), [campaigns])
 
   if (campaignsLoading && !campaigns && upcomingCampaignsLoading && !upcomingCampaigns) return <LoadingScreen />
 
@@ -279,7 +281,7 @@ export const DiscoveryCard: React.FC<Props> = (props) => {
             <Image
               source={campaign.artwork_url}
               placeholder={getRandomBlurhash()}
-              contentFit="fill"
+              contentFit="contain"
               cachePolicy="disk"
               style={[tw.style(`w-full absolute rounded-t-xl h-[${artworkHeight}px] w-[${artworkHeight}px]`)]}
               alt={`Artwork for ${campaign.song_title} by ${campaign.artists.artist_name}`}

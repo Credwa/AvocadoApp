@@ -1,27 +1,23 @@
-import { Image } from 'expo-image';
-import { LinearGradient } from 'expo-linear-gradient';
-import { router } from 'expo-router';
-import React, { useEffect, useState } from 'react';
-import {
-    Dimensions, Pressable, RefreshControl, ScrollView, useColorScheme, View
-} from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Image } from 'expo-image'
+import { LinearGradient } from 'expo-linear-gradient'
+import { router } from 'expo-router'
+import React, { useEffect, useState } from 'react'
+import { Dimensions, Pressable, RefreshControl, ScrollView, useColorScheme, View } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-import { Button } from '@/components/atoms/Button';
-import { Typography } from '@/components/atoms/Typography';
-import { Avatar } from '@/components/Avatar';
-import { DropdownMenu } from '@/components/DropdownMenu';
-import { getRandomBlurhash, getSongTitle } from '@/helpers/lib/lib';
-import tw from '@/helpers/lib/tailwind';
-import useStripeOnboarding from '@/hooks/useStripeOnboarding';
-import { getPurchasedCampaigns } from '@/services/CampaignService';
-import {
-    getCurrentUserProfile, getStripeAccountBalance, getStripeAccountInfo
-} from '@/services/UserService';
-import { useAppStore } from '@/store';
-import { Foundation, Ionicons } from '@expo/vector-icons';
-import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
-import { useQuery } from '@tanstack/react-query';
+import { Button } from '@/components/atoms/Button'
+import { Typography } from '@/components/atoms/Typography'
+import { Avatar } from '@/components/Avatar'
+import { DropdownMenu } from '@/components/DropdownMenu'
+import { getRandomBlurhash, getSongTitle } from '@/helpers/lib/lib'
+import tw from '@/helpers/lib/tailwind'
+import useStripeOnboarding from '@/hooks/useStripeOnboarding'
+import { getPurchasedCampaigns } from '@/services/CampaignService'
+import { getCurrentUserProfile, getStripeAccountBalance, getStripeAccountInfo } from '@/services/UserService'
+import { useAppStore } from '@/store'
+import { Foundation, Ionicons } from '@expo/vector-icons'
+import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
+import { useQuery } from '@tanstack/react-query'
 
 const storybookEnabled = process.env.EXPO_PUBLIC_STORYBOOK_ENABLED === 'true'
 
@@ -121,14 +117,14 @@ const Root = () => {
                   : stripeAccountBalance?.available.reduce((acc, curr) => acc + curr.amount / 100, 0).toFixed(2)}
               </Typography>
             </View>
-            {!isStripeAccDataLoading && !stripeAccountData?.charges_enabled && !stripeAccountData?.payouts_enabled && (
+            {/* {!isStripeAccDataLoading && !stripeAccountData?.charges_enabled && !stripeAccountData?.payouts_enabled && (
               <Pressable
                 style={tw`flex-row flex-wrap items-center justify-center gap-x-2`}
                 onPress={handleStripeOnboarding}
               >
                 <Ionicons name="warning" style={tw`text-yellow-400`} size={20} />
                 <Typography weight={500} style={tw`flex-wrap text-base underline text-neutral-200 opacity-90`}>
-                  Tap to fill information onboarding to withdraw
+                  Connect to Stripe to withdraw
                 </Typography>
               </Pressable>
             )}
@@ -141,7 +137,7 @@ const Root = () => {
                 <Button styles="dark:bg-[#e2e8f0E6] px-5 py-2.5 " textStyles="text-lg dark:text-black">
                   Withdraw
                 </Button>
-              )}
+              )} */}
           </View>
         </LinearGradient>
 

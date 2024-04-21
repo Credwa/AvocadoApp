@@ -61,7 +61,7 @@ export default function Layout() {
         )
       })}
     >
-      <Tabs.Screen name="index" options={{ ...tabBarOptions('home-sharp', 'Home') }} />
+      <Tabs.Screen name="index" options={{ ...tabBarOptions('home-sharp', 'Account') }} />
       <Tabs.Screen name="search" options={{ ...tabBarOptions('search', 'Search'), href: null }} />
 
       <Tabs.Screen name="views" options={{ ...tabBarOptions('search', 'Artist'), href: null }} />

@@ -40,7 +40,7 @@ export default function SignUp() {
         email: data.email,
         password: data.password,
         options: {
-          emailRedirectTo: `${WEB_URL}?mode=app&email=${data.email}&app_redirect=${redirectTo}(main)`
+          emailRedirectTo: `${WEB_URL}?mode=app&email=${data.email}&app_redirect=${redirectTo}`
         }
       })
 

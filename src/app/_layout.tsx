@@ -7,7 +7,6 @@ import * as Updates from 'expo-updates'
 import { PostHogProvider } from 'posthog-react-native'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Alert, Appearance as AppAppearance, AppStateStatus, Platform, StatusBar } from 'react-native'
-import branch from 'react-native-branch'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { RootSiblingParent } from 'react-native-root-siblings'
 import { useAppColorScheme, useDeviceContext } from 'twrnc'
@@ -38,6 +37,8 @@ function onAppStateChange(status: AppStateStatus) {
 }
 
 const postHogKey = __DEV__ ? '' : 'phc_kK42froNyH2xUUXebCZXl3YKF2V9jA2JInAGqhMog2Y'
+
+Linking.createURL('(main)')
 
 if (!sentryInitialzed) {
   Sentry.init({
@@ -177,7 +178,9 @@ const RootLayout = () => {
   // Handle deep linking
   const init = async (initUrl: string) => {
     // const prefix = Linking.createURL('/')
-    if (initUrl && segments[0] === '(main)' && !segments[1]) {
+    console.log('my segments', segments)
+    console.log('my init url', initUrl)
+    if (initUrl && segments[0] === '(auth)' && segments[1] === 'sign-in') {
       const session = await createSessionFromUrl(initUrl)
 
       if (session) {

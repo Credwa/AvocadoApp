@@ -94,7 +94,7 @@ const PurchaseHistory = () => {
             <View style={tw`flex-row items-center`}>
               <View>
                 <Typography weight={500} style={tw`text-base`}>
-                  {purchase.shares === 0 ? 'Bought Song' : 'Share Purchase'}
+                  {purchase.shares === 0 ? 'Bought Song' : 'Slice Purchase'}
                 </Typography>
                 <Typography style={tw`text-sm text-gray-400`}>{dayjs(purchase.created_at).format('lll')}</Typography>
               </View>
@@ -102,7 +102,7 @@ const PurchaseHistory = () => {
             <View style={tw`flex-col items-center`}>
               {purchase.shares > 0 && (
                 <Typography weight={400} style={tw`self-end text-base`}>
-                  {purchase.shares} {purchase.shares === 1 ? 'share' : 'shares'}
+                  {purchase.shares} {purchase.shares === 1 ? 'slice' : 'slices'}
                 </Typography>
               )}
               <View style={tw`ml-4`}>

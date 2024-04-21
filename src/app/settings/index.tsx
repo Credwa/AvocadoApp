@@ -37,6 +37,11 @@ export default function Settings() {
           title: 'Appearance',
           onPress: () => router.push('/settings/appearance'),
           icon: <Ionicons name="eye" style={iconStyle} size={iconSize} />
+        },
+        {
+          title: 'Help',
+          onPress: () => router.push('/settings/help'),
+          icon: <Ionicons name="help-circle" style={iconStyle} size={iconSize} />
         }
       ]
     }

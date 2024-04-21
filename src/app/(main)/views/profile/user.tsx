@@ -41,12 +41,19 @@ const UserProfile = () => {
     mutationFn: async (uri: string) => {
       const imageAsString = await FileSystem.readAsStringAsync(uri, { encoding: 'base64' })
       const base64 = `${imageAsString}`
+
+      console.log('curr id', currentUser?.id)
+      console.log(
+        uploadedPhotoRegex.test(currentUser?.avatar_url as string)
+          ? currentUser?.avatar_url.split('/').pop()?.split('?').shift()
+          : ''
+      )
       return uploadNewAvatar({
         id: currentUser?.id as string,
-        imageBase64: base64,
+        imageBase64: base64 ?? '',
         currentAvatar: uploadedPhotoRegex.test(currentUser?.avatar_url as string)
           ? currentUser?.avatar_url.split('/').pop()?.split('?').shift()
-          : undefined
+          : ''
       })
     },
     onSuccess: () => {

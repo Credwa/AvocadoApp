@@ -170,21 +170,21 @@ export default function PurchaseReleased() {
   }
 
   const onSubmit = async (formData: TPurchaseReleasedSchema) => {
-    if (isStripeAccDataLoading) return
+    // if (isStripeAccDataLoading) return
 
-    if (!stripeAccountData?.charges_enabled && !stripeAccountData?.payouts_enabled) {
-      Alert.alert('Error', 'You need to complete your stripe onboarding to purchase shares', [
-        {
-          text: 'Complete Onboarding',
-          onPress: async () => await handleStripeOnboarding()
-        },
-        {
-          text: 'Cancel',
-          style: 'destructive'
-        }
-      ])
-      return
-    }
+    // if (!stripeAccountData?.charges_enabled && !stripeAccountData?.payouts_enabled) {
+    //   Alert.alert('Error', 'You need to complete your stripe onboarding to purchase shares', [
+    //     {
+    //       text: 'Complete Onboarding',
+    //       onPress: async () => await handleStripeOnboarding()
+    //     },
+    //     {
+    //       text: 'Cancel',
+    //       style: 'destructive'
+    //     }
+    //   ])
+    //   return
+    // }
 
     if (Number(formData.amount) < 100) {
       ShowToast(

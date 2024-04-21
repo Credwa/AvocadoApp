@@ -166,10 +166,9 @@ export default function Onboarding() {
       await Notifications.requestPermissionsAsync
       const token = await registerForPushNotificationsAsync()
       onTokenReceived(token)
-
-      console.log(token)
     }
     setNotificationsLoading(false)
+    await mutateCompleteOnboarding()
   }
 
   if (isCurrentUserLoading) {
@@ -180,39 +179,40 @@ export default function Onboarding() {
     <SafeAreaView
       style={tw.style(`items-center justify-between flex-1 py-10 bg-primary-main`, AndroidSafeAreaPaddingTop)}
     >
-      {!notificationsEnabled ? (
-        <>
-          <View style={tw`items-center gap-y-4`}>
-            <Animated.View style={[tw`items-center gap-y-2`, headerAnimatedStyle]}>
-              <AnimatedText textStyle="text-3xl text-zinc-100 " text="Welcome to Avocado" delay={200} />
-              <AnimatedText
-                textStyle="text-lg text-zinc-100 opacity-90"
-                text=" Where artists and music lovers earn together"
-                delay={300}
-              />
-            </Animated.View>
-            <Animated.View style={[tw`items-center `, contentAnimatedStyle]}>
-              {/* <Typography style={tw`text-lg text-zinc-100 opacity-90`} weight={500}>
+      <>
+        <View style={tw`items-center gap-y-4`}>
+          <Animated.View style={[tw`items-center gap-y-2`, headerAnimatedStyle]}>
+            <AnimatedText textStyle="text-3xl text-zinc-100 " text="Welcome to Avocado" delay={200} />
+            <AnimatedText
+              textStyle="text-lg text-zinc-100 opacity-90"
+              text=" Where artists and music lovers earn together"
+              delay={300}
+            />
+          </Animated.View>
+          <Animated.View style={[tw`items-center `, contentAnimatedStyle]}>
+            {/* <Typography style={tw`text-lg text-zinc-100 opacity-90`} weight={500}>
             Where artists and their fans earn together
           </Typography> */}
-              <LottieView style={tw`h-44 w-44`} source={welcomeAnim} autoPlay />
-            </Animated.View>
-          </View>
-          <Animated.View style={[tw`gap-y-6`, contentAnimatedStyle]}>
-            <Typography style={tw`text-lg text-zinc-100 opacity-90`} weight={500}>
-              Get notified when you earn.
-            </Typography>
-            <Button
-              loading={notificationsLoading}
-              disabled={notificationsLoading}
-              variant="secondary"
-              styles="rounded-lg"
-              onPress={enableNotifications}
-            >
-              Enable Notifications
-            </Button>
+            <LottieView style={tw`h-44 w-44`} source={welcomeAnim} autoPlay />
           </Animated.View>
-        </>
+        </View>
+        <Animated.View style={[tw`gap-y-6`, contentAnimatedStyle]}>
+          <Typography style={tw`text-lg text-zinc-100 opacity-90`} weight={500}>
+            Get notified when you earn.
+          </Typography>
+          <Button
+            loading={notificationsLoading}
+            disabled={notificationsLoading}
+            variant="secondary"
+            styles="rounded-lg"
+            onPress={enableNotifications}
+          >
+            Enable Notifications
+          </Button>
+        </Animated.View>
+      </>
+      {/* {!notificationsEnabled ? (
+
       ) : (
         <>
           <View />
@@ -234,7 +234,7 @@ export default function Onboarding() {
             </Button>
           </Animated.View>
         </>
-      )}
+      )} */}
 
       <Pressable style={tw`justify-end`} onPress={handleSkipOnboarding}>
         <Typography style={tw`text-base text-zinc-100 opacity-85`} weight={500}>
