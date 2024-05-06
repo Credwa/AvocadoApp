@@ -279,7 +279,7 @@ export default function Purchase() {
                               ) {
                                 event = songData?.campaign_details?.available_shares.toString()
                                 ShowToast(
-                                  `Max shares available is ${songData?.campaign_details?.available_shares}`,
+                                  `Max slices available is ${songData?.campaign_details?.available_shares}`,
                                   {
                                     backgroundColor:
                                       colorScheme === 'dark' ? tw.color('bg-zinc-800') : tw.color('bg-zinc-200'),

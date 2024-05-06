@@ -46,7 +46,8 @@ export const Button: FC<ButtonProps> = ({
       textColor = outline ? 'dark:text-secondary-lighter text-secondary-main' : ''
       break
     case 'danger':
-      color = 'bg-danger-main'
+      color = outline ? 'border dark:border-red-400 border-red-500' : 'dark:bg-red-500 bg-red-500'
+      textColor = outline ? 'dark:text-red-400 text-red-500' : 'text-white'
       break
     case 'default':
       color = outline ? 'border dark:border-zinc-400 border-zinc-900' : ''

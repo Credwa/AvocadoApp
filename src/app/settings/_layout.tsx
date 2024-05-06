@@ -47,6 +47,13 @@ export default function Layout() {
         }}
         name="notifications"
       />
+      <Stack.Screen
+        options={{
+          headerTitle: 'Delete Account',
+          headerTitleStyle: tw`text-red-400`
+        }}
+        name="delete-account"
+      />
     </Stack>
   )
 }

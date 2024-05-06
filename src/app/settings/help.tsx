@@ -14,16 +14,22 @@ export default function PrivacyAndSecurity() {
       title: 'Help',
       data: [
         {
+          title: 'Contact us and FAQs',
+          onPress: async () => {
+            const {
+              data: { user }
+            } = await supabase.auth.getUser()
+            router.push(`/webviews/support?url=https://myavocado.app/support`)
+          },
+          icon: null
+        },
+        {
           title: 'Delete Account',
           onPress: async () => {
             const {
               data: { user }
             } = await supabase.auth.getUser()
-            router.push(
-              `/webviews/delete-account?url=${encodeURIComponent(
-                `http://192.168.1.23:3000/delete-account?email=${user?.email}`
-              )}`
-            )
+            router.push('settings/delete-account')
           },
           icon: null
         }
@@ -38,7 +44,12 @@ export default function PrivacyAndSecurity() {
         keyExtractor={(item, index) => item.title + index}
         renderItem={({ item, index, section }) => (
           <ListItem length={section.data.length} index={index} onPress={item.onPress}>
-            <Typography weight={500} style={tw`py-1 text-sm text-zinc-950 dark:text-red-400`}>
+            <Typography
+              weight={500}
+              style={tw.style(`py-1 text-sm text-zinc-950 dark:text-zinc-100`, {
+                'dark:text-red-400 ': item.title === 'Delete Account'
+              })}
+            >
               {item.title}
             </Typography>
           </ListItem>

@@ -30,11 +30,11 @@ export const AndroidSafeAreaPaddingTop = {
   paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0
 }
 
-export const WEB_URL = __DEV__ ? 'http://192.168.1.23:3000' : 'https://artists.myavocado.app'
+export const WEB_URL = __DEV__ ? `http://10.0.0.25:3000` : 'https://artists.myavocado.app'
 
 export const environments = {
   dev: {
-    BASE_URL: 'http://192.168.1.23:8080/api/v1',
+    BASE_URL: `http://10.0.0.25:8080/api/v1`,
     stripePublishableKey:
       'pk_test_51OEgCAD0PCnrjk8E0WhE2BnEJ5Ij9zgjD2lITATKCg8vzdEsYcAELFYFcJqMPsDjy0LlhgBBnt6WLHsxhYdMeZ3c00YW7Bp8el'
   },

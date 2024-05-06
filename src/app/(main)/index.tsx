@@ -156,7 +156,7 @@ const Root = () => {
             </View>
           </View>
           <View style={tw`flex items-center w-full h-full gap-y-4`} onTouchEnd={() => setMenuOpen(false)}>
-            <Typography style={tw`text-lg text-neutral-200 opacity-90`}>Earnings</Typography>
+            <Typography style={tw`text-lg text-neutral-200 opacity-90`}>Earningss</Typography>
             <View style={tw`flex-row items-center content-center justify-center gap-x-1`}>
               <Foundation name="dollar" size={64} style={tw`mb-3`} color={tw.color('text-zinc-100')} />
               <Typography weight={500} style={tw`text-6xl text-zinc-100`}>
@@ -228,7 +228,7 @@ const Root = () => {
                         </View>
 
                         <View style={tw`self-start justify-end`}>
-                          <Typography weight={500}>Shares</Typography>
+                          <Typography weight={500}>Slices</Typography>
                           <Typography weight={500} style={tw`self-end text-base`}>
                             {campaign.total_shares}
                           </Typography>

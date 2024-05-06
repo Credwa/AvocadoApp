@@ -1,3 +1,4 @@
+import { useRouter } from 'expo-router'
 import { usePostHog } from 'posthog-react-native'
 import React from 'react'
 import * as Sentry from 'sentry-expo'
@@ -48,6 +49,7 @@ export function SessionProvider(props: React.PropsWithChildren) {
   const [[isLoading, session], setSession] = useStorageState('session')
   const posthog = usePostHog()
   const parsedSession = session ? (JSON.parse(session) as Session) : null
+  const router = useRouter()
 
   if (parsedSession?.expires_at && parsedSession.expires_at < new Date().getTime() / 1000) {
     console.log('refreshing session auth context')
