@@ -106,8 +106,7 @@
         {
           "photosPermission": "Permission required to upload a new profile photo"
         }
-      ],
-      "expo-tracking-transparency"
+      ]
     ],
     "experiments": {
       "tsconfigPaths": true
