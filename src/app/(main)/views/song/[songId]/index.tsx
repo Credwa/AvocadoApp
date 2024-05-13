@@ -153,7 +153,7 @@ const Song = () => {
           <View style={tw`flex-row justify-between w-full`}>
             <View style={tw`flex-col self-start pt-4`}>
               <Typography weight={500} style={tw`text-lg`}>
-                Price
+                {campaignState === 'released' ? 'Suggested Donation' : 'Price'}
               </Typography>
               <Typography style={tw`text-2xl`} weight={600}>
                 {songData?.campaign_details?.price_per_share.toLocaleString('en-US', {
@@ -259,7 +259,7 @@ const Song = () => {
               textStyles="text-white"
               variant="primary"
             >
-              Buy Song
+              Donate
             </Button>
           )}
         </View>

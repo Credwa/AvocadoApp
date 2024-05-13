@@ -340,7 +340,7 @@ export default function PurchaseReleased() {
                     textStyles="text-white"
                     variant="primary"
                   >
-                    Buy Song
+                    Donate
                   </Button>
                 </View>
               </KeyboardAvoidingView>
