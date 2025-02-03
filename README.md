@@ -1,5 +1,7 @@
 <h1 align="center">Avocado mobile app</h1>
 
+[App Preview](https://github.com/Credwa/AvocadoApp/blob/main/3fb7eee4-2efa-4788-a51f-c9851c74e02a.JPG?raw=true)
+
 <p>
  This is the mobile app for the Avocado project. It is built with react native and expo. It allows fans to discover new artists and support them by purchasing shares in the music streaming royalties.
  <br/>
